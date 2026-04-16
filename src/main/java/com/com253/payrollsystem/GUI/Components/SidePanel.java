@@ -6,11 +6,21 @@ package com.com253.payrollsystem.GUI.Components;
  */
 public class SidePanel extends javax.swing.JPanel {
 
+    public interface ActionHandler {
+        void onProcess();
+        void onClear();
+        void onExit();
+    }
+
+    private ActionHandler actionHandler;
+
     /**
      * Creates new form SidePanel
      */
     public SidePanel() {
         initComponents();
+        processButton.addActionListener(this::processButtonActionPerformed);
+        clearButton.addActionListener(this::clearButtonActionPerformed);
     }
 
     /**
@@ -22,96 +32,116 @@ public class SidePanel extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        SystemName2 = new javax.swing.JLabel();
-        jSeparator3 = new javax.swing.JSeparator();
-        ActionsLabel2 = new javax.swing.JLabel();
-        ProcessButton2 = new javax.swing.JButton();
-        ClearButton2 = new javax.swing.JButton();
-        ExitButton2 = new javax.swing.JButton();
+        systemNameLabel = new javax.swing.JLabel();
+        actionsSeparator = new javax.swing.JSeparator();
+        actionsLabel = new javax.swing.JLabel();
+        processButton = new javax.swing.JButton();
+        clearButton = new javax.swing.JButton();
+        exitButton = new javax.swing.JButton();
 
         setBackground(new java.awt.Color(16, 20, 35));
         setMaximumSize(new java.awt.Dimension(220, 32767));
 
-        SystemName2.setFont(new java.awt.Font("SansSerif", 1, 24)); // NOI18N
-        SystemName2.setForeground(new java.awt.Color(255, 255, 255));
-        SystemName2.setText("PAYROLLPAL");
+        systemNameLabel.setFont(new java.awt.Font("SansSerif", 1, 24)); // NOI18N
+        systemNameLabel.setForeground(new java.awt.Color(255, 255, 255));
+        systemNameLabel.setText("PAYROLLPAL");
 
-        ActionsLabel2.setFont(new java.awt.Font("SansSerif", 1, 12)); // NOI18N
-        ActionsLabel2.setForeground(new java.awt.Color(120, 135, 170));
-        ActionsLabel2.setText("ACTIONS");
+        actionsLabel.setFont(new java.awt.Font("SansSerif", 1, 12)); // NOI18N
+        actionsLabel.setForeground(new java.awt.Color(120, 135, 170));
+        actionsLabel.setText("ACTIONS");
 
-        ProcessButton2.setBackground(new java.awt.Color(22, 28, 48));
-        ProcessButton2.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        ProcessButton2.setForeground(new java.awt.Color(255, 255, 255));
-        ProcessButton2.setText("PORCESS");
-        ProcessButton2.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(40, 50, 80)));
-        ProcessButton2.setFocusable(false);
+        processButton.setBackground(new java.awt.Color(22, 28, 48));
+        processButton.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        processButton.setForeground(new java.awt.Color(255, 255, 255));
+        processButton.setText("PORCESS");
+        processButton.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(40, 50, 80)));
+        processButton.setFocusable(false);
 
-        ClearButton2.setBackground(new java.awt.Color(22, 28, 48));
-        ClearButton2.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        ClearButton2.setForeground(new java.awt.Color(255, 255, 255));
-        ClearButton2.setText("CLEAR");
-        ClearButton2.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(40, 50, 80)));
-        ClearButton2.setFocusable(false);
+        clearButton.setBackground(new java.awt.Color(22, 28, 48));
+        clearButton.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        clearButton.setForeground(new java.awt.Color(255, 255, 255));
+        clearButton.setText("CLEAR");
+        clearButton.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(40, 50, 80)));
+        clearButton.setFocusable(false);
 
-        ExitButton2.setBackground(new java.awt.Color(22, 28, 48));
-        ExitButton2.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        ExitButton2.setForeground(new java.awt.Color(255, 255, 255));
-        ExitButton2.setText("EXIT");
-        ExitButton2.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(40, 50, 80)));
-        ExitButton2.setFocusable(false);
-        ExitButton2.addActionListener(this::ExitButton2ActionPerformed);
+        exitButton.setBackground(new java.awt.Color(22, 28, 48));
+        exitButton.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        exitButton.setForeground(new java.awt.Color(255, 255, 255));
+        exitButton.setText("EXIT");
+        exitButton.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(40, 50, 80)));
+        exitButton.setFocusable(false);
+        exitButton.addActionListener(this::exitButtonActionPerformed);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                        .addComponent(ActionsLabel2)
-                        .addGap(0, 157, Short.MAX_VALUE))
-                    .addComponent(jSeparator3)
-                    .addComponent(ProcessButton2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(ExitButton2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(ClearButton2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap())
             .addGroup(layout.createSequentialGroup()
-                .addGap(28, 28, 28)
-                .addComponent(SystemName2)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(28, 28, 28)
+                        .addComponent(systemNameLabel)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(actionsLabel)
+                                .addGap(0, 157, Short.MAX_VALUE))
+                            .addComponent(actionsSeparator, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(processButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(exitButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(clearButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(18, 18, 18)
-                .addComponent(SystemName2)
+                .addComponent(systemNameLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jSeparator3, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(actionsSeparator, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(ActionsLabel2)
+                .addComponent(actionsLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(ProcessButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(processButton, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(ClearButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(clearButton, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(ExitButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(exitButton, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(489, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void ExitButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ExitButton2ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_ExitButton2ActionPerformed
+    private void exitButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitButtonActionPerformed
+        if (actionHandler != null) {
+            actionHandler.onExit();
+        }
+    }//GEN-LAST:event_exitButtonActionPerformed
+
+    private void processButtonActionPerformed(java.awt.event.ActionEvent evt) {
+        if (actionHandler != null) {
+            actionHandler.onProcess();
+        }
+    }
+
+    private void clearButtonActionPerformed(java.awt.event.ActionEvent evt) {
+        if (actionHandler != null) {
+            actionHandler.onClear();
+        }
+    }
+
+    public void setActionHandler(ActionHandler actionHandler) {
+        this.actionHandler = actionHandler;
+    }
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel ActionsLabel2;
-    private javax.swing.JButton ClearButton2;
-    private javax.swing.JButton ExitButton2;
-    private javax.swing.JButton ProcessButton2;
-    private javax.swing.JLabel SystemName2;
-    private javax.swing.JSeparator jSeparator3;
+    private javax.swing.JLabel actionsLabel;
+    private javax.swing.JSeparator actionsSeparator;
+    private javax.swing.JButton clearButton;
+    private javax.swing.JButton exitButton;
+    private javax.swing.JButton processButton;
+    private javax.swing.JLabel systemNameLabel;
     // End of variables declaration//GEN-END:variables
 }

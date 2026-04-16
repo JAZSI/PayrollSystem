@@ -1,5 +1,6 @@
 package com.com253.payrollsystem.GUI.Components;
 
+import com.com253.payrollsystem.Model.TimeRecord;
 import java.awt.Component;
 import java.awt.FlowLayout;
 import javax.swing.AbstractCellEditor;
@@ -36,12 +37,12 @@ public class Table extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        timeRecordScrollPane = new javax.swing.JScrollPane();
+        timeRecordTable = new javax.swing.JTable();
 
-        jTable1.setBackground(new java.awt.Color(22, 28, 48));
-        jTable1.setForeground(new java.awt.Color(255, 255, 255));
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        timeRecordTable.setBackground(new java.awt.Color(22, 28, 48));
+        timeRecordTable.setForeground(new java.awt.Color(255, 255, 255));
+        timeRecordTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null, null},
                 {null, null, null, null, null},
@@ -78,27 +79,27 @@ public class Table extends javax.swing.JPanel {
                 return canEdit [columnIndex];
             }
         });
-        jTable1.setGridColor(new java.awt.Color(40, 50, 80));
-        jTable1.setRowHeight(32);
-        jTable1.setSelectionForeground(new java.awt.Color(255, 255, 255));
-        jScrollPane1.setViewportView(jTable1);
-        if (jTable1.getColumnModel().getColumnCount() > 0) {
-            jTable1.getColumnModel().getColumn(0).setPreferredWidth(30);
-            jTable1.getColumnModel().getColumn(3).setPreferredWidth(180);
-            jTable1.getColumnModel().getColumn(3).setMaxWidth(220);
-            jTable1.getColumnModel().getColumn(4).setPreferredWidth(90);
-            jTable1.getColumnModel().getColumn(4).setMaxWidth(90);
+        timeRecordTable.setGridColor(new java.awt.Color(40, 50, 80));
+        timeRecordTable.setRowHeight(32);
+        timeRecordTable.setSelectionForeground(new java.awt.Color(255, 255, 255));
+        timeRecordScrollPane.setViewportView(timeRecordTable);
+        if (timeRecordTable.getColumnModel().getColumnCount() > 0) {
+            timeRecordTable.getColumnModel().getColumn(0).setPreferredWidth(30);
+            timeRecordTable.getColumnModel().getColumn(3).setPreferredWidth(180);
+            timeRecordTable.getColumnModel().getColumn(3).setMaxWidth(220);
+            timeRecordTable.getColumnModel().getColumn(4).setPreferredWidth(90);
+            timeRecordTable.getColumnModel().getColumn(4).setMaxWidth(90);
         }
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 752, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(timeRecordScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 752, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1)
+            .addComponent(timeRecordScrollPane)
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -132,23 +133,23 @@ public class Table extends javax.swing.JPanel {
 
         for (int i = 0; i < dayLabels.length; i++) {
             model.setValueAt(dayLabels[i], i, 0);
-            model.setValueAt("0900", i, 1);
+            model.setValueAt("0800", i, 1);
             model.setValueAt("1700", i, 2);
             model.setValueAt(Boolean.FALSE, i, 3);
             model.setValueAt("Regular Day", i, 4);
         }
 
-        jTable1.setModel(model);
+        timeRecordTable.setModel(model);
 
-        jTable1.getColumnModel().getColumn(1).setCellEditor(new TimeComboCellEditor("0900"));
-        jTable1.getColumnModel().getColumn(2).setCellEditor(new TimeComboCellEditor("1700"));
+        timeRecordTable.getColumnModel().getColumn(1).setCellEditor(new TimeComboCellEditor("0800"));
+        timeRecordTable.getColumnModel().getColumn(2).setCellEditor(new TimeComboCellEditor("1700"));
 
         JComboBox<String> holidayTypeCombo = new JComboBox<>(new String[]{
             "Regular Day",
             "Regular Holiday",
             "Special Holiday / Rest Day"
         });
-        jTable1.getColumnModel().getColumn(4).setCellEditor(new DefaultCellEditor(holidayTypeCombo));
+        timeRecordTable.getColumnModel().getColumn(4).setCellEditor(new DefaultCellEditor(holidayTypeCombo));
 
         DefaultTableCellRenderer centeredTextRenderer = new DefaultTableCellRenderer() {
             @Override
@@ -167,14 +168,72 @@ public class Table extends javax.swing.JPanel {
             }
         };
         centeredTextRenderer.setHorizontalAlignment(SwingConstants.CENTER);
-        jTable1.getColumnModel().getColumn(0).setCellRenderer(centeredTextRenderer);
-        jTable1.getColumnModel().getColumn(1).setCellRenderer(centeredTextRenderer);
-        jTable1.getColumnModel().getColumn(2).setCellRenderer(centeredTextRenderer);
+        timeRecordTable.getColumnModel().getColumn(0).setCellRenderer(centeredTextRenderer);
+        timeRecordTable.getColumnModel().getColumn(1).setCellRenderer(centeredTextRenderer);
+        timeRecordTable.getColumnModel().getColumn(2).setCellRenderer(centeredTextRenderer);
 
-        jTable1.getColumnModel().getColumn(0).setPreferredWidth(120);
-        jTable1.getColumnModel().getColumn(1).setPreferredWidth(140);
-        jTable1.getColumnModel().getColumn(2).setPreferredWidth(140);
-        jTable1.getColumnModel().getColumn(4).setPreferredWidth(90);
+        timeRecordTable.getColumnModel().getColumn(0).setPreferredWidth(120);
+        timeRecordTable.getColumnModel().getColumn(1).setPreferredWidth(140);
+        timeRecordTable.getColumnModel().getColumn(2).setPreferredWidth(140);
+        timeRecordTable.getColumnModel().getColumn(4).setPreferredWidth(90);
+    }
+
+    public TimeRecord[] buildTimeRecords() {
+        DefaultTableModel model = (DefaultTableModel) timeRecordTable.getModel();
+        TimeRecord[] records = new TimeRecord[model.getRowCount()];
+
+        for (int row = 0; row < model.getRowCount(); row++) {
+            String timeIn = normalizeTimeValue(model.getValueAt(row, 1), "0800");
+            String timeOut = normalizeTimeValue(model.getValueAt(row, 2), "1700");
+            boolean isAbsent = parseAbsentFlag(model.getValueAt(row, 3));
+            String holiday = mapHolidayType(model.getValueAt(row, 4));
+
+            records[row] = new TimeRecord(
+                row + 1,
+                Integer.parseInt(timeIn),
+                Integer.parseInt(timeOut),
+                isAbsent,
+                holiday
+            );
+        }
+
+        return records;
+    }
+
+    public void resetToDefaults() {
+        configureTimeRecordTable();
+    }
+
+    private String normalizeTimeValue(Object value, String fallback) {
+        if (value == null) {
+            return fallback;
+        }
+
+        String raw = value.toString().trim();
+        if (raw.matches("\\d{4}")) {
+            return raw;
+        }
+
+        return fallback;
+    }
+
+    private boolean parseAbsentFlag(Object value) {
+        if (value instanceof Boolean) {
+            return (Boolean) value;
+        }
+        if (value == null) {
+            return false;
+        }
+        return Boolean.parseBoolean(value.toString());
+    }
+
+    private String mapHolidayType(Object value) {
+        String text = value == null ? "Regular Day" : value.toString();
+        return switch (text) {
+            case "Regular Holiday" -> TimeRecord.HOLIDAY_REGULAR;
+            case "Special Holiday / Rest Day" -> TimeRecord.HOLIDAY_REST_DAY;
+            default -> TimeRecord.HOLIDAY_NONE;
+        };
     }
 
     private String formatDisplayTime(String militaryTime) {
@@ -247,7 +306,7 @@ public class Table extends javax.swing.JPanel {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
+    private javax.swing.JScrollPane timeRecordScrollPane;
+    private javax.swing.JTable timeRecordTable;
     // End of variables declaration//GEN-END:variables
 }
