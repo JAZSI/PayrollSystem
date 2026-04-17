@@ -5,6 +5,9 @@ import com.com253.payrollsystem.Model.TimeRecord;
 
 public class PayrollCalculator {
 
+    private static final double WORKDAY_START_HOUR = 8.0;
+    private static final double LUNCH_BREAK_START_HOUR = 11.0;
+
     // Regular day OT.
     private static final double REGULAR_DAY_OVERTIME_MULTIPLIER = 1.25;
     // Regular holiday.
@@ -17,7 +20,7 @@ public class PayrollCalculator {
 
     /**
      * Computes worked hours for one time record.
-     * Lunch break is subtracted for non-absent days.
+    * Lunch break is subtracted only when the shift extends past 11:00 AM.
      *
      * @param record time record for a day
      * @return worked hours for the day
@@ -37,10 +40,15 @@ public class PayrollCalculator {
         double inHours  = (timeIn  / 100) + (timeIn  % 100) / 60.0;
         double outHours = (timeOut / 100) + (timeOut % 100) / 60.0;
 
-        // Subtract 1 hour for the mandatory lunch break
-        double hoursWorked = outHours - inHours - 1.0;
+        // Work hours only start counting from 8:00 AM onward.
+        double effectiveStartHour = Math.max(WORKDAY_START_HOUR, inHours);
 
-        return hoursWorked;
+        double hoursWorked = outHours - effectiveStartHour;
+        if (outHours > LUNCH_BREAK_START_HOUR) {
+            hoursWorked -= 1.0;
+        }
+
+        return Math.max(0.0, hoursWorked);
     }
 
     /**

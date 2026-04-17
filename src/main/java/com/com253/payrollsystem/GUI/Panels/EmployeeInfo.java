@@ -206,7 +206,7 @@ public class EmployeeInfo extends javax.swing.JPanel {
         ));
 
         cutoffComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(
-            new String[] {"1st Cut-off", "2nd Cut-off"}
+            new String[] {"1st Cut-off (1st-15th)", "2nd Cut-off (16th-30th)"}
         ));
 
         updateRateLabel();

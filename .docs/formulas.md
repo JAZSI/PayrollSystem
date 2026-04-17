@@ -10,11 +10,15 @@ This document contains all mathematical formulas used in the Payroll System for 
 ### 1.1 Hours Worked Per Day
 **Formula:**
 ```
-hoursWorked = (timeOut - timeIn) - 1.0
+effectiveTimeIn = MAX(timeIn, 0800)
+hoursWorked = MAX(0, timeOut - effectiveTimeIn)
+if timeOut > 1100:
+      hoursWorked = hoursWorked - 1.0
 where:
   - timeIn/timeOut are in HHMM format (e.g., 0800 = 8:00 AM)
   - Convert to decimal: hours = (HHMM / 100) + (HHMM % 100) / 60
-  - 1.0 hour is subtracted for mandatory lunch break
+   - Work hours only start counting at 8:00 AM; earlier time-in is ignored
+   - 1.0 hour is subtracted for lunch only when the shift extends past 11:00 AM
   - Returns 0.0 if employee is absent
 ```
 
@@ -24,7 +28,7 @@ where:
 ```
 Time In: 0800 → 8.0 + 0/60 = 8.0 hours
 Time Out: 1700 → 17.0 + 0/60 = 17.0 hours
-Hours Worked = 17.0 - 8.0 - 1.0 = 8.0 hours
+Hours Worked = (17.0 - 8.0) - 1.0 = 8.0 hours
 ```
 
 ---

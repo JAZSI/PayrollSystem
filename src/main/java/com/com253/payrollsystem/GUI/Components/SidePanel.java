@@ -53,9 +53,10 @@ public class SidePanel extends javax.swing.JPanel {
         processButton.setBackground(new java.awt.Color(22, 28, 48));
         processButton.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         processButton.setForeground(new java.awt.Color(255, 255, 255));
-        processButton.setText("PORCESS");
+        processButton.setText("PROCESS");
         processButton.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(40, 50, 80)));
         processButton.setFocusable(false);
+        processButton.addActionListener(this::processButtonActionPerformed);
 
         clearButton.setBackground(new java.awt.Color(22, 28, 48));
         clearButton.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
@@ -119,11 +120,11 @@ public class SidePanel extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_exitButtonActionPerformed
 
-    private void processButtonActionPerformed(java.awt.event.ActionEvent evt) {
+    private void processButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_processButtonActionPerformed
         if (actionHandler != null) {
             actionHandler.onProcess();
         }
-    }
+    }//GEN-LAST:event_processButtonActionPerformed
 
     private void clearButtonActionPerformed(java.awt.event.ActionEvent evt) {
         if (actionHandler != null) {
