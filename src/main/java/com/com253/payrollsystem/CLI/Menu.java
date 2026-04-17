@@ -7,6 +7,7 @@ import com.com253.payrollsystem.Model.EmployeeTypes.PartTimer;
 import com.com253.payrollsystem.Model.EmployeeTypes.Probationary;
 import com.com253.payrollsystem.Model.EmployeeTypes.Regular;
 import com.com253.payrollsystem.Service.PayrollCalculator;
+import com.com253.payrollsystem.Service.WorkingDayCalculator;
 import java.util.Scanner;
 
 public class Menu {
@@ -152,27 +153,7 @@ public class Menu {
      * @return array of working day numbers
      */
     static int[] getWorkingDays(String cutOffPeriod) {
-        int startDayOfWeek = 1; // 1 = Monday
-
-        int startDay = cutOffPeriod.equals("1st-15th") ? 1 : 16;
-        int endDay   = cutOffPeriod.equals("1st-15th") ? 15 : 30;
-
-        // Count working days first to size the array
-        int count = 0;
-        for (int day = startDay; day <= endDay; day++) {
-            int dayOfWeek = ((startDayOfWeek - 1 + (day - 1)) % 7) + 1;
-            if (dayOfWeek <= 5) count++; // Mon–Fri
-        }
-
-        int[] workingDays = new int[count];
-        int idx = 0;
-        for (int day = startDay; day <= endDay; day++) {
-            int dayOfWeek = ((startDayOfWeek - 1 + (day - 1)) % 7) + 1;
-            if (dayOfWeek <= 5) {
-                workingDays[idx++] = day;
-            }
-        }
-        return workingDays;
+        return WorkingDayCalculator.getWorkingDaysForCurrentMonth(cutOffPeriod);
     }
 
     /**

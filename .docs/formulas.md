@@ -80,6 +80,37 @@ absentDays = COUNT(days where isAbsent = true)
 
 ---
 
+### 1.6 Working-Day Selection (Weekend Removal)
+**Formula:**
+```
+workingDays = { day in cutoffRange | dayOfWeek(day) is not SATURDAY and not SUNDAY }
+
+cutoffRange:
+   - 1st-15th  => days 1..15
+   - 16th-30th => days 16..min(30, lastDayOfMonth)
+```
+
+**Implementation:** `WorkingDayCalculator.getWorkingDaysForCurrentMonth(cutOffPeriod)`
+
+**Rule:**
+- Weekend days are excluded from both CLI and GUI attendance entry lists.
+
+---
+
+### 1.7 GUI Strict Time Validation Rules
+**Validation Rules:**
+```
+1. timeIn and timeOut are required for non-absent rows
+2. both values must be HHMM (exactly 4 digits)
+3. hour must be 00..23 and minute must be 00..59
+4. timeOut must be greater than timeIn
+5. if row is marked absent, times are ignored and stored as 0000
+```
+
+**Implementation:** `Table.buildTimeRecords()` and `Table.parseTimeToHHMM(...)`
+
+---
+
 ## 2. PAY CALCULATIONS
 
 ### 2.1 Daily Rate Computation (By Employee Type)

@@ -20,12 +20,14 @@ import javax.swing.table.TableCellEditor;
  */
 public class Table extends javax.swing.JPanel {
 
+    private int[] workingDays = new int[0];
+
     /**
      * Creates new form Table
      */
     public Table() {
         initComponents();
-        configureTimeRecordTable();
+        setWorkingDays(createDefaultWorkingDays());
     }
 
     /**
@@ -103,10 +105,10 @@ public class Table extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void configureTimeRecordTable() {
-        String[] dayLabels = new String[15];
+    private void configureTimeRecordTable(int[] days) {
+        String[] dayLabels = new String[days.length];
         for (int i = 0; i < dayLabels.length; i++) {
-            dayLabels[i] = "Day " + (i + 1);
+            dayLabels[i] = "Day " + days[i];
         }
 
         DefaultTableModel model = new DefaultTableModel(
@@ -183,15 +185,26 @@ public class Table extends javax.swing.JPanel {
         TimeRecord[] records = new TimeRecord[model.getRowCount()];
 
         for (int row = 0; row < model.getRowCount(); row++) {
-            String timeIn = normalizeTimeValue(model.getValueAt(row, 1), "0800");
-            String timeOut = normalizeTimeValue(model.getValueAt(row, 2), "1700");
+            int dayNumber = workingDays[row];
             boolean isAbsent = parseAbsentFlag(model.getValueAt(row, 3));
-            String holiday = mapHolidayType(model.getValueAt(row, 4));
+            if (isAbsent) {
+                records[row] = new TimeRecord(dayNumber, 0, 0, true, TimeRecord.HOLIDAY_NONE);
+                continue;
+            }
+
+            int timeIn = parseTimeToHHMM(model.getValueAt(row, 1), "Time in", dayNumber);
+            int timeOut = parseTimeToHHMM(model.getValueAt(row, 2), "Time out", dayNumber);
+
+            if (timeOut <= timeIn) {
+                throw new IllegalArgumentException("Day " + dayNumber + ": Time out must be later than Time in.");
+            }
+
+            String holiday = mapHolidayType(model.getValueAt(row, 4), dayNumber);
 
             records[row] = new TimeRecord(
-                row + 1,
-                Integer.parseInt(timeIn),
-                Integer.parseInt(timeOut),
+                dayNumber,
+                timeIn,
+                timeOut,
                 isAbsent,
                 holiday
             );
@@ -201,20 +214,39 @@ public class Table extends javax.swing.JPanel {
     }
 
     public void resetToDefaults() {
-        configureTimeRecordTable();
+        configureTimeRecordTable(workingDays);
     }
 
-    private String normalizeTimeValue(Object value, String fallback) {
+    public void setWorkingDays(int[] workingDays) {
+        if (workingDays == null || workingDays.length == 0) {
+            throw new IllegalArgumentException("Working days cannot be empty.");
+        }
+
+        this.workingDays = workingDays.clone();
+        configureTimeRecordTable(this.workingDays);
+    }
+
+    private int parseTimeToHHMM(Object value, String fieldName, int dayNumber) {
         if (value == null) {
-            return fallback;
+            throw new IllegalArgumentException("Day " + dayNumber + ": " + fieldName + " is required.");
         }
 
         String raw = value.toString().trim();
-        if (raw.matches("\\d{4}")) {
-            return raw;
+        if (!raw.matches("\\d{4}")) {
+            throw new IllegalArgumentException(
+                "Day " + dayNumber + ": " + fieldName + " must be in HHMM format (e.g., 0800)."
+            );
         }
 
-        return fallback;
+        int hour = Integer.parseInt(raw.substring(0, 2));
+        int minute = Integer.parseInt(raw.substring(2, 4));
+        if (hour < 0 || hour > 23 || minute < 0 || minute > 59) {
+            throw new IllegalArgumentException(
+                "Day " + dayNumber + ": " + fieldName + " must be a valid 24-hour time."
+            );
+        }
+
+        return Integer.parseInt(raw);
     }
 
     private boolean parseAbsentFlag(Object value) {
@@ -227,13 +259,22 @@ public class Table extends javax.swing.JPanel {
         return Boolean.parseBoolean(value.toString());
     }
 
-    private String mapHolidayType(Object value) {
+    private String mapHolidayType(Object value, int dayNumber) {
         String text = value == null ? "Regular Day" : value.toString();
         return switch (text) {
             case "Regular Holiday" -> TimeRecord.HOLIDAY_REGULAR;
             case "Special Holiday / Rest Day" -> TimeRecord.HOLIDAY_REST_DAY;
-            default -> TimeRecord.HOLIDAY_NONE;
+            case "Regular Day" -> TimeRecord.HOLIDAY_NONE;
+            default -> throw new IllegalArgumentException("Day " + dayNumber + ": Invalid holiday type.");
         };
+    }
+
+    private int[] createDefaultWorkingDays() {
+        int[] defaults = new int[15];
+        for (int i = 0; i < defaults.length; i++) {
+            defaults[i] = i + 1;
+        }
+        return defaults;
     }
 
     private String formatDisplayTime(String militaryTime) {

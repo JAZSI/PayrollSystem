@@ -6,6 +6,7 @@ import com.com253.payrollsystem.Model.EmployeeTypes.Contractual;
 import com.com253.payrollsystem.Model.EmployeeTypes.PartTimer;
 import com.com253.payrollsystem.Model.EmployeeTypes.Probationary;
 import com.com253.payrollsystem.Model.EmployeeTypes.Regular;
+import com.com253.payrollsystem.Service.WorkingDayCalculator;
 
 /**
  *
@@ -209,8 +210,10 @@ public class EmployeeInfo extends javax.swing.JPanel {
             new String[] {"1st Cut-off (1st-15th)", "2nd Cut-off (16th-30th)"}
         ));
 
+        cutoffComboBox.addActionListener(evt -> applySelectedCutoffToTable());
+
         updateRateLabel();
-        timeRecordTable.resetToDefaults();
+        applySelectedCutoffToTable();
     }
 
     private void updateRateLabel() {
@@ -259,7 +262,7 @@ public class EmployeeInfo extends javax.swing.JPanel {
     }
 
     public String getCutoffPeriod() {
-        return (String) cutoffComboBox.getSelectedItem();
+        return getSelectedCutoffCode();
     }
 
     public double getLoanDeduction() {
@@ -290,8 +293,22 @@ public class EmployeeInfo extends javax.swing.JPanel {
         loanDeductionField.setText("");
         employeeTypeComboBox.setSelectedIndex(0);
         cutoffComboBox.setSelectedIndex(0);
-        timeRecordTable.resetToDefaults();
+        applySelectedCutoffToTable();
         updateRateLabel();
+    }
+
+    private void applySelectedCutoffToTable() {
+        int[] workingDays = getWorkingDays(getSelectedCutoffCode());
+        timeRecordTable.setWorkingDays(workingDays);
+    }
+
+    private String getSelectedCutoffCode() {
+        int selectedIndex = cutoffComboBox.getSelectedIndex();
+        return selectedIndex == 1 ? "16th-30th" : "1st-15th";
+    }
+
+    private int[] getWorkingDays(String cutOffPeriod) {
+        return WorkingDayCalculator.getWorkingDaysForCurrentMonth(cutOffPeriod);
     }
 
 
