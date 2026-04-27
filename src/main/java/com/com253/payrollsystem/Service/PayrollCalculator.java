@@ -1,12 +1,14 @@
 package com.com253.payrollsystem.Service;
 import com.com253.payrollsystem.Model.Employee;
 import com.com253.payrollsystem.Model.PayrollEntry;
+import com.com253.payrollsystem.Model.PayrollSettings;
 import com.com253.payrollsystem.Model.TimeRecord;
+import com.com253.payrollsystem.Service.Tax.Pagibig;
+import com.com253.payrollsystem.Service.Tax.PhilHealth;
+import com.com253.payrollsystem.Service.Tax.SSS;
+import com.com253.payrollsystem.Service.Tax.WithholdingTax;
 
 public class PayrollCalculator {
-
-    private static final double WORKDAY_START_HOUR = 8.0;
-    private static final double LUNCH_BREAK_START_HOUR = 11.0;
 
     // Regular day OT.
     private static final double REGULAR_DAY_OVERTIME_MULTIPLIER = 1.25;
@@ -23,9 +25,10 @@ public class PayrollCalculator {
     * Lunch break is subtracted only when the shift extends past 11:00 AM.
      *
      * @param record time record for a day
+     * @param settings payroll configuration values
      * @return worked hours for the day
      */
-    public static double computeHoursWorked(TimeRecord record) {
+    public static double computeHoursWorked(TimeRecord record, PayrollSettings settings) {
         if (record.isAbsent()) {
             return 0.0;
         }
@@ -40,11 +43,10 @@ public class PayrollCalculator {
         double inHours  = (timeIn  / 100) + (timeIn  % 100) / 60.0;
         double outHours = (timeOut / 100) + (timeOut % 100) / 60.0;
 
-        // Work hours only start counting from 8:00 AM onward.
-        double effectiveStartHour = Math.max(WORKDAY_START_HOUR, inHours);
+        double effectiveStartHour = Math.max(settings.getWorkdayStartHour(), inHours);
 
         double hoursWorked = outHours - effectiveStartHour;
-        if (outHours > LUNCH_BREAK_START_HOUR) {
+        if (outHours > settings.getLunchBreakStartHour()) {
             hoursWorked -= 1.0;
         }
 
@@ -55,12 +57,13 @@ public class PayrollCalculator {
      * Adds worked hours across all records.
      *
      * @param records daily time records
+     * @param settings payroll configuration values
      * @return total worked hours
      */
-    public static double computeTotalHours(TimeRecord[] records) {
+    public static double computeTotalHours(TimeRecord[] records, PayrollSettings settings) {
         double total = 0.0;
         for (TimeRecord record : records) {
-            total += computeHoursWorked(record);
+            total += computeHoursWorked(record, settings);
         }
         return total;
     }
@@ -69,16 +72,14 @@ public class PayrollCalculator {
      * Computes total overtime hours across records.
      *
      * @param records daily time records
+     * @param settings payroll configuration values
      * @return total overtime hours
      */
-    public static double computeOvertimeHours(TimeRecord[] records) {
+    public static double computeOvertimeHours(TimeRecord[] records, PayrollSettings settings) {
         double overtimeTotal = 0.0;
         for (TimeRecord record : records) {
             if (!record.isAbsent()) {
-                double hoursWorked = computeHoursWorked(record);
-                if (hoursWorked > 8.0) {
-                    overtimeTotal += (hoursWorked - 8.0);
-                }
+                overtimeTotal += computeovertimehoursafter(record, settings);
             }
         }
         return overtimeTotal;
@@ -88,13 +89,14 @@ public class PayrollCalculator {
      * Computes total undertime hours across records.
      *
      * @param records daily time records
+     * @param settings payroll configuration values
      * @return total undertime hours
      */
-    public static double computeUndertimeHours(TimeRecord[] records) {
+    public static double computeUndertimeHours(TimeRecord[] records, PayrollSettings settings) {
         double undertimeTotal = 0.0;
         for (TimeRecord record : records) {
             if (!record.isAbsent()) {
-                double hoursWorked = computeHoursWorked(record);
+                double hoursWorked = computeHoursWorked(record, settings);
                 if (hoursWorked < 8.0) {
                     undertimeTotal += (8.0 - hoursWorked);
                 }
@@ -124,10 +126,11 @@ public class PayrollCalculator {
      *
      * @param employee employee data
      * @param records daily time records
+     * @param settings payroll configuration values
      * @return gross pay for the cut-off
      */
-    public static double computeGrossPay(Employee employee, TimeRecord[] records) {
-        return computeBasicPay(employee, records) + computeOvertimePay(employee, records);
+    public static double computeGrossPay(Employee employee, TimeRecord[] records, PayrollSettings settings) {
+        return computeBasicPay(employee, records, settings) + computeOvertimePay(employee, records, settings);
     }
 
     /**
@@ -135,13 +138,14 @@ public class PayrollCalculator {
      *
      * @param employee employee data
      * @param records daily time records
+     * @param settings payroll configuration values
      * @return basic pay for the cut-off
      */
-    public static double computeBasicPay(Employee employee, TimeRecord[] records) {
+    public static double computeBasicPay(Employee employee, TimeRecord[] records, PayrollSettings settings) {
         String type = employee.getEmployeeType();
 
         if (type.equals("PartTimer")) {
-            double totalHours = computeTotalHours(records);
+            double totalHours = computeTotalHours(records, settings);
             return totalHours * employee.getHourlyRate();
         }
 
@@ -154,16 +158,17 @@ public class PayrollCalculator {
      *
      * @param employee employee data
      * @param records daily time records
+     * @param settings payroll configuration values
      * @return overtime pay amount
      */
-    public static double computeOvertimePay(Employee employee, TimeRecord[] records) {
+    public static double computeOvertimePay(Employee employee, TimeRecord[] records, PayrollSettings settings) {
         double overtimePay = 0.0;
         String type = employee.getEmployeeType();
 
         if (type.equals("PartTimer")) {
             for (TimeRecord record : records) {
                 if (!record.isAbsent()) {
-                    double overtimeHours = Math.max(0.0, computeHoursWorked(record) - 8.0);
+                    double overtimeHours = computeovertimehoursafter(record, settings);
                     double overtimeMultiplier = getOvertimeMultiplier(record);
                     overtimePay += overtimeHours * employee.getHourlyRate() * (overtimeMultiplier - 1.0);
                 }
@@ -172,11 +177,11 @@ public class PayrollCalculator {
         }
 
         // Regular, Probationary, Contractual
-        double hourlyRate = employee.computeDailyRate() / 8.0;
+        double hourlyRate = computeDailyRate(employee, settings) / 8.0;
 
         for (TimeRecord record : records) {
             if (!record.isAbsent()) {
-                double overtimeHours = Math.max(0.0, computeHoursWorked(record) - 8.0);
+                double overtimeHours = computeovertimehoursafter(record, settings);
                 double overtimeMultiplier = getOvertimeMultiplier(record);
                 overtimePay += overtimeHours * hourlyRate * overtimeMultiplier;
             }
@@ -202,78 +207,30 @@ public class PayrollCalculator {
     }
 
     /**
+     * Computes overtime hours that occur after 5:00 PM.
+     *
+     * @param record time record for a day
+     * @param settings payroll configuration values
+     * @return hours worked after 5:00 PM
+     */
+    private static double computeovertimehoursafter(TimeRecord record, PayrollSettings settings) {
+        double outHours = (record.getTimeOut() / 100) + (record.getTimeOut() % 100) / 60.0;
+        return Math.max(0.0, outHours - settings.getOvertimeStartHour());
+    }
+
+    private static double computeDailyRate(Employee employee, PayrollSettings settings) {
+        return employee.getMonthlyRate() / settings.getWorkingDaysPerMonth();
+    }
+
+    /**
      * Computes SSS deduction per cut-off from monthly salary.
      *
      * @param salary monthly salary basis
      * @return SSS deduction for one cut-off
      */
     public static double computeSSSDeduction(double salary) {
-        double contribution;
-
-        if      (salary < 5_250)  contribution = 250;
-        else if (salary < 5_750)  contribution = 275;
-        else if (salary < 6_250)  contribution = 300;
-        else if (salary < 6_750)  contribution = 325;
-        else if (salary < 7_250)  contribution = 350;
-        else if (salary < 7_750)  contribution = 375;
-        else if (salary < 8_250)  contribution = 400;
-        else if (salary < 8_750)  contribution = 425;
-        else if (salary < 9_250)  contribution = 450;
-        else if (salary < 9_750)  contribution = 475;
-        else if (salary < 10_250) contribution = 500;
-        else if (salary < 10_750) contribution = 525;
-        else if (salary < 11_250) contribution = 550;
-        else if (salary < 11_750) contribution = 575;
-        else if (salary < 12_250) contribution = 600;
-        else if (salary < 12_750) contribution = 625;
-        else if (salary < 13_250) contribution = 650;
-        else if (salary < 13_750) contribution = 675;
-        else if (salary < 14_250) contribution = 700;
-        else if (salary < 14_750) contribution = 725;
-        else if (salary < 15_250) contribution = 750;
-        else if (salary < 15_750) contribution = 775;
-        else if (salary < 16_250) contribution = 800;
-        else if (salary < 16_750) contribution = 825;
-        else if (salary < 17_250) contribution = 850;
-        else if (salary < 17_750) contribution = 875;
-        else if (salary < 18_250) contribution = 900;
-        else if (salary < 18_750) contribution = 925;
-        else if (salary < 19_250) contribution = 950;
-        else if (salary < 19_750) contribution = 975;
-        else if (salary < 20_250) contribution = 1_000;
-        else if (salary < 20_750) contribution = 1_025;
-        else if (salary < 21_250) contribution = 1_050;
-        else if (salary < 21_750) contribution = 1_075;
-        else if (salary < 22_250) contribution = 1_100;
-        else if (salary < 22_750) contribution = 1_125;
-        else if (salary < 23_250) contribution = 1_150;
-        else if (salary < 23_750) contribution = 1_175;
-        else if (salary < 24_250) contribution = 1_200;
-        else if (salary < 24_750) contribution = 1_225;
-        else if (salary < 25_250) contribution = 1_250;
-        else if (salary < 25_750) contribution = 1_275;
-        else if (salary < 26_250) contribution = 1_300;
-        else if (salary < 26_750) contribution = 1_325;
-        else if (salary < 27_250) contribution = 1_350;
-        else if (salary < 27_750) contribution = 1_375;
-        else if (salary < 28_250) contribution = 1_400;
-        else if (salary < 28_750) contribution = 1_425;
-        else if (salary < 29_250) contribution = 1_450;
-        else if (salary < 29_750) contribution = 1_475;
-        else if (salary < 30_250) contribution = 1_500;
-        else if (salary < 30_750) contribution = 1_525;
-        else if (salary < 31_250) contribution = 1_550;
-        else if (salary < 31_750) contribution = 1_575;
-        else if (salary < 32_250) contribution = 1_600;
-        else if (salary < 32_750) contribution = 1_625;
-        else if (salary < 33_250) contribution = 1_650;
-        else if (salary < 33_750) contribution = 1_675;
-        else if (salary < 34_250) contribution = 1_700;
-        else if (salary < 34_750) contribution = 1_725;
-        else                      contribution = 1_750; // cap at 35,000+
-
-        // Per cutoff (semi-monthly)
-        return contribution / 2.0;
+        double monthlyContribution = SSS.monthlyContribution(salary);
+        return monthlyContribution / 2.0;
     }
 
     /**
@@ -283,14 +240,7 @@ public class PayrollCalculator {
      * @return PhilHealth deduction for one cut-off
      */
     public static double computePhilHealthDeduction(double monthlyRate) {
-        double monthlyContribution = monthlyRate * 0.055;  // 5.5% total
-
-        // Apply floor and ceiling
-        if (monthlyContribution < 500.00) {
-            monthlyContribution = 500.00;
-        } else if (monthlyContribution > 2750.00) {
-            monthlyContribution = 2750.00;
-        }
+        double monthlyContribution = PhilHealth.monthlyContribution(monthlyRate);
 
         // Employee share = half; deducted per cut-off = another half
         // Employee monthly share = monthlyContribution / 2
@@ -305,17 +255,7 @@ public class PayrollCalculator {
      * @return Pag-IBIG deduction for one cut-off
      */
     public static double computePagibigDeduction(double monthlyRate) {
-        double monthlyContribution;
-
-        if (monthlyRate < 1500.00) {
-            monthlyContribution = monthlyRate * 0.01;  // 1% for lower salaries
-        } else {
-            monthlyContribution = monthlyRate * 0.02;  // 2% for 1,500 and above
-        }
-
-        if (monthlyContribution > 100.00) {
-            monthlyContribution = 100.00;
-        }
+        double monthlyContribution = Pagibig.monthlyContribution(monthlyRate);
 
         return monthlyContribution / 2.0;  // per cut-off
     }
@@ -329,22 +269,7 @@ public class PayrollCalculator {
     public static double computeWithholdingTax(double taxableIncome) {
         // Annualize (24 cut-offs per year)
         double annualIncome = taxableIncome * 24.0;
-
-        double annualTax;
-
-        if (annualIncome <= 250_000) {
-            annualTax = 0.0;
-        } else if (annualIncome <= 400_000) {
-            annualTax = (annualIncome - 250_000) * 0.15;
-        } else if (annualIncome <= 800_000) {
-            annualTax = 22_500 + (annualIncome - 400_000) * 0.20;
-        } else if (annualIncome <= 2_000_000) {
-            annualTax = 102_500 + (annualIncome - 800_000) * 0.25;
-        } else if (annualIncome <= 8_000_000) {
-            annualTax = 402_500 + (annualIncome - 2_000_000) * 0.30;
-        } else {
-            annualTax = 2_202_500 + (annualIncome - 8_000_000) * 0.35;
-        }
+        double annualTax = WithholdingTax.annualTax(annualIncome);
 
         // Return per-cut-off amount (Semi-monthly)
         return annualTax / 24.0;
@@ -366,26 +291,22 @@ public class PayrollCalculator {
      *
      * @param employee employee data
      * @param absentDays total absent days
+     * @param settings payroll configuration values
      * @return absence penalty amount
      */
-    public static double computeAbsencePenalty(Employee employee, int absentDays) {
-        if (employee.getEmployeeType().equals("PartTimer")) {
+    public static double computeAbsencePenalty(Employee employee, int absentDays, PayrollSettings settings) {
+        if (absentDays <= 0) {
             return 0.0;
         }
 
-        if (employee.isHasLeave() && absentDays <= 5) {
-            // All absent days are covered by leave credits — no penalty
+        int leaveCredits = Math.max(0, settings.getLeaveCreditsFor(employee));
+        int chargeableDays = Math.max(0, absentDays - leaveCredits);
+
+        if (chargeableDays == 0) {
             return 0.0;
         }
 
-        // Contractual or PartTimer (hasLeave == false), or absences exceed leave credits
-        int chargeableDays = absentDays;
-        if (employee.isHasLeave() && absentDays > 5) {
-            // Only days beyond the 5-credit allowance are charged
-            chargeableDays = absentDays - 5;
-        }
-
-        return chargeableDays * employee.computeDailyRate();
+        return chargeableDays * computeDailyRate(employee, settings);
     }
 
     /**
@@ -412,18 +333,20 @@ public class PayrollCalculator {
      * @param records daily time records
      * @param cutOffPeriod selected cut-off period
      * @param loanAmount loan deduction amount
+      * @param settings payroll configuration values
      * @return populated payroll entry
      */
     public static PayrollEntry buildPayrollEntry(Employee employee,
                                                  TimeRecord[] records,
                                                  String cutOffPeriod,
-                                                 double loanAmount) {
+                                                                 double loanAmount,
+                                                                 PayrollSettings settings) {
         PayrollEntry entry = new PayrollEntry(employee, cutOffPeriod);
 
         // --- Attendance summary ---
-        double totalHours    = computeTotalHours(records);
-        double overtimeHours = computeOvertimeHours(records);
-        double undertimeHours = computeUndertimeHours(records);
+          double totalHours    = computeTotalHours(records, settings);
+          double overtimeHours = computeOvertimeHours(records, settings);
+          double undertimeHours = computeUndertimeHours(records, settings);
         int    absentDays    = computeAbsentDays(records);
 
         entry.setTotalHoursWorked(totalHours);
@@ -432,8 +355,8 @@ public class PayrollCalculator {
         entry.setAbsentDays(absentDays);
 
         // --- Earnings ---
-        double basicPay = computeBasicPay(employee, records);
-        double overtimePay = computeOvertimePay(employee, records);
+        double basicPay = computeBasicPay(employee, records, settings);
+        double overtimePay = computeOvertimePay(employee, records, settings);
         double grossPay = basicPay + overtimePay;
 
         entry.setBasicPay(basicPay);
@@ -463,11 +386,11 @@ public class PayrollCalculator {
         entry.setLoanDeduction(loanAmount);
 
         // --- Penalties ---
-        double dailyRate  = employee.computeDailyRate();
+        double dailyRate  = computeDailyRate(employee, settings);
         double hourlyRate = dailyRate / 8.0;
 
         double undertimePenalty = computeUndertimePenalty(undertimeHours, hourlyRate);
-        double absencePenalty   = computeAbsencePenalty(employee, absentDays);
+        double absencePenalty   = computeAbsencePenalty(employee, absentDays, settings);
 
         entry.setUndertimePenalty(undertimePenalty);
         entry.setAbsencePenalty(absencePenalty);

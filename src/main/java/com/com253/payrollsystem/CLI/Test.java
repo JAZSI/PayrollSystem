@@ -2,6 +2,7 @@ package com.com253.payrollsystem.CLI;
 
 import com.com253.payrollsystem.Model.Employee;
 import com.com253.payrollsystem.Model.PayrollEntry;
+import com.com253.payrollsystem.Model.PayrollSettings;
 import com.com253.payrollsystem.Model.TimeRecord;
 import com.com253.payrollsystem.Model.EmployeeTypes.Contractual;
 import com.com253.payrollsystem.Model.EmployeeTypes.PartTimer;
@@ -18,6 +19,15 @@ public class Test {
 
     private static final String CUT_OFF_PERIOD = "1st-15th";
     private static final double LOAN_AMOUNT = 0.00;
+        private static final PayrollSettings PAYROLL_SETTINGS = new PayrollSettings(
+            26,
+            8.0,
+            17.0,
+            11.0,
+            5,
+            5,
+            0,
+            0);
 
     private static final TimeRecordData[] TIME_RECORD_DATA = {
         new TimeRecordData(1, 800, 1700, false, TimeRecord.HOLIDAY_NONE),
@@ -50,7 +60,8 @@ public class Test {
                 employee,
                 records,
                 CUT_OFF_PERIOD,
-                LOAN_AMOUNT);
+            LOAN_AMOUNT,
+            PAYROLL_SETTINGS);
 
         Menu.printPayslip(entry);
     }

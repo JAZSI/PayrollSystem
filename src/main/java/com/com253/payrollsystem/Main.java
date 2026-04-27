@@ -23,7 +23,7 @@ public class Main {
                 com.com253.payrollsystem.CLI.Menu.main(args);
                 break;
             case 2:
-                com.com253.payrollsystem.GUI.Menu.main(args);
+                System.out.println("N/A");
                 break;
             default:
                 System.out.println("\n  Goodbye!");

@@ -1,6 +1,7 @@
 package com.com253.payrollsystem.CLI;
 import com.com253.payrollsystem.Model.Employee;
 import com.com253.payrollsystem.Model.PayrollEntry;
+import com.com253.payrollsystem.Model.PayrollSettings;
 import com.com253.payrollsystem.Model.TimeRecord;
 import com.com253.payrollsystem.Model.EmployeeTypes.Contractual;
 import com.com253.payrollsystem.Model.EmployeeTypes.PartTimer;
@@ -55,24 +56,27 @@ public class Menu {
         System.out.println("  PAYROLL PROCESSING");
         System.out.println("============================================================");
 
-        // 1. Collect employee data
+        // 1. Read payroll settings
+        PayrollSettings settings = readPayrollSettings();
+
+        // 2. Collect employee data
         Employee employee = createEmployee();
 
-        // 2. Select cut-off period
+        // 3. Select cut-off period
         String cutOffPeriod = readCutOffPeriod();
 
-        // 3. Enter attendance
+        // 4. Enter attendance
         System.out.println("\n  --- Time Records for " + cutOffPeriod + " ---");
         TimeRecord[] records = readAllTimeRecords(cutOffPeriod);
 
-        // 4. Loan deduction
+        // 5. Loan deduction
         double loanAmount = readLoanAmount();
 
-        // 5. Compute payroll
+        // 6. Compute payroll
         PayrollEntry entry = PayrollCalculator.buildPayrollEntry(
-                employee, records, cutOffPeriod, loanAmount);
+            employee, records, cutOffPeriod, loanAmount, settings);
 
-        // 6. Print payslip
+        // 7. Print payslip
         printPayslip(entry);
     }
 
@@ -229,6 +233,61 @@ public class Menu {
             records[i] = readTimeRecord(workingDays[i]);
         }
         return records;
+    }
+
+    /**
+     * Reads schedule and leave policy values used in payroll computations.
+     *
+     * @return user-defined payroll settings
+     */
+    static PayrollSettings readPayrollSettings() {
+        System.out.println("\n  --- Payroll Settings ---");
+
+        int workingDaysPerMonth = InputValidator.readIntInRange(
+                scanner,
+                "  Working days in a month (e.g. 26): ",
+                1,
+                31);
+
+        int workdayStart = InputValidator.readHHMM(
+                scanner,
+                "  Workday start time (HHMM, e.g. 800): ");
+
+        int overtimeStart;
+        while (true) {
+            overtimeStart = InputValidator.readHHMM(
+                    scanner,
+                    "  Overtime start time (HHMM, e.g. 1700): ");
+            if (overtimeStart <= workdayStart) {
+                System.out.println("  Overtime start must be later than workday start time.");
+                continue;
+            }
+            break;
+        }
+
+        int lunchStart = InputValidator.readHHMM(
+                scanner,
+                "  Lunch break start time (HHMM, e.g. 1100): ");
+
+        System.out.println("\n  Leave Credits Per Employee Type (days):");
+        int regularLeave = InputValidator.readIntInRange(scanner, "  Regular: ", 0, 366);
+        int probationaryLeave = InputValidator.readIntInRange(scanner, "  Probationary: ", 0, 366);
+        int contractualLeave = InputValidator.readIntInRange(scanner, "  Contractual: ", 0, 366);
+        int partTimerLeave = InputValidator.readIntInRange(scanner, "  Part-Timer: ", 0, 366);
+
+        return new PayrollSettings(
+                workingDaysPerMonth,
+                hhmmToHours(workdayStart),
+                hhmmToHours(overtimeStart),
+                hhmmToHours(lunchStart),
+                regularLeave,
+                probationaryLeave,
+                contractualLeave,
+                partTimerLeave);
+    }
+
+    private static double hhmmToHours(int hhmm) {
+        return (hhmm / 100) + (hhmm % 100) / 60.0;
     }
 
     /**
