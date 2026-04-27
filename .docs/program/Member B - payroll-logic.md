@@ -67,6 +67,6 @@ This is the main calculation class. It contains only static methods, so it behav
 
 ## 4. Shared Working-Day Rule
 
-- A shared helper (`WorkingDayCalculator`) is used by both CLI and GUI.
+- A shared helper (`WorkingDayCalculator`) is used by the CLI flow.
 - It excludes Saturdays and Sundays from cut-off attendance days.
 - It uses real calendar dates from the current month instead of fixed weekday assumptions.

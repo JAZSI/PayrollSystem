@@ -1,15 +1,15 @@
 # UI & Main Flow
 
-This part controls how the program starts, how the console menu works, and how the user is guided through payroll input in both CLI and GUI.
+This part controls how the program starts, how the console menu works, and how the user is guided through payroll input in CLI only.
 
 ## 1. Main
 
-This is the program entry point. It only asks the user whether to run the CLI, GUI, or exit.
+This is the program entry point. It asks the user whether to run the CLI or exit.
 
 ### What it does
 - Shows the first menu
 - Reads the user's choice
-- Starts the CLI or GUI version
+- Starts the CLI version
 - Ends the program if the user chooses exit
 
 ### Methods
@@ -54,24 +54,7 @@ This class contains the full console-based payroll flow.
 - Day filtering is based on real calendar dates for the current month.
 - Saturdays and Sundays are excluded from both cut-off periods.
 
-## 3. GUI Flow
-
-The GUI now follows the same attendance-day rule as CLI.
-
-### What it does
-- Collects employee and payroll inputs.
-- Rebuilds time-record rows whenever cut-off changes.
-- Validates time data strictly before calculation.
-- Shows computed output in the payslip panel.
-
-### Validation behavior
-- Time fields must be present and in `HHMM` format.
-- Hours and minutes must be valid in 24-hour time.
-- For non-absent rows, `Time out` must be later than `Time in`.
-- Invalid rows throw clear validation errors instead of silently defaulting values.
-- For absent rows, times are ignored and stored as zero.
-
-## 4. InputValidator
+## 3. InputValidator
 
 This is a helper class for safe user input. It keeps the program from crashing when the user types invalid data.
 
@@ -95,7 +78,7 @@ This is a helper class for safe user input. It keeps the program from crashing w
 | readHHMM(scanner, prompt) | Reads a time value in HHMM format | Scanner scanner, String prompt | int |
 | isValidHHMM(hhmm) | Checks whether the minute part is valid | int hhmm | boolean |
 
-## 5. Test
+## 4. Test
 
 This class is a fixed-data demo runner. It is not part of the normal user flow.
 
