@@ -6,121 +6,110 @@ title: Payroll System State Diagram
 ---
 stateDiagram-v2
 
-    %% Top-level launcher
-    [*] --> LauncherMenu
-    LauncherMenu --> CLIFlow: choose CLI
-    LauncherMenu --> GUIStub: choose GUI
-    LauncherMenu --> ExitApp: choose Exit
+    [*] --> MainStart
+    MainStart --> PrintLauncherMenu: Main.main()
+    PrintLauncherMenu --> ReadLauncherChoice: InputValidator.readIntInRange()
 
-    %% CLI flow (high-level)
-    state CLIFlow {
+    ReadLauncherChoice --> ProcessPayroll: choice == 1
+    ReadLauncherChoice --> ExitApp: choice == 3
+
+    state ProcessPayroll {
         [*] --> PrintHeader
-        PrintHeader --> ReadPayrollSettings
-        ReadPayrollSettings --> SelectOperation
+        PrintHeader --> ReadPayrollSettings: Menu.processPayroll()
 
-        state SelectOperation <<choice>>
-        SelectOperation --> CreateOrEditEmployee: manage employees
-        SelectOperation --> ProcessPayroll: run payroll
-        SelectOperation --> ManageTimeRecords: time records
-        SelectOperation --> Configure: settings
-        SelectOperation --> ExitCLI: exit
+        ReadPayrollSettings --> CreateEmployee: Menu.createEmployee()
+        CreateEmployee --> ReadEmployeeType: Menu.readEmployeeType()
+        ReadEmployeeType --> ValidateEmployeeType: InputValidator.readEmployeeType()
+        ValidateEmployeeType --> ReadEmployeeId: InputValidator.readEmployeeId()
+        ReadEmployeeId --> ReadPersonName: InputValidator.readPersonName()
+        ReadPersonName --> ChooseEmployeeClass
 
-        CreateOrEditEmployee --> EmployeeLifecycle: open employee editor
-        ManageTimeRecords --> TimeRecordFlow: open time entry
-        ProcessPayroll --> PayrollProcessing: start payroll flow
-        Configure --> ReadPayrollSettings
+        state ChooseEmployeeClass <<choice>>
+        ChooseEmployeeClass --> RegularEmployee: "R" / new Regular(...)
+        ChooseEmployeeClass --> ProbationaryEmployee: "P" / new Probationary(...)
+        ChooseEmployeeClass --> ContractualEmployee: "C" / new Contractual(...)
+        ChooseEmployeeClass --> PartTimerEmployee: "T" / new PartTimer(...)
 
-        ExitCLI --> [*]
+        RegularEmployee --> ReadCutOffPeriod
+        ProbationaryEmployee --> ReadCutOffPeriod
+        ContractualEmployee --> ReadCutOffPeriod
+        PartTimerEmployee --> ReadCutOffPeriod
+
+        ReadCutOffPeriod --> ReadAllTimeRecords: Menu.readAllTimeRecords()
+        ReadAllTimeRecords --> GetWorkingDays: Menu.getWorkingDays()
+        GetWorkingDays --> ReadTimeRecord: Menu.readTimeRecord()
+
+        state ReadTimeRecord {
+            [*] --> AskAbsent
+            AskAbsent --> ReturnAbsentRecord: InputValidator.readYesNo() == Y
+            AskAbsent --> ReadTimeIn: InputValidator.readYesNo() == N
+            ReadTimeIn --> ReadTimeOut: InputValidator.readHHMM()
+            ReadTimeOut --> ValidateTimeOrder
+            ValidateTimeOrder --> ReadHolidayType
+            ReadHolidayType --> BuildTimeRecord: new TimeRecord(...)
+            ReturnAbsentRecord --> [*]
+            BuildTimeRecord --> [*]
+        }
+
+        ReadTimeRecord --> ReadLoanAmount: Menu.readLoanAmount()
+        ReadLoanAmount --> BuildPayrollEntry: PayrollCalculator.buildPayrollEntry()
+
+        state BuildPayrollEntry {
+            [*] --> ComputeAttendanceSummary
+            ComputeAttendanceSummary --> ComputeBasicPay
+            ComputeBasicPay --> ComputeOvertimePay
+            ComputeOvertimePay --> ComputeDeductions
+            ComputeDeductions --> ComputePenalties
+            ComputePenalties --> ComputeNetPay
+            ComputeNetPay --> [*]
+
+            state ComputeAttendanceSummary {
+                [*] --> ComputeTotalHours: PayrollCalculator.computeTotalHours()
+                ComputeTotalHours --> ComputeHoursWorked: PayrollCalculator.computeHoursWorked()
+                ComputeHoursWorked --> ComputeOvertimeHours: PayrollCalculator.computeOvertimeHours()
+                ComputeOvertimeHours --> ComputeUndertimeHours: PayrollCalculator.computeUndertimeHours()
+                ComputeUndertimeHours --> ComputeAbsentDays: PayrollCalculator.computeAbsentDays()
+                ComputeAbsentDays --> [*]
+            }
+
+            state ComputeBasicPay {
+                [*] --> EmployeeTypeBranch
+                EmployeeTypeBranch --> PartTimerBasicPay: employeeType == PartTimer
+                EmployeeTypeBranch --> MonthlyBasicPay: employeeType != PartTimer
+                MonthlyBasicPay --> [*]
+                PartTimerBasicPay --> [*]
+            }
+
+            state ComputeOvertimePay {
+                [*] --> OvertimeBranch
+                OvertimeBranch --> PartTimerOvertime: employeeType == PartTimer
+                OvertimeBranch --> SalariedOvertime: employeeType != PartTimer
+                PartTimerOvertime --> [*]
+                SalariedOvertime --> [*]
+            }
+
+            state ComputeDeductions {
+                [*] --> ComputeSSS: PayrollCalculator.computeSSSDeduction()
+                ComputeSSS --> ComputePhilHealth: PayrollCalculator.computePhilHealthDeduction()
+                ComputePhilHealth --> ComputePagibig: PayrollCalculator.computePagibigDeduction()
+                ComputePagibig --> ComputeWithholdingTax: PayrollCalculator.computeWithholdingTax()
+                ComputeWithholdingTax --> [*]
+            }
+
+            state ComputePenalties {
+                [*] --> ComputeUndertimePenalty: PayrollCalculator.computeUndertimePenalty()
+                ComputeUndertimePenalty --> ComputeAbsencePenalty: PayrollCalculator.computeAbsencePenalty()
+                ComputeAbsencePenalty --> [*]
+            }
+        }
+
+        BuildPayrollEntry --> PrintPayslip: Menu.printPayslip()
+        PrintPayslip --> NextAction
+
+        state NextAction <<choice>>
+        NextAction --> ReadPayrollSettings: choice == 1 / process another payroll
+        NextAction --> ExitApp: choice == 2 / exit
     }
 
-    %% GUI placeholder
-    state GUIStub {
-        [*] --> GUIHome
-        GUIHome --> GUIEmployee: open employees
-        GUIHome --> GUIPayroll: open payroll
-        GUIHome --> GUIReports
-        GUIHome --> ExitApp: logout
-    }
-
-    %% Employee lifecycle (detailed)
-    state EmployeeLifecycle {
-        [*] --> Created
-        Created --> Probationary: hireProbation()
-        Created --> Contractual: hireContract()
-        Created --> PartTimer: hirePartTime()
-        Created --> Regular: hireRegular()
-
-        Probationary --> Regular: passProbation / promote()
-        Probationary --> Terminated: failProbation / terminate()
-
-        Contractual --> Terminated: contractEnd / endContract()
-        PartTimer --> Regular: convertToRegular / convert()
-        Regular --> Suspended: suspend()
-        Suspended --> Regular: reinstate()
-
-        Regular --> Terminated: terminate()
-        Terminated --> [*]
-    }
-
-    %% Time record flow
-    state TimeRecordFlow {
-        [*] --> Submitted
-        Submitted --> Verified: verifyTime()
-        Verified --> ApprovedTime: approveTime()
-        Verified --> RejectedTime: rejectTime()
-        RejectedTime --> Submitted: resubmit()
-
-        ApprovedTime --> IncludedInPayroll: includeInPayroll()
-        IncludedInPayroll --> [*]
-    }
-
-    %% Payroll processing (detailed with choices and error paths)
-    state PayrollProcessing {
-        [*] --> Draft
-        Draft --> Calculating: runCalculations()
-        Calculating --> Calculated: calculationsComplete
-        Calculated --> Review: sendForReview()
-        Review --> Approved: approvePayroll()
-        Review --> Rejected: auditFail()
-        Rejected --> Draft: revise()
-        Approved --> Finalized: finalizePayroll()
-        Finalized --> RunPayments: schedulePayments()
-        RunPayments --> Paid: paymentsDispatched
-        Paid --> Archived: archivePayroll()
-        Archived --> [*]
-
-        %% error and rollback paths
-        Calculating --> Failed: validationError
-        Failed --> Draft: fixData()/retry
-    }
-
-    %% Payment states
-    state Payment {
-        [*] --> Unpaid
-        Unpaid --> Paid: pay()
-        Paid --> Reversed: reversePayment()
-        Reversed --> Unpaid: reinstate()
-    }
-
-    %% Cross-state interactions (events linking flows)
-    TimeRecordFlow --> PayrollProcessing: timeIncluded
-    EmployeeLifecycle --> PayrollProcessing: removeFromPayroll
-    PayrollProcessing --> Payment: createPaymentRecords
-
-    %% Exit
-    CLIFlow --> ExitApp: return to Main
-    GUIStub --> ExitApp: logout
     ExitApp --> [*]
-
-    %% Notes
-    note right of PayrollProcessing
-        - Draft: payroll configured but not run
-        - Calculating: compute gross/net, taxes, benefits
-        - Review: HR/accounting reviews results
-        - Finalized: ready for payment
-    end note
-
-    note left of EmployeeLifecycle
-        Employee types: Probationary, Regular, PartTimer, Contractual
-    end note
 ```
