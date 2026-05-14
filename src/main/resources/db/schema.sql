@@ -1,8 +1,12 @@
 CREATE TABLE IF NOT EXISTS employees (
-	id TEXT PRIMARY KEY,
-	name TEXT NOT NULL,
-	type TEXT NOT NULL,
-	rate REAL NOT NULL
+	id                  TEXT       PRIMARY KEY,
+        name                TEXT       NOT NULL,
+        type                TEXT       NOT NULL,
+        rate                REAL       NOT NULL,
+        sick_leave          INTEGER    NOT NULL DEFAULT 0,
+        vacation_leave      INTEGER    NOT NULL DEFAULT 0,
+        emergency_leave     INTEGER    NOT NULL DEFAULT 0,
+        loan_balance        REAL       NOT NULL DEFAULT 0.0
 );
 
 CREATE TABLE IF NOT EXISTS payroll_entries (

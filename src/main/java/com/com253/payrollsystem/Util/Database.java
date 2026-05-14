@@ -14,6 +14,8 @@ public final class Database {
 
     private Database() {
     }
+    
+    
 
     public static Connection getConnection() throws SQLException {
         return DriverManager.getConnection(URL);

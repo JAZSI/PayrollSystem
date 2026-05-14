@@ -114,22 +114,22 @@ public class Menu {
             case "R": {
                 double rate = InputValidator.readDoubleMin(scanner,
                     "  Monthly Rate (PHP): ", 1.0);
-                return new Regular(id, name, rate);
+                return new Regular(id, name, rate, 0, 0, 0, 0.0);
             }
             case "P": {
                 double rate = InputValidator.readDoubleMin(scanner,
                     "  Monthly Rate (PHP): ", 1.0);
-                return new Probationary(id, name, rate);
+                return new Probationary(id, name, rate, 0, 0, 0, 0.0);
             }
             case "C": {
                 double rate = InputValidator.readDoubleMin(scanner,
                     "  Monthly Rate (PHP): ", 1.0);
-                return new Contractual(id, name, rate);
+                return new Contractual(id, name, rate, 0, 0, 0, 0.0);
             }
             case "T": {
                 double rate = InputValidator.readDoubleMin(scanner,
                     "  Hourly Rate (PHP): ", 1.0);
-                return new PartTimer(id, name, rate);
+                return new PartTimer(id, name, rate, 0, 0, 0, 0.0);
             }
             default:
                 // Should never reach here due to validation above

@@ -7,22 +7,12 @@ import com.com253.payrollsystem.Model.Employee;
  */
 public class PartTimer extends Employee {
 
-    /**
-     * Creates a part-time employee record.
-     *
-     * @param employeeId employee identifier
-     * @param name employee name
-     * @param hourlyRate hourly compensation rate
-     */
-    public PartTimer(String employeeId, String name, double hourlyRate) {
-        super(employeeId, name, "PartTimer", 0.0, hourlyRate, false);
+    public PartTimer(String employeeId, String name, double hourlyRate, 
+            int sickLeave, int vacationLeave, int emergencyLeave, double loanBalance) {
+        super(employeeId, name, "PartTimer", 0.0, hourlyRate, false,
+            sickLeave, vacationLeave, emergencyLeave, loanBalance);
     }
 
-    /**
-     * Computes the daily rate based on hourly rate.
-     *
-     * @return daily rate
-     */
     @Override
     public double computeDailyRate() {
         return getHourlyRate() * 8.0;

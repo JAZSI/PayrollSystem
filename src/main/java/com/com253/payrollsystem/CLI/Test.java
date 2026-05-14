@@ -69,13 +69,13 @@ public class Test {
     private static Employee createEmployeeFromConstants() {
         switch (EMPLOYEE_TYPE) {
             case "R":
-                return new Regular(EMPLOYEE_ID, EMPLOYEE_NAME, RATE);
+                return new Regular(EMPLOYEE_ID, EMPLOYEE_NAME, RATE, 0, 0, 0, 0.0);
             case "P":
-                return new Probationary(EMPLOYEE_ID, EMPLOYEE_NAME, RATE);
+                return new Probationary(EMPLOYEE_ID, EMPLOYEE_NAME, RATE, 0, 0, 0, 0.0);
             case "C":
-                return new Contractual(EMPLOYEE_ID, EMPLOYEE_NAME, RATE);
+                return new Contractual(EMPLOYEE_ID, EMPLOYEE_NAME, RATE, 0, 0, 0, 0.0);
             case "T":
-                return new PartTimer(EMPLOYEE_ID, EMPLOYEE_NAME, RATE);
+                return new PartTimer(EMPLOYEE_ID, EMPLOYEE_NAME, RATE, 0, 0, 0, 0.0);
             default:
                 throw new IllegalStateException("Unexpected employee type: " + EMPLOYEE_TYPE);
         }

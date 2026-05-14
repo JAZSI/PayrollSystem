@@ -22,7 +22,7 @@ public class PayrollCalculator {
 
     /**
      * Computes worked hours for one time record.
-    * Lunch break is subtracted only when the shift extends past 11:00 AM.
+     * Lunch break is subtracted only when the shift extends past 11:00 AM.
      *
      * @param record time record for a day
      * @param settings payroll configuration values
