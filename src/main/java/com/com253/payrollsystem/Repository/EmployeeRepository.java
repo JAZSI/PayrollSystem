@@ -103,4 +103,42 @@ public class EmployeeRepository {
             default: throw new IllegalStateException("Unknown employee type in DB: " + type);
         }
     }
+    
+    /**
+     * Updates the leave balance for the given employee in the database.
+     *
+     * @param employeeId    employee identifier
+     * @param leaveBalance  updated leave balance to persist
+     */
+    public void updateLeaveBalance(String employeeId, LeaveBalance leaveBalance) throws SQLException {
+        String sql = "Update employees SET sick_leave = ?, vacation_leave = ?, "
+                + "emergency_leave = ? WHERE id = ?";
+        
+        try (Connection connection = Database.getConnection();
+            PreparedStatement stmt = connection.prepareStatement(sql)) {
+            
+            stmt.setInt(1, leaveBalance.getSick());
+            stmt.setInt(2, leaveBalance.getVacation());
+            stmt.setInt(3, leaveBalance.getEmergency());
+            stmt.setString(4, employeeId);
+            stmt.executeUpdate();
+        }
+    }
+    /**
+     * Updates the loan balance for the given employee in the database.
+     *
+     * @param employeeId  employee identifier
+     * @param loanBalance updated loan balance to persist
+     */
+    public void updateLoanBalance(String employeeId, LoanBalance loanBalance) throws SQLException {
+        String sql = "UPDATE employees SET loan_balance = ? WHERE id = ?";
+        
+        try (Connection connection = Database.getConnection();
+            PreparedStatement stmt = connection.prepareStatement(sql)) {
+            
+            stmt.setDouble(1, loanBalance.getBalance());
+            stmt.setString(2, employeeId);
+            stmt.executeUpdate();
+        }
+    }
 }

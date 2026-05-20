@@ -30,6 +30,17 @@ CREATE TABLE IF NOT EXISTS attendance (
     FOREIGN KEY (employee_id) REFERENCES employee(id)
 );
 
+CREATE TABLE IF NOT EXISTS submissions (
+    id                  INTEGER     PRIMARY KEY AUTOINCREMENT,
+    employee_id         TEXT        NOT NULL,
+    leave_days          REAL        NOT NULL DEFAULT 0,
+    ot_hours            REAL        NOT NULL DEFAULT 0,
+    loan_deduction      REAL        NOT NULL DEFAULT 0,
+    status              TEXT        NOT NULL DEFAULT 'PENDING',
+    submitted_at        TEXT        NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (employee_id) REFERENCES employee(id)
+);
+
 CREATE TABLE IF NOT EXISTS payroll_entries (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     employee_id TEXT NOT NULL,
