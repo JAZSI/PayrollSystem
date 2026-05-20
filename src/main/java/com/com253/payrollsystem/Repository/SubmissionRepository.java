@@ -51,7 +51,7 @@ public class SubmissionRepository {
                 PreparedStatement stmt = connection.prepareStatement(sql)) {
                 
                 stmt.setString(1, submission.getEmployeeId());
-                stmt.setDouble(1, submission.getLeaveDays());
+                stmt.setDouble(2, submission.getLeaveDays());
                 stmt.setDouble(3, submission.getOtHours());
                 stmt.setDouble(4, submission.getLoanDeduction());
                 stmt.executeUpdate();
@@ -82,6 +82,30 @@ public class SubmissionRepository {
             }
         }
         return null;    
+    }
+    
+    /**
+     * Finds a submission by its ID.
+     *
+     * @param id submission identifier
+     * @return matching submission, or null if not found
+     */    
+    public Submission findById(int id) throws SQLException {
+        String sql = "SELECT id, employee_id, leave_days, ot_hours, loan_deduction, "
+                   + "status, submitted_at FROM submissions WHERE id = ?";
+        
+        try (Connection connection = Database.getConnection();
+            PreparedStatement stmt = connection.prepareStatement(sql)) {
+            
+            stmt.setInt(1, id);
+            
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return buildSubmission(rs);
+                }
+            }
+        }
+        return null;
     }
     
     /**

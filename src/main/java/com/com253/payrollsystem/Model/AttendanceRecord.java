@@ -51,7 +51,7 @@ public class AttendanceRecord {
      *
      * @return time in, or null if absent
      */
-    public Double timeIn() {
+    public Double getTimeIn() {
         return timeIn;
     }
 
@@ -60,7 +60,7 @@ public class AttendanceRecord {
      *
      * @return time out, or null if not yet clocked out
      */
-    public Double timeOut() {
+    public Double getTimeOut() {
         return timeOut;
     }
     

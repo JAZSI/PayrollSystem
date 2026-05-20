@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS accounts (
     password_hash       TEXT        NOT NULL,
     role                TEXT        NOT NULL,
     linked_employee_id  TEXT,
-    FOREIGN KEY (linked_employee_id) REFERENCES employees(id)      
+    FOREIGN KEY (linked_employee_id) REFERENCES employees(id)
 );
 
 INSERT OR IGNORE INTO accounts (username, password_hash, role, linked_employee_id)
@@ -26,8 +26,8 @@ CREATE TABLE IF NOT EXISTS attendance (
     record_date         TEXT        NOT NULL,
     time_in             REAL,
     time_out            REAL,
-    UNIQUE (employee_id, record_date).
-    FOREIGN KEY (employee_id) REFERENCES employee(id)
+    UNIQUE (employee_id, record_date),
+    FOREIGN KEY (employee_id) REFERENCES employees(id)
 );
 
 CREATE TABLE IF NOT EXISTS submissions (
@@ -38,7 +38,7 @@ CREATE TABLE IF NOT EXISTS submissions (
     loan_deduction      REAL        NOT NULL DEFAULT 0,
     status              TEXT        NOT NULL DEFAULT 'PENDING',
     submitted_at        TEXT        NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (employee_id) REFERENCES employee(id)
+    FOREIGN KEY (employee_id) REFERENCES employees(id)
 );
 
 CREATE TABLE IF NOT EXISTS payroll_entries (

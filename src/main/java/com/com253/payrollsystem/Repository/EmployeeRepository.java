@@ -59,7 +59,7 @@ public class EmployeeRepository {
     }
     
     public List<Employee> findAll() throws SQLException {
-        String sql = "SELECT id, name, type, rate, sick_leave, vacation_leave, emergency_leave, loan_balance FROM employees WHERE id = ?";
+        String sql = "SELECT id, name, type, rate, sick_leave, vacation_leave, emergency_leave, loan_balance FROM employees";
         List<Employee> employees = new ArrayList<>();
         
         try (Connection connection = Database.getConnection(); 
@@ -112,7 +112,7 @@ public class EmployeeRepository {
      */
     public void updateLeaveBalance(String employeeId, LeaveBalance leaveBalance) throws SQLException {
         String sql = "Update employees SET sick_leave = ?, vacation_leave = ?, "
-                + "emergency_leave = ? WHERE id = ?";
+                   + "emergency_leave = ? WHERE id = ?";
         
         try (Connection connection = Database.getConnection();
             PreparedStatement stmt = connection.prepareStatement(sql)) {

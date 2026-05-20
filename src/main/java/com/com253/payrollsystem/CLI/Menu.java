@@ -272,10 +272,6 @@ public class Menu {
                 "  Lunch break start time (HHMM, e.g. 1100): ");
 
         System.out.println("\n  Leave Credits Per Employee Type (days):");
-        int regularLeave = InputValidator.readIntInRange(scanner, "  Regular: ", 0, 366);
-        int probationaryLeave = InputValidator.readIntInRange(scanner, "  Probationary: ", 0, 366);
-        int contractualLeave = InputValidator.readIntInRange(scanner, "  Contractual: ", 0, 366);
-        int partTimerLeave = InputValidator.readIntInRange(scanner, "  Part-Timer: ", 0, 366);
 
         return new PayrollSettings(
                 workingDaysPerMonth,
