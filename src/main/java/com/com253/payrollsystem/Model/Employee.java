@@ -10,20 +10,20 @@ public abstract class Employee {
     private double monthlyRate;
     private double hourlyRate;
     private boolean hasLeave;
-    private int sickLeave;
-    private int vacationLeave;
-    private int emergencyLeave;
-    private double loanBalance;
+    private LeaveBalance leaveBalance;
+    private LoanBalance loanBalance;
 
     /**
      * Creates an employee with the provided details.
      *
-     * @param employeeId employee identifier
-     * @param name employee name
-     * @param employeeType employee classification
-     * @param monthlyRate monthly compensation rate
-     * @param hourlyRate hourly compensation rate
-     * @param hasLeave leave eligibility flag
+     * @param employeeId    employee identifier
+     * @param name          employee name
+     * @param employeeType  employee classification
+     * @param monthlyRate   monthly compensation rate
+     * @param hourlyRate    hourly compensation rate
+     * @param hasLeave      leave eligibility flag
+     * @param leaveBalance  employee's leave credit balances
+     * @param loanBalance   employee's outstanding loan balance
      */
     public Employee(
             String employeeId,
@@ -32,66 +32,94 @@ public abstract class Employee {
             double monthlyRate,
             double hourlyRate,
             boolean hasLeave,
-            int sickLeave,
-            int vacationLeave,
-            int emergencyLeave,
-            double loanBalance) {
+            LeaveBalance leaveBalance,
+            LoanBalance loanBalance) {
         this.employeeId = employeeId;
         this.name = name;
         this.employeeType = employeeType;
         this.monthlyRate = monthlyRate;
         this.hourlyRate = hourlyRate;
         this.hasLeave = hasLeave;
-        this.sickLeave = sickLeave;
-        this.vacationLeave = vacationLeave;
-        this.emergencyLeave = emergencyLeave;
+        this.leaveBalance = leaveBalance;
         this.loanBalance = loanBalance;
     }
 
     /**
-     * Gets the variable identifier.
+     * Gets the employee identifier.
      *
-     * @return variable identifier
+     * @return employee identifier
      */
     public String getEmployeeId() {
         return employeeId;
     }
 
+    /**
+     * Gets the employee name.
+     *
+     * @return employee name
+     */
     public String getName() {
         return name;
     }
-
+    
+    /**
+     * Gets the employee classification.
+     *
+     * @return employee type
+     */
     public String getEmployeeType() {
         return employeeType;
     }
 
+    /**
+     * Gets the monthly rate.
+     *
+     * @return monthly rate
+     */
     public double getMonthlyRate() {
         return monthlyRate;
     }
 
+    /**
+     * Gets the hourly rate.
+     *
+     * @return hourly rate
+     */
     public double getHourlyRate() {
         return hourlyRate;
     }
 
+    /**
+     * Indicates whether the employee has leave benefits.
+     *
+     * @return true if leave is available; otherwise false
+     */
     public boolean isHasLeave() {
         return hasLeave;
     }
-
-    public int getSickLeave() {
-        return sickLeave;
+    
+    /**
+     * Gets the employee's leave balance object.
+     *
+     * @return leave balance
+     */
+    public LeaveBalance getLeaveBalance() {
+        return leaveBalance;
     }
     
-    public int getVacationLeave() {
-        return vacationLeave;
-    }
-    
-    public int getEmergencyLeave() {
-        return emergencyLeave;
-    }
-    
-    public double getLoanBalance() {
+    /**
+     * Gets the employee's loan balance object.
+     *
+     * @return loan balance
+     */
+    public LoanBalance getLoanBalance() {
         return loanBalance;
     }
     
+    /**
+     * Computes the equivalent daily rate.
+     *
+     * @return daily rate value
+     */
     public abstract double computeDailyRate();
 }

@@ -47,4 +47,14 @@ public class AccountRepository {
         }
         return null;
     }
+    public void deleteByEmployeeId(String employeeId) throws SQLException {
+        String sql = "DELETE FROM accounts where linked_employee_id = ?";
+        
+        try (Connection connection = Database.getConnection();
+            PreparedStatement stmt = connection.prepareStatement(sql)) {
+            
+            stmt.setString(1, employeeId);
+            stmt.executeUpdate();
+        }
+    }
 }

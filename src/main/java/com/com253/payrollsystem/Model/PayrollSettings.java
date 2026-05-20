@@ -9,19 +9,20 @@ public final class PayrollSettings {
     private final double workdayStartHour;
     private final double overtimeStartHour;
     private final double lunchBreakStartHour;
-    private final int regularLeaveCredits;
-    private final int probationaryLeaveCredits;
-    private final int contractualLeaveCredits;
-    private final int partTimerLeaveCredits;
 
-    public PayrollSettings(int workingDaysPerMonth,
-                           double workdayStartHour,
-                           double overtimeStartHour,
-                           double lunchBreakStartHour,
-                           int regularLeaveCredits,
-                           int probationaryLeaveCredits,
-                           int contractualLeaveCredits,
-                           int partTimerLeaveCredits) {
+    /**
+     * Creates a payroll settings instance with the given schedule values.
+     *
+     * @param workingDaysPerMonth  number of working days in a month
+     * @param workdayStartHour     workday start time in decimal hours
+     * @param overtimeStartHour    overtime start time in decimal hours
+     * @param lunchBreakStartHour  lunch break start time in decimal hours
+     */
+    public PayrollSettings(
+            int workingDaysPerMonth,
+            double workdayStartHour,
+            double overtimeStartHour,
+            double lunchBreakStartHour) {
         if (workingDaysPerMonth <= 0) {
             throw new IllegalArgumentException("Working days per month must be greater than 0.");
         }
@@ -33,42 +34,41 @@ public final class PayrollSettings {
         this.workdayStartHour = workdayStartHour;
         this.overtimeStartHour = overtimeStartHour;
         this.lunchBreakStartHour = lunchBreakStartHour;
-        this.regularLeaveCredits = regularLeaveCredits;
-        this.probationaryLeaveCredits = probationaryLeaveCredits;
-        this.contractualLeaveCredits = contractualLeaveCredits;
-        this.partTimerLeaveCredits = partTimerLeaveCredits;
     }
-
+    
+    /**
+     * Gets the number of working days per month.
+     *
+     * @return working days per month
+     */
     public int getWorkingDaysPerMonth() {
         return workingDaysPerMonth;
     }
 
+    /**
+     * Gets the workday start time in decimal hours.
+     *
+     * @return workday start hour
+     */
     public double getWorkdayStartHour() {
         return workdayStartHour;
     }
-
+    
+    /**
+     * Gets the overtime start time in decimal hours.
+     *
+     * @return overtime start hour
+     */
     public double getOvertimeStartHour() {
         return overtimeStartHour;
     }
-
+    
+    /**
+     * Gets the lunch break start time in decimal hours.
+     *
+     * @return lunch break start hour
+     */
     public double getLunchBreakStartHour() {
         return lunchBreakStartHour;
-    }
-
-    public int getLeaveCreditsFor(Employee employee) {
-        String type = employee.getEmployeeType();
-        if ("Regular".equals(type)) {
-            return regularLeaveCredits;
-        }
-        if ("Probationary".equals(type)) {
-            return probationaryLeaveCredits;
-        }
-        if ("Contractual".equals(type)) {
-            return contractualLeaveCredits;
-        }
-        if ("PartTimer".equals(type)) {
-            return partTimerLeaveCredits;
-        }
-        return 0;
     }
 }

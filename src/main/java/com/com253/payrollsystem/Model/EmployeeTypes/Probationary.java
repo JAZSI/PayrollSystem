@@ -1,16 +1,27 @@
 package com.com253.payrollsystem.Model.EmployeeTypes;
 
 import com.com253.payrollsystem.Model.Employee;
+import com.com253.payrollsystem.Model.LeaveBalance;
+import com.com253.payrollsystem.Model.LoanBalance;
 
 /**
  * Represents a probationary employee.
  */
 public class Probationary extends Employee {
-
+    
+    /**
+     * Creates a contractual employee record.
+     *
+     * @param employeeId   employee identifier
+     * @param name         employee name
+     * @param monthlyRate  monthly compensation rate
+     * @param leaveBalance employee's leave credit balances
+     * @param loanBalance  employee's outstanding loan balance
+     */
     public Probationary(String employeeId, String name, double monthlyRate,
-            int sickLeave, int vacationLeave, int emergencyLeave, double loanBalance) {
+            LeaveBalance leaveBalance, LoanBalance loanBalance) {
         super(employeeId, name, "Probationary", monthlyRate, 0.0, true,
-            sickLeave, vacationLeave, emergencyLeave, loanBalance);
+            leaveBalance, loanBalance);
     }
 
     @Override

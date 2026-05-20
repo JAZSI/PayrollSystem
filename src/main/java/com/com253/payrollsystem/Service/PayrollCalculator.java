@@ -299,7 +299,10 @@ public class PayrollCalculator {
             return 0.0;
         }
 
-        int leaveCredits = Math.max(0, settings.getLeaveCreditsFor(employee));
+        int leaveCredits = employee.isHasLeave()
+                ? employee.getLeaveBalance().getTotal()
+                : 0;
+        
         int chargeableDays = Math.max(0, absentDays - leaveCredits);
 
         if (chargeableDays == 0) {

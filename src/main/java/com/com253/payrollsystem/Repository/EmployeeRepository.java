@@ -1,6 +1,8 @@
 package com.com253.payrollsystem.Repository;
 
 import com.com253.payrollsystem.Model.Employee;
+import com.com253.payrollsystem.Model.LeaveBalance;
+import com.com253.payrollsystem.Model.LoanBalance;
 import com.com253.payrollsystem.Model.EmployeeTypes.Contractual;
 import com.com253.payrollsystem.Model.EmployeeTypes.PartTimer;
 import com.com253.payrollsystem.Model.EmployeeTypes.Probationary;
@@ -30,17 +32,17 @@ public class EmployeeRepository {
             stmt.setString(2, employee.getName());
             stmt.setString(3, employee.getEmployeeType());
             stmt.setDouble(4, rate);
-            stmt.setInt(5, employee.getSickLeave());
-            stmt.setInt(6, employee.getVacationLeave());
-            stmt.setInt(7, employee.getEmergencyLeave());
-            stmt.setDouble(8, employee.getLoanBalance());
+            stmt.setInt(5, employee.getLeaveBalance().getSick());
+            stmt.setInt(6, employee.getLeaveBalance().getVacation());
+            stmt.setInt(7, employee.getLeaveBalance().getEmergency());
+            stmt.setDouble(8, employee.getLoanBalance().getBalance());
             
             stmt.executeUpdate();
         }
     }
     
     public Employee findById(String id) throws SQLException {
-        String sql = "SELECT id, name, type, rate FROM employees WHERE id = ?";
+        String sql = "SELECT id, name, type, rate, sick_leave, vacation_leave, emergency_leave, loan_balance FROM employees WHERE id = ?";;
         
         try (Connection connection = Database.getConnection();
             PreparedStatement stmt = connection.prepareStatement(sql)) {
@@ -57,7 +59,7 @@ public class EmployeeRepository {
     }
     
     public List<Employee> findAll() throws SQLException {
-        String sql = "SELECT id, name, type, rate FROM employees";
+        String sql = "SELECT id, name, type, rate, sick_leave, vacation_leave, emergency_leave, loan_balance FROM employees WHERE id = ?";
         List<Employee> employees = new ArrayList<>();
         
         try (Connection connection = Database.getConnection(); 
@@ -87,16 +89,17 @@ public class EmployeeRepository {
         String name = rs.getString("name");
         String type = rs.getString("type");
         double rate = rs.getDouble("rate");
-        int sickLeave = rs.getInt("sick_leave");
-        int vacationLeave = rs.getInt("vacation_leave");
-        int emergencyLeave = rs.getInt("emergency_leave");
-        double loanBalance = rs.getDouble("loan_balance");
+        LeaveBalance leave = new LeaveBalance(
+                rs.getInt("sick_leave"),
+                rs.getInt("vacation_leave"),
+                rs.getInt("emergency_leave"));
+        LoanBalance loan = new LoanBalance(rs.getDouble("loan_balance"));
         
         switch (type){
-            case "Regular": return new Regular(id, name, rate, sickLeave, vacationLeave, emergencyLeave, loanBalance);
-            case "Probationary": return new Probationary(id, name, rate, sickLeave, vacationLeave, emergencyLeave, loanBalance);
-            case "Contractual": return new Contractual(id, name, rate, sickLeave, vacationLeave, emergencyLeave, loanBalance);
-            case "PartTimer": return new PartTimer(id, name, rate, sickLeave, vacationLeave, emergencyLeave, loanBalance);
+            case "Regular": return new Regular(id, name, rate, leave, loan);
+            case "Probationary": return new Probationary(id, name, rate, leave, loan);
+            case "Contractual": return new Contractual(id, name, rate, leave, loan);
+            case "PartTimer": return new PartTimer(id, name, rate, leave, loan);
             default: throw new IllegalStateException("Unknown employee type in DB: " + type);
         }
     }

@@ -1,5 +1,7 @@
 package com.com253.payrollsystem.CLI;
 import com.com253.payrollsystem.Model.Employee;
+import com.com253.payrollsystem.Model.LeaveBalance;
+import com.com253.payrollsystem.Model.LoanBalance;
 import com.com253.payrollsystem.Model.PayrollEntry;
 import com.com253.payrollsystem.Model.PayrollSettings;
 import com.com253.payrollsystem.Model.TimeRecord;
@@ -114,22 +116,22 @@ public class Menu {
             case "R": {
                 double rate = InputValidator.readDoubleMin(scanner,
                     "  Monthly Rate (PHP): ", 1.0);
-                return new Regular(id, name, rate, 0, 0, 0, 0.0);
+                return new Regular(id, name, rate, new LeaveBalance(0, 0, 0), new LoanBalance(0.0));
             }
             case "P": {
                 double rate = InputValidator.readDoubleMin(scanner,
                     "  Monthly Rate (PHP): ", 1.0);
-                return new Probationary(id, name, rate, 0, 0, 0, 0.0);
+                return new Probationary(id, name, rate, new LeaveBalance(0, 0, 0), new LoanBalance(0.0));
             }
             case "C": {
                 double rate = InputValidator.readDoubleMin(scanner,
                     "  Monthly Rate (PHP): ", 1.0);
-                return new Contractual(id, name, rate, 0, 0, 0, 0.0);
+                return new Contractual(id, name, rate, new LeaveBalance(0, 0, 0), new LoanBalance(0.0));
             }
             case "T": {
                 double rate = InputValidator.readDoubleMin(scanner,
                     "  Hourly Rate (PHP): ", 1.0);
-                return new PartTimer(id, name, rate, 0, 0, 0, 0.0);
+                return new PartTimer(id, name, rate, new LeaveBalance(0, 0, 0), new LoanBalance(0.0));
             }
             default:
                 // Should never reach here due to validation above
@@ -279,11 +281,7 @@ public class Menu {
                 workingDaysPerMonth,
                 hhmmToHours(workdayStart),
                 hhmmToHours(overtimeStart),
-                hhmmToHours(lunchStart),
-                regularLeave,
-                probationaryLeave,
-                contractualLeave,
-                partTimerLeave);
+                hhmmToHours(lunchStart));
     }
 
     private static double hhmmToHours(int hhmm) {

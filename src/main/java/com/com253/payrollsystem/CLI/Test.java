@@ -1,6 +1,8 @@
 package com.com253.payrollsystem.CLI;
 
 import com.com253.payrollsystem.Model.Employee;
+import com.com253.payrollsystem.Model.LeaveBalance;
+import com.com253.payrollsystem.Model.LoanBalance;
 import com.com253.payrollsystem.Model.PayrollEntry;
 import com.com253.payrollsystem.Model.PayrollSettings;
 import com.com253.payrollsystem.Model.TimeRecord;
@@ -23,11 +25,7 @@ public class Test {
             26,
             8.0,
             17.0,
-            11.0,
-            5,
-            5,
-            0,
-            0);
+            11.0);
 
     private static final TimeRecordData[] TIME_RECORD_DATA = {
         new TimeRecordData(1, 800, 1700, false, TimeRecord.HOLIDAY_NONE),
@@ -60,8 +58,8 @@ public class Test {
                 employee,
                 records,
                 CUT_OFF_PERIOD,
-            LOAN_AMOUNT,
-            PAYROLL_SETTINGS);
+                LOAN_AMOUNT,
+                PAYROLL_SETTINGS);
 
         Menu.printPayslip(entry);
     }
@@ -69,13 +67,13 @@ public class Test {
     private static Employee createEmployeeFromConstants() {
         switch (EMPLOYEE_TYPE) {
             case "R":
-                return new Regular(EMPLOYEE_ID, EMPLOYEE_NAME, RATE, 0, 0, 0, 0.0);
+                return new Regular(EMPLOYEE_ID, EMPLOYEE_NAME, RATE, new LeaveBalance(0, 0, 0), new LoanBalance(0.0));
             case "P":
-                return new Probationary(EMPLOYEE_ID, EMPLOYEE_NAME, RATE, 0, 0, 0, 0.0);
+                return new Probationary(EMPLOYEE_ID, EMPLOYEE_NAME, RATE, new LeaveBalance(0, 0, 0), new LoanBalance(0.0));
             case "C":
-                return new Contractual(EMPLOYEE_ID, EMPLOYEE_NAME, RATE, 0, 0, 0, 0.0);
+                return new Contractual(EMPLOYEE_ID, EMPLOYEE_NAME, RATE, new LeaveBalance(0, 0, 0), new LoanBalance(0.0));
             case "T":
-                return new PartTimer(EMPLOYEE_ID, EMPLOYEE_NAME, RATE, 0, 0, 0, 0.0);
+                return new PartTimer(EMPLOYEE_ID, EMPLOYEE_NAME, RATE, new LeaveBalance(0, 0, 0), new LoanBalance(0.0));
             default:
                 throw new IllegalStateException("Unexpected employee type: " + EMPLOYEE_TYPE);
         }
