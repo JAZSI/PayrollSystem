@@ -1,51 +1,72 @@
 package com.com253.payrollsystem.Model;
 
 /**
- * Represents a payroll entry for a specific cutoff period.
+ * Represents a snapshot of a computed payroll result for a specific employee
+ * and cutoff period. Immutable — all fields set once at construction.
  */
 public class PayrollEntry {
-    private Employee employee;
-    private String cutOffPeriod;
-    private double totalHoursWorked;
-    private double overtimeHours;
-    private double undertimeHours;
-    private int absentDays;
-    private double basicPay;
-    private double overtimePay;
-    private double grossPay;
-    private double sssDeduction;
-    private double philhealthDeduction;
-    private double pagibigDeduction;
-    private double taxDeduction;
-    private double loanDeduction;
-    private double undertimePenalty;
-    private double absencePenalty;
-    private double netPay;
+    private final Employee employee;
+    private final String cutOffPeriod;
+    private final double totalHoursWorked;
+    private final double overtimeHours;
+    private final double undertimeHours;
+    private final int absentDays;
+    private final double basicPay;
+    private final double overtimePay;
+    private final double grossPay;
+    private final double sssDeduction;
+    private final double philhealthDeduction;
+    private final double pagibigDeduction;
+    private final double taxDeduction;
+    private final double loanDeduction;
+    private final double undertimePenalty;
+    private final double absencePenalty;
+    private final double netPay;
 
     /**
-     * Creates a payroll entry with default numeric values.
+     * Creates a payroll entry with all computed values.
      *
-     * @param employee payroll employee reference
-     * @param cutOffPeriod payroll cutoff period
+     * @param employee            payroll employee reference
+     * @param cutOffPeriod        payroll cutoff period
+     * @param totalHoursWorked    total hours worked in the period
+     * @param overtimeHours       overtime hours worked
+     * @param undertimeHours      undertime hours
+     * @param absentDays          days absent
+     * @param basicPay            basic salary for the cutoff
+     * @param overtimePay         overtime pay amount
+     * @param grossPay            total earnings before deductions
+     * @param sssDeduction        SSS contribution deduction
+     * @param philhealthDeduction PhilHealth contribution deduction
+     * @param pagibigDeduction    Pag-IBIG contribution deduction
+     * @param taxDeduction        withholding tax deduction
+     * @param loanDeduction       loan amortization deduction
+     * @param undertimePenalty    undertime penalty amount
+     * @param absencePenalty      absence penalty amount
+     * @param netPay              final take-home pay
      */
-    public PayrollEntry(Employee employee, String cutOffPeriod) {
+    public PayrollEntry(Employee employee, String cutOffPeriod, 
+            double totalHoursWorked, double overtimeHours, double undertimeHours,
+            int absentDays, double basicPay, double overtimePay, double grossPay,
+            double sssDeduction, double philhealthDeduction, double pagibigDeduction,
+            double taxDeduction, double loanDeduction, double undertimePenalty,
+            double absencePenalty, double netPay) {
         this.employee = employee;
         this.cutOffPeriod = cutOffPeriod;
-        this.totalHoursWorked = 0.0;
-        this.overtimeHours = 0.0;
-        this.undertimeHours = 0.0;
-        this.absentDays = 0;
-        this.basicPay = 0.0;
-        this.overtimePay = 0.0;
-        this.grossPay = 0.0;
-        this.sssDeduction = 0.0;
-        this.philhealthDeduction = 0.0;
-        this.pagibigDeduction = 0.0;
-        this.taxDeduction = 0.0;
-        this.loanDeduction = 0.0;
-        this.undertimePenalty = 0.0;
-        this.absencePenalty = 0.0;
-        this.netPay = 0.0;
+        this.totalHoursWorked = totalHoursWorked;
+        this.overtimeHours = overtimeHours;
+        this.undertimeHours = undertimeHours;
+        this.absentDays = absentDays;
+        this.basicPay = basicPay;
+        this.overtimePay = overtimePay;
+        this.grossPay = grossPay;
+        this.sssDeduction = sssDeduction;
+        this.philhealthDeduction = philhealthDeduction;
+        this.pagibigDeduction = pagibigDeduction;
+        this.taxDeduction = taxDeduction;
+        this.loanDeduction = loanDeduction;
+        this.undertimePenalty = undertimePenalty;
+        this.absencePenalty = absencePenalty;
+        this.netPay = netPay;
     }
 
     /**
@@ -199,140 +220,5 @@ public class PayrollEntry {
      */
     public double getNetPay() {
         return netPay;
-    }
-
-    /**
-     * Sets total hours worked.
-     *
-     * @param totalHoursWorked total hours worked
-     */
-    public void setTotalHoursWorked(double totalHoursWorked) {
-        this.totalHoursWorked = totalHoursWorked;
-    }
-
-    /**
-     * Sets overtime hours.
-     *
-     * @param overtimeHours overtime hours
-     */
-    public void setOvertimeHours(double overtimeHours) {
-        this.overtimeHours = overtimeHours;
-    }
-
-    /**
-     * Sets undertime hours.
-     *
-     * @param undertimeHours undertime hours
-     */
-    public void setUndertimeHours(double undertimeHours) {
-        this.undertimeHours = undertimeHours;
-    }
-
-    /**
-     * Sets absent days.
-     *
-     * @param absentDays absent day count
-     */
-    public void setAbsentDays(int absentDays) {
-        this.absentDays = absentDays;
-    }
-
-    /**
-     * Sets basic pay.
-     *
-     * @param basicPay basic pay
-     */
-    public void setBasicPay(double basicPay) {
-        this.basicPay = basicPay;
-    }
-
-    /**
-     * Sets overtime pay.
-     *
-     * @param overtimePay overtime pay
-     */
-    public void setOvertimePay(double overtimePay) {
-        this.overtimePay = overtimePay;
-    }
-
-    /**
-     * Sets gross pay.
-     *
-     * @param grossPay gross pay
-     */
-    public void setGrossPay(double grossPay) {
-        this.grossPay = grossPay;
-    }
-
-    /**
-     * Sets SSS deduction.
-     *
-     * @param sssDeduction SSS deduction
-     */
-    public void setSssDeduction(double sssDeduction) {
-        this.sssDeduction = sssDeduction;
-    }
-
-    /**
-     * Sets PhilHealth deduction.
-     *
-     * @param philhealthDeduction PhilHealth deduction
-     */
-    public void setPhilhealthDeduction(double philhealthDeduction) {
-        this.philhealthDeduction = philhealthDeduction;
-    }
-
-    /**
-     * Sets Pag-IBIG deduction.
-     *
-     * @param pagibigDeduction Pag-IBIG deduction
-     */
-    public void setPagibigDeduction(double pagibigDeduction) {
-        this.pagibigDeduction = pagibigDeduction;
-    }
-
-    /**
-     * Sets tax deduction.
-     *
-     * @param taxDeduction tax deduction
-     */
-    public void setTaxDeduction(double taxDeduction) {
-        this.taxDeduction = taxDeduction;
-    }
-
-    /**
-     * Sets loan deduction.
-     *
-     * @param loanDeduction loan deduction
-     */
-    public void setLoanDeduction(double loanDeduction) {
-        this.loanDeduction = loanDeduction;
-    }
-
-    /**
-     * Sets undertime penalty.
-     *
-     * @param undertimePenalty undertime penalty
-     */
-    public void setUndertimePenalty(double undertimePenalty) {
-        this.undertimePenalty = undertimePenalty;
-    }
-
-    /**
-     * Sets absence penalty.
-     *
-     * @param absencePenalty absence penalty
-     */
-    public void setAbsencePenalty(double absencePenalty) {
-        this.absencePenalty = absencePenalty;
-    }
-
-    /**
-     * Sets net pay.
-     *
-     * @param netPay net pay
-     */
-    public void setNetPay(double netPay) {
-        this.netPay = netPay;
     }
 }

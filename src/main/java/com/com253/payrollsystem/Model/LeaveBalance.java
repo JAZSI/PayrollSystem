@@ -63,10 +63,12 @@ public class LeaveBalance {
     /**
      * Deducts the given number of days from leave balances in order:
      * sick first, then vacation, then emergency.
+     * Returns a DeductionResult showing how many were taken from each type.
      *
      * @param days number of leave days to deduct
+     * @return deduction result with per-type breakdown
      */
-    public void deduct(int days) {
+    public DeductionResult deduct(int days) {
         int remaining = days;
 
         int takeSick = Math.min(remaining, sick);
@@ -77,7 +79,30 @@ public class LeaveBalance {
         vacation -= takeVacation;
         remaining -= takeVacation;
 
-        emergency -= Math.min(remaining, emergency);
+        int takeEmergency = Math.min(remaining, emergency);
+        emergency -= takeEmergency;
+
+        return new DeductionResult(takeSick, takeVacation, takeEmergency);
+    }
+
+    /**
+     * Holds the breakdown of leave days deducted per type.
+     */
+    public static class DeductionResult {
+        private final int sick;
+        private final int vacation;
+        private final int emergency;
+
+        public DeductionResult(int sick, int vacation, int emergency) {
+            this.sick = sick;
+            this.vacation = vacation;
+            this.emergency = emergency;
+        }
+
+        public int getSick() { return sick; }
+        public int getVacation() { return vacation; }
+        public int getEmergency() { return emergency; }
+        public int getTotal() { return sick + vacation + emergency; }
     }
 }
 

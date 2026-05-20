@@ -41,24 +41,32 @@ CREATE TABLE IF NOT EXISTS submissions (
     FOREIGN KEY (employee_id) REFERENCES employees(id)
 );
 
-CREATE TABLE IF NOT EXISTS payroll_entries (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    employee_id TEXT NOT NULL,
-    cutoff_period TEXT NOT NULL,
-    gross_pay REAL NOT NULL,
-    deductions REAL NOT NULL,
-    net_pay REAL NOT NULL,
-    created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+CREATE TABLE IF NOT EXISTS leave_transactions (
+    id                  INTEGER     PRIMARY KEY AUTOINCREMENT,
+    employee_id         TEXT        NOT NULL,
+    leave_type          TEXT        NOT NULL,
+    days                INTEGER     NOT NULL,
+    cutoff_period       TEXT        NOT NULL,
+    created_at          TEXT        DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (employee_id) REFERENCES employees(id)
 );
 
-CREATE TABLE IF NOT EXISTS time_records (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    employee_id TEXT NOT NULL,
-    day_number INTEGER NOT NULL,
-    time_in INTEGER,
-    time_out INTEGER,
-    absent INTEGER NOT NULL,
-    holiday_type TEXT NOT NULL,
+CREATE TABLE IF NOT EXISTS loan_transactions (
+    id                  INTEGER     PRIMARY KEY AUTOINCREMENT,
+    employee_id         TEXT        NOT NULL,
+    amount              REAL        NOT NULL,
+    cutoff_period       TEXT        NOT NULL,
+    created_at          TEXT        DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (employee_id) REFERENCES employees(id)
+);
+
+CREATE TABLE IF NOT EXISTS payroll_entries (
+    id                  INTEGER     PRIMARY KEY AUTOINCREMENT,
+    employee_id         TEXT        NOT NULL,
+    cutoff_period       TEXT        NOT NULL,
+    gross_pay           REAL        NOT NULL,
+    deductions          REAL        NOT NULL,
+    net_pay             REAL        NOT NULL,
+    created_at          TEXT        DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (employee_id) REFERENCES employees(id)
 );

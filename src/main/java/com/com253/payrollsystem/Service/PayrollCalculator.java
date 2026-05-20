@@ -329,79 +329,63 @@ public class PayrollCalculator {
              - entry.getLoanDeduction();
     }
 
-    /**
-     * Builds a complete payroll entry from employee input and time records.
-     *
-     * @param employee employee data
-     * @param records daily time records
-     * @param cutOffPeriod selected cut-off period
-     * @param loanAmount loan deduction amount
-      * @param settings payroll configuration values
-     * @return populated payroll entry
-     */
-    public static PayrollEntry buildPayrollEntry(Employee employee,
-                                                 TimeRecord[] records,
-                                                 String cutOffPeriod,
-                                                                 double loanAmount,
-                                                                 PayrollSettings settings) {
-        PayrollEntry entry = new PayrollEntry(employee, cutOffPeriod);
+      /**
+   * Builds a complete payroll entry from employee input and time records.
+   *
+   * @param employee   employee data
+   * @param records    daily time records
+   * @param cutOffPeriod selected cut-off period
+   * @param loanAmount loan deduction amount
+   * @param settings   payroll configuration values
+   * @return populated payroll entry
+   */
+    public static PayrollEntry buildPayrollEntry(Employee employee, TimeRecord[] records,
+                                                 String cutOffPeriod, double loanAmount,
+                                                 PayrollSettings settings) {
+      // Attendance summary
+      double totalHours     = computeTotalHours(records, settings);
+      double overtimeHours  = computeOvertimeHours(records, settings);
+      double undertimeHours = computeUndertimeHours(records, settings);
+      int    absentDays     = computeAbsentDays(records);
 
-        // --- Attendance summary ---
-          double totalHours    = computeTotalHours(records, settings);
-          double overtimeHours = computeOvertimeHours(records, settings);
-          double undertimeHours = computeUndertimeHours(records, settings);
-        int    absentDays    = computeAbsentDays(records);
+      // Earnings
+      double basicPay    = computeBasicPay(employee, records, settings);
+      double overtimePay = computeOvertimePay(employee, records, settings);
+      double grossPay    = basicPay + overtimePay;
 
-        entry.setTotalHoursWorked(totalHours);
-        entry.setOvertimeHours(overtimeHours);
-        entry.setUndertimeHours(undertimeHours);
-        entry.setAbsentDays(absentDays);
+      // Government-mandated deductions
+      double monthlyRate = employee.getMonthlyRate();
+      if (employee.getEmployeeType().equals("PartTimer")) {
+          monthlyRate = grossPay * 2.0;
+      }
 
-        // --- Earnings ---
-        double basicPay = computeBasicPay(employee, records, settings);
-        double overtimePay = computeOvertimePay(employee, records, settings);
-        double grossPay = basicPay + overtimePay;
+      double sss        = computeSSSDeduction(monthlyRate);
+      double philhealth = computePhilHealthDeduction(monthlyRate);
+      double pagibig    = computePagibigDeduction(monthlyRate);
+      double tax        = computeWithholdingTax(grossPay - sss - philhealth - pagibig);
 
-        entry.setBasicPay(basicPay);
-        entry.setOvertimePay(overtimePay);
-        entry.setGrossPay(grossPay);
+      // Penalties
+      double dailyRate        = computeDailyRate(employee, settings);
+      double hourlyRate       = dailyRate / 8.0;
+      double undertimePenalty = computeUndertimePenalty(undertimeHours, hourlyRate);
+      double absencePenalty   = computeAbsencePenalty(employee, absentDays, settings);
 
-        // --- Government-mandated deductions ---
-        double monthlyRate = employee.getMonthlyRate();
-        if (employee.getEmployeeType().equals("PartTimer")) {
-            monthlyRate = grossPay * 2.0;
-        }
+      // Net pay
+      double netPay = grossPay
+          - undertimePenalty
+          - absencePenalty
+          - sss
+          - philhealth
+          - pagibig
+          - tax
+          - loanAmount;
 
-        double sss        = computeSSSDeduction(monthlyRate);
-        double philhealth = computePhilHealthDeduction(monthlyRate);
-        double pagibig    = computePagibigDeduction(monthlyRate);
-
-        entry.setSssDeduction(sss);
-        entry.setPhilhealthDeduction(philhealth);
-        entry.setPagibigDeduction(pagibig);
-
-        // --- Withholding tax ---
-        double taxableIncome = grossPay - sss - philhealth - pagibig;
-        double tax = computeWithholdingTax(taxableIncome);
-        entry.setTaxDeduction(tax);
-
-        // --- Loan ---
-        entry.setLoanDeduction(loanAmount);
-
-        // --- Penalties ---
-        double dailyRate  = computeDailyRate(employee, settings);
-        double hourlyRate = dailyRate / 8.0;
-
-        double undertimePenalty = computeUndertimePenalty(undertimeHours, hourlyRate);
-        double absencePenalty   = computeAbsencePenalty(employee, absentDays, settings);
-
-        entry.setUndertimePenalty(undertimePenalty);
-        entry.setAbsencePenalty(absencePenalty);
-
-        // --- Net pay ---
-        double netPay = computeNetPay(entry);
-        entry.setNetPay(netPay);
-
-        return entry;
+      return new PayrollEntry(
+          employee, cutOffPeriod,
+          totalHours, overtimeHours, undertimeHours, absentDays,
+          basicPay, overtimePay, grossPay,
+          sss, philhealth, pagibig, tax, loanAmount,
+          undertimePenalty, absencePenalty,
+          netPay);
     }
 }

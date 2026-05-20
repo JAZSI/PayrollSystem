@@ -1,11 +1,20 @@
 package com.com253.payrollsystem.Service;
 
+import com.com253.payrollsystem.Model.AttendanceRecord;
 import com.com253.payrollsystem.Model.Employee;
 import com.com253.payrollsystem.Model.EndUser;
+import com.com253.payrollsystem.Model.LeaveBalance;
+import com.com253.payrollsystem.Model.LeaveTransaction.LeaveType;
+import com.com253.payrollsystem.Model.PayrollEntry;
+import com.com253.payrollsystem.Model.PayrollSettings;
 import com.com253.payrollsystem.Model.Submission;
+import com.com253.payrollsystem.Model.TimeRecord;
 import com.com253.payrollsystem.Repository.AccountRepository;
 import com.com253.payrollsystem.Repository.AttendanceRepository;
 import com.com253.payrollsystem.Repository.EmployeeRepository;
+import com.com253.payrollsystem.Repository.LeaveTransactionRepository;
+import com.com253.payrollsystem.Repository.LoanTransactionRepository;
+import com.com253.payrollsystem.Repository.PayrollRepository;
 import com.com253.payrollsystem.Repository.SubmissionRepository;
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -23,7 +32,9 @@ public class PayrollService {
     private final EmployeeRepository employeeRepository = new EmployeeRepository();
     private final SubmissionRepository submissionRepository = new SubmissionRepository();
     private final AttendanceRepository attendanceRepository = new AttendanceRepository();
-    
+    private final PayrollRepository payrollRepository = new PayrollRepository();
+    private final LeaveTransactionRepository leaveTransactionRepository = new LeaveTransactionRepository();
+    private final LoanTransactionRepository loanTransactionRepository = new LoanTransactionRepository();
     /**
      * Authenticates a user by username and password.
      * Returns the matching EndUser or null if credentials are invalid.
@@ -82,20 +93,37 @@ public class PayrollService {
      * Applies leave and loan deductions to the employee record after payroll is processed.
      * Deducts the given leave days from the employee's leave balance and the
      * loan amount from their loan balance, then persists both to the database.
+     * Each deduction is recorded in the respective ledger table.
      *
      * @param employee      the employee to update
-     * @param leaveDaysUsed number of leave days consumed this cutoff
-     * @param loanDeducted  loan amount deducted this cutoff
-     */   
-    public void applyDeductions(Employee employee, int leaveDaysUsed, double loanDeducted) throws SQLException {
+     * @param leaveDaysUsed number of leave days consumed this cut-off
+     * @param loanDeducted  loan amount deducted this cut-off
+     * @param cutOffPeriod  the cut-off period label
+     */
+    public void applyDeductions(Employee employee, int leaveDaysUsed,
+                                double loanDeducted, String cutOffPeriod) throws SQLException {
         if (employee.isHasLeave() && leaveDaysUsed > 0) {
-            employee.getLeaveBalance().deduct(leaveDaysUsed);
+            LeaveBalance.DeductionResult result = employee.getLeaveBalance().deduct(leaveDaysUsed);
             employeeRepository.updateLeaveBalance(employee.getEmployeeId(), employee.getLeaveBalance());
+
+            if (result.getSick() > 0) {
+                leaveTransactionRepository.save(employee.getEmployeeId(),
+                        LeaveType.SICK, result.getSick(), cutOffPeriod);
+            }
+            if (result.getVacation() > 0) {
+                leaveTransactionRepository.save(employee.getEmployeeId(),
+                        LeaveType.VACATION, result.getVacation(), cutOffPeriod);
+            }
+            if (result.getEmergency() > 0) {
+                leaveTransactionRepository.save(employee.getEmployeeId(),
+                        LeaveType.EMERGENCY, result.getEmergency(), cutOffPeriod);
+            }
         }
-        
+
         if (loanDeducted > 0) {
             employee.getLoanBalance().deduct(loanDeducted);
             employeeRepository.updateLoanBalance(employee.getEmployeeId(), employee.getLoanBalance());
+            loanTransactionRepository.save(employee.getEmployeeId(), loanDeducted, cutOffPeriod);
         }
     }
 
@@ -169,8 +197,11 @@ public class PayrollService {
         List<TimeRecord> records = buildTimeRecords(emp.getEmployeeId(), from, to);
         TimeRecord[] recordArray = records.toArray(new TimeRecord[0]);
 
-        return com.com253.payrollsystem.Service.PayrollCalculator.buildPayrollEntry(
-                emp, recordArray, cutOffPeriod, sub.getLoanDeduction(), settings);
+        PayrollEntry entry = com.com253.payrollsystem.Service.PayrollCalculator.buildPayrollEntry(
+                                                      emp, recordArray, cutOffPeriod, sub.getLoanDeduction(), settings);
+        payrollRepository.save(entry);
+        
+        return entry;
     }
     
     /**
@@ -240,12 +271,15 @@ public class PayrollService {
     
     /**
      * Approves or rejects a submission by ID.
-     * On approval, applies leave and loan deductions to the employee record.
+     * On approval, applies leave and loan deductions to the employee record
+     * and records each transaction in the respective ledger.
      *
-     * @param submissionId the submission to update
+     * @param submissionId  the submission to update
      * @param status       APPROVED or REJECTED
-     */    
-    public void updateSubmissionStatus(int submissionId, Submission.Status status) throws SQLException {
+     * @param cutOffPeriod the cut-off period for ledger recording
+     */
+    public void updateSubmissionStatus(int submissionId, Submission.Status status,
+                                       String cutOffPeriod) throws SQLException {
         Submission sub = submissionRepository.findById(submissionId);
         if (sub == null) {
             throw new IllegalArgumentException("Submission not found: " + submissionId);
@@ -256,7 +290,8 @@ public class PayrollService {
         if (status == Submission.Status.APPROVED) {
             Employee emp = employeeRepository.findById(sub.getEmployeeId());
             if (emp != null) {
-                applyDeductions(emp, (int) sub.getLeaveDays(), sub.getLoanDeduction());
+                applyDeductions(emp, (int) sub.getLeaveDays(),
+                        sub.getLoanDeduction(), cutOffPeriod);
             }
         }
     }
