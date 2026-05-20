@@ -20,6 +20,16 @@ CREATE TABLE IF NOT EXISTS accounts (
 INSERT OR IGNORE INTO accounts (username, password_hash, role, linked_employee_id)
 VALUES ('admin', 'admin123', 'ADMIN', NULL);
 
+CREATE TABLE IF NOT EXISTS attendance (
+    id                  INTEGER     PRIMARY KEY AUTOINCREMENT,
+    employee_id         TEXT        NOT NULL,
+    record_date         TEXT        NOT NULL,
+    time_in             REAL,
+    time_out            REAL,
+    UNIQUE (employee_id, record_date).
+    FOREIGN KEY (employee_id) REFERENCES employee(id)
+);
+
 CREATE TABLE IF NOT EXISTS payroll_entries (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     employee_id TEXT NOT NULL,
