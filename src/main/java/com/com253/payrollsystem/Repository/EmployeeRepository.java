@@ -18,8 +18,8 @@ import java.util.List;
 public class EmployeeRepository {
     
     public void save(Employee employee) throws SQLException {
-        Double rate = (employee.getEmployeeType().equals("PartTimer")) 
-                ? employee.getHourlyRate() 
+        Double rate = (employee instanceof PartTimer)
+                ? employee.getHourlyRate()
                 : employee.getMonthlyRate();
         
         String sql = "INSERT INTO employees (id, name, type, rate, sick_leave, vacation_leave, emergency_leave, loan_balance) "
@@ -42,7 +42,7 @@ public class EmployeeRepository {
     }
     
     public Employee findById(String id) throws SQLException {
-        String sql = "SELECT id, name, type, rate, sick_leave, vacation_leave, emergency_leave, loan_balance FROM employees WHERE id = ?";;
+        String sql = "SELECT id, name, type, rate, sick_leave, vacation_leave, emergency_leave, loan_balance FROM employees WHERE id = ?";
         
         try (Connection connection = Database.getConnection();
             PreparedStatement stmt = connection.prepareStatement(sql)) {

@@ -61,12 +61,26 @@ CREATE TABLE IF NOT EXISTS loan_transactions (
 );
 
 CREATE TABLE IF NOT EXISTS payroll_entries (
-    id                  INTEGER     PRIMARY KEY AUTOINCREMENT,
-    employee_id         TEXT        NOT NULL,
-    cutoff_period       TEXT        NOT NULL,
-    gross_pay           REAL        NOT NULL,
-    deductions          REAL        NOT NULL,
-    net_pay             REAL        NOT NULL,
-    created_at          TEXT        DEFAULT CURRENT_TIMESTAMP,
+    id                      INTEGER     PRIMARY KEY AUTOINCREMENT,
+    employee_id             TEXT        NOT NULL,
+    cutoff_period           TEXT        NOT NULL,
+    total_hours             REAL        NOT NULL DEFAULT 0,
+    overtime_hours          REAL        NOT NULL DEFAULT 0,
+    undertime_hours         REAL        NOT NULL DEFAULT 0,
+    absent_days             INTEGER     NOT NULL DEFAULT 0,
+    basic_pay               REAL        NOT NULL DEFAULT 0,
+    overtime_pay            REAL        NOT NULL DEFAULT 0,
+    holiday_pay             REAL        NOT NULL DEFAULT 0,
+    night_shift_differential REAL       NOT NULL DEFAULT 0,
+    gross_pay               REAL        NOT NULL DEFAULT 0,
+    sss_deduction           REAL        NOT NULL DEFAULT 0,
+    philhealth_deduction    REAL        NOT NULL DEFAULT 0,
+    pagibig_deduction       REAL        NOT NULL DEFAULT 0,
+    tax_deduction           REAL        NOT NULL DEFAULT 0,
+    loan_deduction          REAL        NOT NULL DEFAULT 0,
+    undertime_penalty       REAL        NOT NULL DEFAULT 0,
+    absence_penalty         REAL        NOT NULL DEFAULT 0,
+    net_pay                 REAL        NOT NULL DEFAULT 0,
+    created_at              TEXT        DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (employee_id) REFERENCES employees(id)
 );

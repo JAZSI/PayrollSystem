@@ -1,6 +1,7 @@
 package com.com253.payrollsystem.Service;
 
 import com.com253.payrollsystem.Model.Employee;
+import com.com253.payrollsystem.Model.EmployeeTypes.PartTimer;
 import com.com253.payrollsystem.Model.PayrollEntry;
 import com.com253.payrollsystem.Model.PayrollSettings;
 import com.com253.payrollsystem.Model.TimeRecord;
@@ -156,9 +157,7 @@ public class PayrollCalculator {
      * @return basic pay for the cut-off
      */
     public static double computeBasicPay(Employee employee, TimeRecord[] records, PayrollSettings settings) {
-        String type = employee.getEmployeeType();
-
-        if (type.equals("PartTimer")) {
+        if (employee instanceof PartTimer) {
             double totalHours = computeTotalHours(records, settings);
             return totalHours * employee.getHourlyRate();
         }
@@ -242,14 +241,14 @@ public class PayrollCalculator {
      * @return hourly rate
      */
     private static double getHourlyRate(Employee employee, PayrollSettings settings) {
-        if (employee.getEmployeeType().equals("PartTimer")) {
+        if (employee instanceof PartTimer) {
             return employee.getHourlyRate();
         }
         return computeDailyRate(employee, settings) / STANDARD_HOURS_PER_DAY;
     }
 
     private static double computeDailyRate(Employee employee, PayrollSettings settings) {
-        if (employee.getEmployeeType().equals("PartTimer")) {
+        if (employee instanceof PartTimer) {
             return employee.getHourlyRate() * STANDARD_HOURS_PER_DAY;
         }
         return employee.getMonthlyRate() / settings.getWorkingDaysPerMonth();
@@ -462,7 +461,7 @@ public class PayrollCalculator {
 
       // Government-mandated deductions
       double monthlyRate = employee.getMonthlyRate();
-      if (employee.getEmployeeType().equals("PartTimer")) {
+      if (employee instanceof PartTimer) {
           monthlyRate = grossPay * 2.0;
       }
 

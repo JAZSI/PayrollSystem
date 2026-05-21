@@ -20,7 +20,7 @@ public class PartTimer extends Employee {
      */
     public PartTimer(String employeeId, String name, double hourlyRate, 
             LeaveBalance leaveBalance, LoanBalance loanBalance) {
-        super(employeeId, name, "PartTimer", 0.0, hourlyRate, false,
+        super(employeeId, name, 0.0, hourlyRate, false,
             leaveBalance, loanBalance);
     }
 

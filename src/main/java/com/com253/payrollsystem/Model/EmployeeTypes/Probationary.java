@@ -20,7 +20,7 @@ public class Probationary extends Employee {
      */
     public Probationary(String employeeId, String name, double monthlyRate,
             LeaveBalance leaveBalance, LoanBalance loanBalance) {
-        super(employeeId, name, "Probationary", monthlyRate, 0.0, true,
+        super(employeeId, name, monthlyRate, 0.0, true,
             leaveBalance, loanBalance);
     }
 

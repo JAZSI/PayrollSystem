@@ -4,12 +4,11 @@ package com.com253.payrollsystem.Model;
  * Represents a generic employee with shared payroll attributes.
  */
 public abstract class Employee {
-    private String employeeId;
-    private String name;
-    private String employeeType;
-    private double monthlyRate;
-    private double hourlyRate;
-    private boolean hasLeave;
+    private final String employeeId;
+    private final String name;
+    private final double monthlyRate;
+    private final double hourlyRate;
+    private final boolean hasLeave;
     private LeaveBalance leaveBalance;
     private LoanBalance loanBalance;
 
@@ -18,7 +17,6 @@ public abstract class Employee {
      *
      * @param employeeId    employee identifier
      * @param name          employee name
-     * @param employeeType  employee classification
      * @param monthlyRate   monthly compensation rate
      * @param hourlyRate    hourly compensation rate
      * @param hasLeave      leave eligibility flag
@@ -28,7 +26,6 @@ public abstract class Employee {
     public Employee(
             String employeeId,
             String name,
-            String employeeType,
             double monthlyRate,
             double hourlyRate,
             boolean hasLeave,
@@ -36,7 +33,6 @@ public abstract class Employee {
             LoanBalance loanBalance) {
         this.employeeId = employeeId;
         this.name = name;
-        this.employeeType = employeeType;
         this.monthlyRate = monthlyRate;
         this.hourlyRate = hourlyRate;
         this.hasLeave = hasLeave;
@@ -68,7 +64,7 @@ public abstract class Employee {
      * @return employee type
      */
     public String getEmployeeType() {
-        return employeeType;
+        return getClass().getSimpleName();
     }
 
     /**
@@ -115,7 +111,15 @@ public abstract class Employee {
     public LoanBalance getLoanBalance() {
         return loanBalance;
     }
-    
+
+    public void setLeaveBalance(LeaveBalance balance) {
+        this.leaveBalance = balance;
+    }
+
+    public void setLoanBalance(LoanBalance balance) {
+        this.loanBalance = balance;
+    }
+
     /**
      * Computes the equivalent daily rate.
      *

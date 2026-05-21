@@ -20,7 +20,7 @@ public class Regular extends Employee {
      */
     public Regular(String employeeId, String name, double monthlyRate,
             LeaveBalance leaveBalance, LoanBalance loanBalance) {
-        super(employeeId, name, "Regular", monthlyRate, 0.0, true,
+        super(employeeId, name, monthlyRate, 0.0, true,
             leaveBalance, loanBalance);
     }
 

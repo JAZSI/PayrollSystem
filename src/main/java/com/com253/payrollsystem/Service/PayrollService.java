@@ -4,7 +4,10 @@ import com.com253.payrollsystem.Model.AttendanceRecord;
 import com.com253.payrollsystem.Model.Employee;
 import com.com253.payrollsystem.Model.EndUser;
 import com.com253.payrollsystem.Model.LeaveBalance;
+import com.com253.payrollsystem.Model.LeaveTransaction;
 import com.com253.payrollsystem.Model.LeaveTransaction.LeaveType;
+import com.com253.payrollsystem.Model.LoanBalance;
+import com.com253.payrollsystem.Model.LoanTransaction;
 import com.com253.payrollsystem.Model.PayrollEntry;
 import com.com253.payrollsystem.Model.PayrollSettings;
 import com.com253.payrollsystem.Model.Submission;
@@ -104,7 +107,9 @@ public class PayrollService {
                                 double loanDeducted, String cutOffPeriod) throws SQLException {
         if (employee.isHasLeave() && leaveDaysUsed > 0) {
             LeaveBalance.DeductionResult result = employee.getLeaveBalance().deduct(leaveDaysUsed);
-            employeeRepository.updateLeaveBalance(employee.getEmployeeId(), employee.getLeaveBalance());
+            LeaveBalance updatedLeave = employee.getLeaveBalance().apply(result);
+            employee.setLeaveBalance(updatedLeave);
+            employeeRepository.updateLeaveBalance(employee.getEmployeeId(), updatedLeave);
 
             if (result.getSick() > 0) {
                 leaveTransactionRepository.save(employee.getEmployeeId(),
@@ -121,10 +126,34 @@ public class PayrollService {
         }
 
         if (loanDeducted > 0) {
-            employee.getLoanBalance().deduct(loanDeducted);
-            employeeRepository.updateLoanBalance(employee.getEmployeeId(), employee.getLoanBalance());
-            loanTransactionRepository.save(employee.getEmployeeId(), loanDeducted, cutOffPeriod);
+            double actualDeducted = employee.getLoanBalance().deduct(loanDeducted);
+            if (actualDeducted > 0) {
+                LoanBalance updatedLoan = employee.getLoanBalance().apply(actualDeducted);
+                employee.setLoanBalance(updatedLoan);
+                employeeRepository.updateLoanBalance(employee.getEmployeeId(), updatedLoan);
+                loanTransactionRepository.save(employee.getEmployeeId(), actualDeducted, cutOffPeriod);
+            }
         }
+    }
+
+    /**
+     * Retrieves the leave transaction history for the given employee.
+     *
+     * @param employeeId employee identifier
+     * @return list of leave transactions ordered by date descending
+     */
+    public List<LeaveTransaction> getLeaveHistory(String employeeId) throws SQLException {
+        return leaveTransactionRepository.findByEmployeeId(employeeId);
+    }
+
+    /**
+     * Retrieves the loan transaction history for the given employee.
+     *
+     * @param employeeId employee identifier
+     * @return list of loan transactions ordered by date descending
+     */
+    public List<LoanTransaction> getLoanHistory(String employeeId) throws SQLException {
+        return loanTransactionRepository.findByEmployeeId(employeeId);
     }
 
     /**
@@ -290,7 +319,7 @@ public class PayrollService {
         if (status == Submission.Status.APPROVED) {
             Employee emp = employeeRepository.findById(sub.getEmployeeId());
             if (emp != null) {
-                applyDeductions(emp, (int) sub.getLeaveDays(),
+                applyDeductions(emp, (int) Math.round(sub.getLeaveDays()),
                         sub.getLoanDeduction(), cutOffPeriod);
             }
         }

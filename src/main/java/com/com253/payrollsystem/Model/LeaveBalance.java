@@ -2,12 +2,12 @@ package com.com253.payrollsystem.Model;
 
 /**
  * Represents an employee's leave credit balances.
- * Tracks sick, vacation, and emergency leave separately.
+ * Immutable — all operations return new instances.
  */
 public class LeaveBalance {
-    private int sick;
-    private int vacation;
-    private int emergency;
+    private final int sick;
+    private final int vacation;
+    private final int emergency;
 
     /**
      * Creates a leave balance with the given credit counts.
@@ -22,14 +22,13 @@ public class LeaveBalance {
         this.emergency = emergency;
     }
 
-
     /**
      * Gets the number of sick leave days remaining.
      *
      * @return sick leave days
      */
-    public int getSick() { 
-        return sick; 
+    public int getSick() {
+        return sick;
     }
 
     /**
@@ -37,8 +36,8 @@ public class LeaveBalance {
      *
      * @return vacation leave days
      */
-    public int getVacation() { 
-        return vacation; 
+    public int getVacation() {
+        return vacation;
     }
 
     /**
@@ -46,8 +45,8 @@ public class LeaveBalance {
      *
      * @return emergency leave days
      */
-    public int getEmergency() { 
-        return emergency; 
+    public int getEmergency() {
+        return emergency;
     }
 
     /**
@@ -55,15 +54,13 @@ public class LeaveBalance {
      *
      * @return total leave days
      */
-    public int getTotal() { 
-        return sick + vacation + emergency; 
+    public int getTotal() {
+        return sick + vacation + emergency;
     }
 
-
     /**
-     * Deducts the given number of days from leave balances in order:
-     * sick first, then vacation, then emergency.
-     * Returns a DeductionResult showing how many were taken from each type.
+     * Computes the deduction breakdown without modifying this balance.
+     * Deducts in order: sick first, then vacation, then emergency.
      *
      * @param days number of leave days to deduct
      * @return deduction result with per-type breakdown
@@ -72,17 +69,29 @@ public class LeaveBalance {
         int remaining = days;
 
         int takeSick = Math.min(remaining, sick);
-        sick -= takeSick;
         remaining -= takeSick;
 
         int takeVacation = Math.min(remaining, vacation);
-        vacation -= takeVacation;
         remaining -= takeVacation;
 
         int takeEmergency = Math.min(remaining, emergency);
-        emergency -= takeEmergency;
 
         return new DeductionResult(takeSick, takeVacation, takeEmergency);
+    }
+
+    /**
+     * Returns a new LeaveBalance with the given deduction applied.
+     * Does not modify this instance.
+     *
+     * @param result the deduction breakdown from deduct()
+     * @return new LeaveBalance with reduced balances
+     */
+    public LeaveBalance apply(DeductionResult result) {
+        return new LeaveBalance(
+            sick - result.getSick(),
+            vacation - result.getVacation(),
+            emergency - result.getEmergency()
+        );
     }
 
     /**
@@ -105,4 +114,3 @@ public class LeaveBalance {
         public int getTotal() { return sick + vacation + emergency; }
     }
 }
-

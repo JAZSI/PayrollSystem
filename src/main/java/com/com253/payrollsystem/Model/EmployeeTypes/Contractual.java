@@ -20,7 +20,7 @@ public class Contractual extends Employee {
      */
     public Contractual(String employeeId, String name, double monthlyRate, 
             LeaveBalance leaveBalance, LoanBalance loanBalance) {
-        super(employeeId, name, "Contractual", monthlyRate, 0.0, false,
+        super(employeeId, name, monthlyRate, 0.0, false,
             leaveBalance, loanBalance);
     }
 
