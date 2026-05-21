@@ -1,4 +1,5 @@
 package com.com253.payrollsystem.Service;
+
 import com.com253.payrollsystem.Model.Employee;
 import com.com253.payrollsystem.Model.PayrollEntry;
 import com.com253.payrollsystem.Model.PayrollSettings;
@@ -8,17 +9,27 @@ import com.com253.payrollsystem.Service.Tax.PhilHealth;
 import com.com253.payrollsystem.Service.Tax.SSS;
 import com.com253.payrollsystem.Service.Tax.WithholdingTax;
 
+/**
+ * Static utility class for all payroll computation.
+ * All methods are pure functions — no side effects, no state.
+ */
 public class PayrollCalculator {
 
-    // Regular day OT.
-    private static final double REGULAR_DAY_OVERTIME_MULTIPLIER = 1.25;
-    // Regular holiday.
-    private static final double REGULAR_HOLIDAY_BASE = 2.00;
-    private static final double REGULAR_HOLIDAY_OT = REGULAR_HOLIDAY_BASE * 1.30;
+    // Regular day OT: 25% additional on top of normal rate.
+    private static final double REGULAR_DAY_OT_MULTIPLIER = 1.25;
 
-    // Special holiday / rest day.
-    private static final double REST_DAY_BASE = 1.30;
-    private static final double REST_DAY_OT = REST_DAY_BASE * 1.30;
+    // Regular holiday: 200% for all hours worked, plus 30% extra on OT hours.
+    private static final double REGULAR_HOLIDAY_MULTIPLIER = 2.00;
+    private static final double REGULAR_HOLIDAY_OT_PREMIUM = 0.30;
+
+    // Special non-working / rest day: 130% for all hours, plus 30% extra on OT hours.
+    private static final double SPECIAL_DAY_MULTIPLIER = 1.30;
+    private static final double SPECIAL_DAY_OT_PREMIUM = 0.30;
+
+    // Night shift differential: 10% additional on hours between 10 PM and 6 AM.
+    private static final double NSD_RATE = 0.10;
+
+    private static final double STANDARD_HOURS_PER_DAY = 8.0;
 
     /**
      * Computes worked hours for one time record.
@@ -79,7 +90,7 @@ public class PayrollCalculator {
         double overtimeTotal = 0.0;
         for (TimeRecord record : records) {
             if (!record.isAbsent()) {
-                overtimeTotal += computeovertimehoursafter(record, settings);
+                overtimeTotal += computeOvertimeHoursForRecord(record, settings);
             }
         }
         return overtimeTotal;
@@ -97,8 +108,8 @@ public class PayrollCalculator {
         for (TimeRecord record : records) {
             if (!record.isAbsent()) {
                 double hoursWorked = computeHoursWorked(record, settings);
-                if (hoursWorked < 8.0) {
-                    undertimeTotal += (8.0 - hoursWorked);
+                if (hoursWorked < STANDARD_HOURS_PER_DAY) {
+                    undertimeTotal += (STANDARD_HOURS_PER_DAY - hoursWorked);
                 }
             }
         }
@@ -130,7 +141,10 @@ public class PayrollCalculator {
      * @return gross pay for the cut-off
      */
     public static double computeGrossPay(Employee employee, TimeRecord[] records, PayrollSettings settings) {
-        return computeBasicPay(employee, records, settings) + computeOvertimePay(employee, records, settings);
+        return computeBasicPay(employee, records, settings)
+             + computeNSD(employee, records, settings)
+             + computeHolidayPay(employee, records, settings)
+             + computeOvertimePay(employee, records, settings);
     }
 
     /**
@@ -163,65 +177,156 @@ public class PayrollCalculator {
      */
     public static double computeOvertimePay(Employee employee, TimeRecord[] records, PayrollSettings settings) {
         double overtimePay = 0.0;
-        String type = employee.getEmployeeType();
-
-        if (type.equals("PartTimer")) {
-            for (TimeRecord record : records) {
-                if (!record.isAbsent()) {
-                    double overtimeHours = computeovertimehoursafter(record, settings);
-                    double overtimeMultiplier = getOvertimeMultiplier(record);
-                    overtimePay += overtimeHours * employee.getHourlyRate() * (overtimeMultiplier - 1.0);
-                }
-            }
-            return overtimePay;
-        }
-
-        // Regular, Probationary, Contractual
-        double hourlyRate = computeDailyRate(employee, settings) / 8.0;
+        double hourlyRate = getHourlyRate(employee, settings);
 
         for (TimeRecord record : records) {
-            if (!record.isAbsent()) {
-                double overtimeHours = computeovertimehoursafter(record, settings);
-                double overtimeMultiplier = getOvertimeMultiplier(record);
-                overtimePay += overtimeHours * hourlyRate * overtimeMultiplier;
+            if (record.isAbsent()) {
+                continue;
             }
-        }
 
+            double overtimeHours = computeOvertimeHoursForRecord(record, settings);
+            double multiplier = computeOtMultiplier(record);
+
+            // multiplier - 1.0 gives the extra premium on top of the base rate.
+            // For regular days: 1.25 - 1.0 = +25%.
+            // For holiday OT: 1.60 - 1.0 = +60% on top of the holiday base;
+            //                 1.39 - 1.0 = +39% on top of the special day base.
+            // The holiday base itself is already paid via computeHolidayPay().
+            overtimePay += overtimeHours * hourlyRate * (multiplier - 1.0);
+        }
         return overtimePay;
     }
 
     /**
-     * Returns overtime multiplier based on holiday type.
+     * Returns the overtime multipler for a given time record.
+     * For holidays, this is the EXTRA premium (e.g. 0.30) not the base multiplier.
+     * The holiday base pay is handled separately in computeHolidayPay().
      *
      * @param record time record for the day
-     * @return overtime multiplier value
+     * @return multiplier value
      */
-    private static double getOvertimeMultiplier(TimeRecord record) {
+    private static double computeOtMultiplier(TimeRecord record) {
         if (record.isRegularHoliday()) {
-            return REGULAR_HOLIDAY_OT;
+            // 200% base + 30% OT = 260% total rate for holiday OT hours.
+            // The 200% base is already paid via basicPay + holidayPay.
+            // The extra 60% comes from here: 2.0 * 0.30 = 0.60, so (1.60 - 1.0) = 0.60.
+            return 1.0 + (REGULAR_HOLIDAY_MULTIPLIER * REGULAR_HOLIDAY_OT_PREMIUM);
         }
         if (record.isRestDayHoliday()) {
-            return REST_DAY_OT;
+            // 130% base + 30% OT = 169% total rate for holiday OT hours.
+            // The 130% base is already paid via basicPay + holidayPay.
+            // The extra 39% comes from here: 1.30 * 0.30 = 0.39, so (1.39 - 1.0) = 0.39.
+            return 1.0 + (SPECIAL_DAY_MULTIPLIER * SPECIAL_DAY_OT_PREMIUM);
         }
-        return REGULAR_DAY_OVERTIME_MULTIPLIER;
+        return REGULAR_DAY_OT_MULTIPLIER; // 1.25 → (1.25 - 1.0) = 0.25
     }
 
     /**
-     * Computes overtime hours that occur after 5:00 PM.
+     * Computes overtime hours that occur after the overtime start threshold.
      *
-     * @param record time record for a day
+     * @param record   time record for a day
      * @param settings payroll configuration values
-     * @return hours worked after 5:00 PM
+     * @return hours worked beyond the overtime start hour
      */
-    private static double computeovertimehoursafter(TimeRecord record, PayrollSettings settings) {
+    private static double computeOvertimeHoursForRecord(TimeRecord record, PayrollSettings settings) {
         double outHours = (record.getTimeOut() / 100) + (record.getTimeOut() % 100) / 60.0;
         return Math.max(0.0, outHours - settings.getOvertimeStartHour());
     }
 
+    /**
+     * Gets the hourly rate for an employee.
+     * For PartTimer this is the direct hourly rate; for others it's derived from daily rate.
+     *
+     * @param employee employee data
+     * @param settings payroll configuration values
+     * @return hourly rate
+     */
+    private static double getHourlyRate(Employee employee, PayrollSettings settings) {
+        if (employee.getEmployeeType().equals("PartTimer")) {
+            return employee.getHourlyRate();
+        }
+        return computeDailyRate(employee, settings) / STANDARD_HOURS_PER_DAY;
+    }
+
     private static double computeDailyRate(Employee employee, PayrollSettings settings) {
+        if (employee.getEmployeeType().equals("PartTimer")) {
+            return employee.getHourlyRate() * STANDARD_HOURS_PER_DAY;
+        }
         return employee.getMonthlyRate() / settings.getWorkingDaysPerMonth();
     }
 
+    /**
+     * Computes the extra pay employees receive for working on holidays.
+     * For each holiday worked, hours worked get the statutory holiday multiplier
+     * on top of the normal rate.
+     *
+     * @param employee employee data
+     * @param records  daily time records
+     * @param settings payroll configuration values
+     * @return total holiday pay premium for the cut-off
+     */
+    private static double computeHolidayPay(Employee employee, TimeRecord[] records, PayrollSettings settings) {
+        double holidayPay = 0.0;
+        double hourlyRate = getHourlyRate(employee, settings);
+
+        for (TimeRecord record : records) {
+            if (record.isAbsent() || !record.isHoliday()) {
+                continue;
+            }
+
+            double hoursWorked = computeHoursWorked(record, settings);
+
+            if (record.isRegularHoliday()) {
+                holidayPay += hoursWorked * hourlyRate * (REGULAR_HOLIDAY_MULTIPLIER - 1.0);
+            } else if (record.isRestDayHoliday()) {
+                holidayPay += hoursWorked * hourlyRate * (SPECIAL_DAY_MULTIPLIER - 1.0);
+            }
+        }
+        return holidayPay;
+    }
+
+    /**
+     * Computes night shift differential for hours worked between 10 PM and 6 AM.
+     * Applies an additional 10% of the hourly rate on top of whatever pay
+     * the NSD hours already receive (basic, holiday, or OT).
+     *
+     * @param employee employee data
+     * @param records  daily time records
+     * @param settings payroll configuration values
+     * @return total night shift differential for the cut-off
+     */
+    private static double computeNSD(Employee employee, TimeRecord[] records, PayrollSettings settings) {
+        double nsdPay = 0.0;
+        double hourlyRate = getHourlyRate(employee, settings);
+
+        // NSD window: 22:00 to 06:00 next day.
+        // Treated as hours [22.0, 46.0) — the 6 AM boundary becomes 30.0 (24+6).
+        final double NSD_START_HOUR = 22.0;
+        final double NSD_END_HOUR   = 30.0; // 6 AM = 24 + 6
+
+        for (TimeRecord record : records) {
+            if (record.isAbsent()) {
+                continue;
+            }
+
+            double timeIn  = (record.getTimeIn()  / 100) + (record.getTimeIn()  % 100) / 60.0;
+            double timeOut = (record.getTimeOut() / 100) + (record.getTimeOut() % 100) / 60.0;
+
+            // If shift crosses midnight, extend the coordinate system forward by 24.
+            // e.g., 22:00 to 06:00 becomes [22, 30] in a continuous timeline.
+            if (timeOut <= timeIn) {
+                timeOut += 24.0;
+            }
+
+            double nsdHours = Math.max(0.0, Math.min(timeOut, NSD_END_HOUR) - Math.max(timeIn, NSD_START_HOUR));
+
+            if (nsdHours > 0.0) {
+                nsdPay += nsdHours * hourlyRate * NSD_RATE;
+            }
+        }
+        return nsdPay;
+    }
+    
     /**
      * Computes SSS deduction per cut-off from monthly salary.
      *
@@ -350,8 +455,10 @@ public class PayrollCalculator {
 
       // Earnings
       double basicPay    = computeBasicPay(employee, records, settings);
+      double nsd         = computeNSD(employee, records, settings);
+      double holidayPay  = computeHolidayPay(employee, records, settings);
       double overtimePay = computeOvertimePay(employee, records, settings);
-      double grossPay    = basicPay + overtimePay;
+      double grossPay    = basicPay + nsd + holidayPay + overtimePay;
 
       // Government-mandated deductions
       double monthlyRate = employee.getMonthlyRate();
@@ -365,8 +472,7 @@ public class PayrollCalculator {
       double tax        = computeWithholdingTax(grossPay - sss - philhealth - pagibig);
 
       // Penalties
-      double dailyRate        = computeDailyRate(employee, settings);
-      double hourlyRate       = dailyRate / 8.0;
+      double hourlyRate       = getHourlyRate(employee, settings);
       double undertimePenalty = computeUndertimePenalty(undertimeHours, hourlyRate);
       double absencePenalty   = computeAbsencePenalty(employee, absentDays, settings);
 
@@ -383,7 +489,7 @@ public class PayrollCalculator {
       return new PayrollEntry(
           employee, cutOffPeriod,
           totalHours, overtimeHours, undertimeHours, absentDays,
-          basicPay, overtimePay, grossPay,
+          basicPay, overtimePay, holidayPay, nsd, grossPay,
           sss, philhealth, pagibig, tax, loanAmount,
           undertimePenalty, absencePenalty,
           netPay);

@@ -13,6 +13,8 @@ public class PayrollEntry {
     private final int absentDays;
     private final double basicPay;
     private final double overtimePay;
+    private final double holidayPay;
+    private final double nightShiftDifferential;
     private final double grossPay;
     private final double sssDeduction;
     private final double philhealthDeduction;
@@ -34,6 +36,8 @@ public class PayrollEntry {
      * @param absentDays          days absent
      * @param basicPay            basic salary for the cutoff
      * @param overtimePay         overtime pay amount
+     * @param holidayPay          additional pay for working on holidays
+     * @param nightShiftDifferential additional pay for hours between 10 PM and 6 AM
      * @param grossPay            total earnings before deductions
      * @param sssDeduction        SSS contribution deduction
      * @param philhealthDeduction PhilHealth contribution deduction
@@ -44,12 +48,13 @@ public class PayrollEntry {
      * @param absencePenalty      absence penalty amount
      * @param netPay              final take-home pay
      */
-    public PayrollEntry(Employee employee, String cutOffPeriod, 
+    public PayrollEntry(Employee employee, String cutOffPeriod,
             double totalHoursWorked, double overtimeHours, double undertimeHours,
-            int absentDays, double basicPay, double overtimePay, double grossPay,
-            double sssDeduction, double philhealthDeduction, double pagibigDeduction,
-            double taxDeduction, double loanDeduction, double undertimePenalty,
-            double absencePenalty, double netPay) {
+            int absentDays, double basicPay, double overtimePay, double holidayPay,
+            double nightShiftDifferential, double grossPay, double sssDeduction,
+            double philhealthDeduction, double pagibigDeduction, double taxDeduction,
+            double loanDeduction, double undertimePenalty, double absencePenalty,
+            double netPay) {
         this.employee = employee;
         this.cutOffPeriod = cutOffPeriod;
         this.totalHoursWorked = totalHoursWorked;
@@ -58,6 +63,8 @@ public class PayrollEntry {
         this.absentDays = absentDays;
         this.basicPay = basicPay;
         this.overtimePay = overtimePay;
+        this.holidayPay = holidayPay;
+        this.nightShiftDifferential = nightShiftDifferential;
         this.grossPay = grossPay;
         this.sssDeduction = sssDeduction;
         this.philhealthDeduction = philhealthDeduction;
@@ -139,6 +146,25 @@ public class PayrollEntry {
      */
     public double getOvertimePay() {
         return overtimePay;
+    }
+
+    /**
+     * Gets additional pay for working on holidays.
+     *
+     * @return holiday pay
+     */
+    public double getHolidayPay() {
+        return holidayPay;
+    }
+
+    /**
+     * Gets night shift differential (10% additional pay for hours between
+     * 10 PM and 6 AM).
+     *
+     * @return night shift differential
+     */
+    public double getNightShiftDifferential() {
+        return nightShiftDifferential;
     }
 
     /**
