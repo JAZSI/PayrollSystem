@@ -1,9 +1,9 @@
 package com.com253.payrollsystem.Model;
 
 /**
- * Represents a generic employee with shared payroll attributes.
+ * Represents an employee with shared payroll attributes.
  */
-public abstract class Employee {
+public class Employee {
 
     /**
      * Employee type classifications used for payroll differentiation.
@@ -28,13 +28,13 @@ public abstract class Employee {
      * Creates an employee with the provided details.
      *
      * @param employeeId    employee identifier
-     * @param name          employee name
-     * @param type          employee type (REGULAR, PROBATIONARY, CONTRACTUAL, PARTTIMER)
-     * @param monthlyRate   monthly compensation rate
-     * @param hourlyRate    hourly compensation rate
-     * @param hasLeave      leave eligibility flag
-     * @param leaveBalance  employee's leave credit balances
-     * @param loanBalance   employee's outstanding loan balance
+     * @param name           employee name
+     * @param type           employee type (REGULAR, PROBATIONARY, CONTRACTUAL, PARTTIMER)
+     * @param monthlyRate    monthly compensation rate (used for non-part-timers)
+     * @param hourlyRate     hourly compensation rate (used for part-timers)
+     * @param hasLeave       leave eligibility flag
+     * @param leaveBalance   employee's leave credit balances
+     * @param loanBalance    employee's outstanding loan balance
      */
     public Employee(
             String employeeId,
@@ -89,7 +89,7 @@ public abstract class Employee {
      * @return employee type name
      */
     public String getTypeName() {
-        return getClass().getSimpleName();
+        return type.name().charAt(0) + type.name().substring(1).toLowerCase();
     }
 
     /**
@@ -153,33 +153,5 @@ public abstract class Employee {
      */
     public void setLoanBalance(LoanBalance balance) {
         this.loanBalance = balance;
-    }
-
-    /**
-     * Computes the hourly rate for this employee.
-     * For PartTimer, this is the direct hourly rate stored in the field.
-     * For all other types, this is derived from the daily rate divided by 8 standard hours.
-     *
-     * @return hourly rate
-     */
-    public double computeHourlyRate() {
-        if (type == EmployeeType.PARTTIMER) {
-            return hourlyRate;
-        }
-        return computeDailyRate() / 8.0;
-    }
-
-    /**
-     * Computes the equivalent daily rate for this employee.
-     * For PartTimer, this is the hourly rate multiplied by 8 standard hours.
-     * For all other types, this is the monthly rate divided by 26 working days.
-     *
-     * @return daily rate value
-     */
-    public double computeDailyRate() {
-        if (type == EmployeeType.PARTTIMER) {
-            return hourlyRate * 8.0;
-        }
-        return monthlyRate / 26.0;
     }
 }

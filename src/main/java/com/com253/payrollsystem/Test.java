@@ -1,5 +1,7 @@
 package com.com253.payrollsystem;
 
+import com.com253.payrollsystem.Model.Employee;
+import com.com253.payrollsystem.Model.Employee.EmployeeType;
 import com.com253.payrollsystem.Model.EndUser;
 import com.com253.payrollsystem.Model.Submission;
 import com.com253.payrollsystem.Service.PayrollReportService;
@@ -11,10 +13,6 @@ import com.com253.payrollsystem.Model.LoanBalance;
 import com.com253.payrollsystem.Model.PayrollEntry;
 import com.com253.payrollsystem.Model.PayrollSettings;
 import com.com253.payrollsystem.Model.TimeRecord;
-import com.com253.payrollsystem.Model.EmployeeTypes.Contractual;
-import com.com253.payrollsystem.Model.EmployeeTypes.PartTimer;
-import com.com253.payrollsystem.Model.EmployeeTypes.Probationary;
-import com.com253.payrollsystem.Model.EmployeeTypes.Regular;
 import com.com253.payrollsystem.Service.PayrollCalculator;
 import com.com253.payrollsystem.Service.PayrollService;
 
@@ -102,8 +100,11 @@ public class Test {
         System.out.println("\n=== BASELINE TEST ===");
         System.out.println("Regular employee, 15 days x 8:00-17:00, no OT, no leave, no loan\n");
 
-        Employee emp = new Regular("EMP001", "Juan dela Cruz", 30000.00,
-                new LeaveBalance(0, 0, 0), new LoanBalance(0.0));
+        Employee emp = new Employee("EMP001", "Juan dela Cruz", 
+                EmployeeType.REGULAR,
+                30000.00, 0.0, true, 
+                new LeaveBalance(0, 0, 0), 
+                new LoanBalance(0.0));
 
         TimeRecord[] records = buildRecords(15, 800, 1700, false, TimeRecord.HOLIDAY_NONE);
 
@@ -125,8 +126,11 @@ public class Test {
         System.out.println("\n=== OVERTIME TEST ===");
         System.out.println("Regular employee, 15 days x 8:00-18:00 (1hr OT each day)\n");
 
-        Employee emp = new Regular("EMP002", "Maria Santos", 30000.00,
-                new LeaveBalance(0, 0, 0), new LoanBalance(0.0));
+        Employee emp = new Employee("EMP002", "Maria Santos", 
+                EmployeeType.REGULAR,
+                30000.00, 0.0, true, 
+                new LeaveBalance(0, 0, 0), 
+                new LoanBalance(0.0));
 
         // 15 days + 1 hour OT each
         TimeRecord[] records = buildRecords(15, 800, 1800, false, TimeRecord.HOLIDAY_NONE);
@@ -146,8 +150,11 @@ public class Test {
         System.out.println("\n=== REGULAR HOLIDAY TEST ===");
         System.out.println("Regular employee, 1 regular holiday worked\n");
 
-        Employee emp = new Regular("EMP003", "Pedro Cruz", 30000.00,
-                new LeaveBalance(0, 0, 0), new LoanBalance(0.0));
+        Employee emp = new Employee("EMP003", "Pedro Cruz", 
+                EmployeeType.REGULAR,
+                30000.00, 0.0, true, 
+                new LeaveBalance(0, 0, 0), 
+                new LoanBalance(0.0));
 
         TimeRecord[] records = buildRecords(15, 800, 1700, false, TimeRecord.HOLIDAY_NONE);
         records[0] = new TimeRecord(1, 800, 1700, false, TimeRecord.HOLIDAY_REGULAR);
@@ -166,8 +173,11 @@ public class Test {
         System.out.println("\n=== NIGHT SHIFT DIFFERENTIAL TEST ===");
         System.out.println("Regular employee, 1 day clocked in at 22:00, out at 06:00\n");
 
-        Employee emp = new Regular("EMP004", "Ana Reyes", 30000.00,
-                new LeaveBalance(0, 0, 0), new LoanBalance(0.0));
+        Employee emp = new Employee("EMP004", "Ana Reyes", 
+                EmployeeType.REGULAR,
+                30000.00, 0.0, true, 
+                new LeaveBalance(0, 0, 0), 
+                new LoanBalance(0.0));
 
         TimeRecord[] records = buildRecords(15, 800, 1700, false, TimeRecord.HOLIDAY_NONE);
         // 10 PM (22:00) to 6 AM next day (6:00) = 8 hours NSD
@@ -188,8 +198,11 @@ public class Test {
         System.out.println("Part-time employee, 80 hours worked at Php 200/hr\n");
 
         // PartTimer uses hourly rate, not monthly
-        Employee pt = new PartTimer("EMP005", "Lito Lim", 200.0,
-                new LeaveBalance(0, 0, 0), new LoanBalance(0.0));
+        Employee pt = new Employee("EMP005", "Lito Lim", 
+                EmployeeType.PARTTIMER,
+                0.0, 200.0, false, 
+                new LeaveBalance(0, 0, 0), 
+                new LoanBalance(0.0));
 
         TimeRecord[] records = buildRecords(10, 800, 1700, false, TimeRecord.HOLIDAY_NONE);
 
@@ -208,8 +221,11 @@ public class Test {
         System.out.println("\n=== UNDERTIME TEST ===");
         System.out.println("Regular employee, 15 days x 8:00-16:00 (1hr undertime each day)\n");
 
-        Employee emp = new Regular("EMP006", "Luis Torres", 30000.00,
-                new LeaveBalance(0, 0, 0), new LoanBalance(0.0));
+        Employee emp = new Employee("EMP006", "Luis Torres",
+                EmployeeType.REGULAR,
+                30000.00, 0.0, true,
+                new LeaveBalance(0, 0, 0),
+                new LoanBalance(0.0));
 
         // 15 days, 1 hour undertime each (8:00-16:00 instead of 8:00-17:00)
         TimeRecord[] records = buildRecords(15, 800, 1600, false, TimeRecord.HOLIDAY_NONE);
@@ -229,8 +245,11 @@ public class Test {
         System.out.println("\n=== ABSENCE TEST (No Leave Credits) ===");
         System.out.println("Regular employee, 2 absent days (no leave balance)\n");
 
-        Employee emp = new Regular("EMP007", "Elena Dizon", 30000.00,
-                new LeaveBalance(0, 0, 0), new LoanBalance(0.0));
+        Employee emp = new Employee("EMP007", "Elena Dizon",
+                EmployeeType.REGULAR,
+                30000.00, 0.0, true,
+                new LeaveBalance(0, 0, 0),
+                new LoanBalance(0.0));
 
         TimeRecord[] records = buildRecords(15, 800, 1700, false, TimeRecord.HOLIDAY_NONE);
         records[0] = new TimeRecord(1, 800, 1700, true, TimeRecord.HOLIDAY_NONE);  // absent
@@ -251,8 +270,11 @@ public class Test {
         System.out.println("\n=== SPECIAL DAY / REST DAY HOLIDAY TEST ===");
         System.out.println("Regular employee, 1 rest day worked\n");
 
-        Employee emp = new Regular("EMP008", "Rico Miranda", 30000.00,
-                new LeaveBalance(0, 0, 0), new LoanBalance(0.0));
+        Employee emp = new Employee("EMP008", "Rico Miranda",
+                EmployeeType.REGULAR,
+                30000.00, 0.0, true,
+                new LeaveBalance(0, 0, 0),
+                new LoanBalance(0.0));
 
         TimeRecord[] records = buildRecords(15, 800, 1700, false, TimeRecord.HOLIDAY_NONE);
         records[0] = new TimeRecord(1, 800, 1700, false, TimeRecord.HOLIDAY_REST_DAY);
@@ -271,8 +293,11 @@ public class Test {
         System.out.println("\n=== PROBATIONARY EMPLOYEE TEST ===");
         System.out.println("Probationary employee, 15 days x 8:00-17:00\n");
 
-        Employee emp = new Probationary("EMP009", "Mark Aquino", 25000.00,
-                new LeaveBalance(3, 5, 2), new LoanBalance(0.0));
+        Employee emp = new Employee("EMP009", "Mark Aquino",
+                EmployeeType.PROBATIONARY,
+                25000.00, 0.0, true,
+                new LeaveBalance(3, 5, 2),
+                new LoanBalance(0.0));
 
         TimeRecord[] records = buildRecords(15, 800, 1700, false, TimeRecord.HOLIDAY_NONE);
 
@@ -290,8 +315,11 @@ public class Test {
         System.out.println("\n=== CONTRACTUAL EMPLOYEE TEST ===");
         System.out.println("Contractual employee, 15 days x 8:00-17:00\n");
 
-        Employee emp = new Contractual("EMP010", "Sofia Reyes", 28000.00,
-                new LeaveBalance(0, 0, 0), new LoanBalance(0.0));
+        Employee emp = new Employee("EMP010", "Sofia Reyes",
+                EmployeeType.CONTRACTUAL,
+                28000.00, 0.0, true,
+                new LeaveBalance(0, 0, 0),
+                new LoanBalance(0.0));
 
         TimeRecord[] records = buildRecords(15, 800, 1700, false, TimeRecord.HOLIDAY_NONE);
 
@@ -309,8 +337,11 @@ public class Test {
         System.out.println("\n=== LOAN DEDUCTION TEST ===");
         System.out.println("Regular employee with Php 1000 loan deduction\n");
 
-        Employee emp = new Regular("EMP011", "Nina Cruz", 30000.00,
-                new LeaveBalance(0, 0, 0), new LoanBalance(5000.0));
+        Employee emp = new Employee("EMP011", "Nina Cruz",
+                EmployeeType.REGULAR,
+                30000.00, 0.0, true,
+                new LeaveBalance(0, 0, 0),
+                new LoanBalance(5000.0));
 
         TimeRecord[] records = buildRecords(15, 800, 1700, false, TimeRecord.HOLIDAY_NONE);
 
@@ -373,8 +404,11 @@ public class Test {
         try {
             SERVICE.deleteEmployee(TEST_EMP_ID);
         } catch (Exception e) {}
-        Employee emp = new Regular(TEST_EMP_ID, "Test Employee", 30000.00,
-                new LeaveBalance(5, 10, 3), new LoanBalance(3000.0));
+        Employee emp = new Employee(TEST_EMP_ID, "Test Employee",
+                EmployeeType.REGULAR,
+                30000.00, 0.0, true,
+                new LeaveBalance(5, 10, 3),
+                new LoanBalance(3000.0));
         SERVICE.registerEmployee(emp, "testuser", "testpass");
         System.out.println("Registered: " + TEST_EMP_ID + " (testuser/testpass)");
         System.out.println("Leave: sick=5, vacation=10, emergency=3 | Loan: 3000.0");
@@ -420,8 +454,12 @@ public class Test {
         SERVICE.deleteSubmission(TEST_EMP_ID);
         try { SERVICE.deleteEmployee(TEST_EMP_ID); } catch (Exception e) {}
 
-        SERVICE.registerEmployee(new Regular(TEST_EMP_ID, "Test", 30000.00,
-                new LeaveBalance(5, 10, 3), new LoanBalance(3000.0)),
+        SERVICE.registerEmployee(
+        new Employee(TEST_EMP_ID, "Test",
+                EmployeeType.REGULAR,
+                30000.00, 0.0, true,
+                new LeaveBalance(5, 10, 3),
+                new LoanBalance(3000.0)),
                 "testuser2", "testpass");
 
         boolean filed = SERVICE.submitPayroll(TEST_EMP_ID, 3.0, 0.0, 0.0);
@@ -440,8 +478,13 @@ public class Test {
     private static void testFullPayrollFlow() throws Exception {
         System.out.println("\n=== FULL FLOW: Build Payroll Entry ===");
         SERVICE.deleteEmployee(TEST_EMP_ID);
-        SERVICE.registerEmployee(new Regular(TEST_EMP_ID, "Test", 30000.00,
-                new LeaveBalance(0, 0, 0), new LoanBalance(0.0)), "testuser", "testpass");
+        SERVICE.registerEmployee(
+        new Employee(TEST_EMP_ID, "Test",
+                EmployeeType.REGULAR,
+                30000.00, 0.0, true,
+                new LeaveBalance(0, 0, 0),
+                new LoanBalance(0.0)),
+                "testuser", "testpass");
 
         SERVICE.submitPayroll(TEST_EMP_ID, 0.0, 0.0, 0.0);
         SERVICE.updateSubmissionStatus(

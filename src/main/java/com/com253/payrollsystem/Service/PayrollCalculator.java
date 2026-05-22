@@ -263,7 +263,7 @@ public class PayrollCalculator {
         if (employee.getEmployeeType() == EmployeeType.PARTTIMER) {
             return employee.getHourlyRate();
         }
-        return employee.computeDailyRate() / STANDARD_HOURS_PER_DAY;
+        return computeDailyRate(employee, settings) / STANDARD_HOURS_PER_DAY;
     }
 
     private static double computeDailyRate(Employee employee, PayrollSettings settings) {

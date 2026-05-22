@@ -2,6 +2,7 @@ package com.com253.payrollsystem;
 
 import com.com253.payrollsystem.Model.AttendanceRecord;
 import com.com253.payrollsystem.Model.Employee;
+import com.com253.payrollsystem.Model.Employee.EmployeeType;
 import com.com253.payrollsystem.Model.EndUser;
 import com.com253.payrollsystem.Model.LeaveBalance;
 import com.com253.payrollsystem.Model.LeaveTransaction;
@@ -10,10 +11,6 @@ import com.com253.payrollsystem.Model.LoanTransaction;
 import com.com253.payrollsystem.Model.PayrollEntry;
 import com.com253.payrollsystem.Model.PayrollReportEntry;
 import com.com253.payrollsystem.Model.Submission;
-import com.com253.payrollsystem.Model.EmployeeTypes.Contractual;
-import com.com253.payrollsystem.Model.EmployeeTypes.PartTimer;
-import com.com253.payrollsystem.Model.EmployeeTypes.Probationary;
-import com.com253.payrollsystem.Model.EmployeeTypes.Regular;
 import com.com253.payrollsystem.Service.PayrollReportService;
 import com.com253.payrollsystem.Service.PayrollService;
 import com.com253.payrollsystem.Util.Database;
@@ -163,19 +160,37 @@ public class LiveTest {
         LeaveBalance leave = new LeaveBalance(sick, vacation, emergency);
         LoanBalance loanBalance = new LoanBalance(loan);
 
-        Employee emp;
-        if ("R".equals(type)) {
-            emp = new Regular(id, name, rate, leave, loanBalance);
-        } else if ("P".equals(type)) {
-            emp = new Probationary(id, name, rate, leave, loanBalance);
-        } else if ("C".equals(type)) {
-            emp = new Contractual(id, name, rate, leave, loanBalance);
-        } else if ("T".equals(type)) {
-            emp = new PartTimer(id, name, rate, leave, loanBalance);
-        } else {
-            System.out.println("Invalid employee type: " + type);
-            return;
+        EmployeeType empType;
+        double monthlyRate = 0.0;
+        double hourlyRate = 0.0;
+        boolean hasLeave = true;
+
+        switch (type) {
+            case "R":
+                empType = EmployeeType.REGULAR;
+                monthlyRate = rate;
+                break;
+            case "P":
+                empType = EmployeeType.PROBATIONARY;
+                monthlyRate = rate;
+                break;
+            case "C":
+                empType = EmployeeType.CONTRACTUAL;
+                monthlyRate = rate;
+                hasLeave = false;
+                break;
+            case "T":
+                empType = EmployeeType.PARTTIMER;
+                hourlyRate = rate;
+                hasLeave = false;
+                break;
+            default:
+                System.out.println("Invalid employee type: " + type);
+                return;
         }
+
+        Employee emp = new Employee(id, name, empType, monthlyRate, hourlyRate,
+                hasLeave, leave, loanBalance);
 
         service.registerEmployee(emp, username, password);
         System.out.println("Employee registered successfully!");

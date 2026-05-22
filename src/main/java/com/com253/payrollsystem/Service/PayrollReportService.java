@@ -2,7 +2,6 @@ package com.com253.payrollsystem.Service;
 
 import com.com253.payrollsystem.Model.Employee;
 import com.com253.payrollsystem.Model.PayrollReportEntry;
-import com.com253.payrollsystem.Repository.EmployeeRepository;
 import com.com253.payrollsystem.Repository.PayrollRepository;
 import java.io.FileWriter;
 import java.io.IOException;
