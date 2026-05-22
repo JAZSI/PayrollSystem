@@ -1,12 +1,13 @@
 package com.com253.payrollsystem.Repository;
 
 import com.com253.payrollsystem.Model.Employee;
-import com.com253.payrollsystem.Model.LeaveBalance;
-import com.com253.payrollsystem.Model.LoanBalance;
+import com.com253.payrollsystem.Model.Employee.EmployeeType;
 import com.com253.payrollsystem.Model.EmployeeTypes.Contractual;
 import com.com253.payrollsystem.Model.EmployeeTypes.PartTimer;
 import com.com253.payrollsystem.Model.EmployeeTypes.Probationary;
 import com.com253.payrollsystem.Model.EmployeeTypes.Regular;
+import com.com253.payrollsystem.Model.LeaveBalance;
+import com.com253.payrollsystem.Model.LoanBalance;
 import com.com253.payrollsystem.Util.Database;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -18,25 +19,25 @@ import java.util.List;
 public class EmployeeRepository {
     
     public void save(Employee employee) throws SQLException {
-        Double rate = (employee instanceof PartTimer)
+        Double rate = (employee.getEmployeeType() == EmployeeType.PARTTIMER)
                 ? employee.getHourlyRate()
                 : employee.getMonthlyRate();
-        
+
         String sql = "INSERT INTO employees (id, name, type, rate, sick_leave, vacation_leave, emergency_leave, loan_balance) "
                    + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-        
+
         try (Connection connection = Database.getConnection();
-            PreparedStatement stmt = connection.prepareStatement(sql)) {   
-            
+            PreparedStatement stmt = connection.prepareStatement(sql)) {
+
             stmt.setString(1, employee.getEmployeeId());
             stmt.setString(2, employee.getName());
-            stmt.setString(3, employee.getEmployeeType());
+            stmt.setString(3, employee.getTypeName());
             stmt.setDouble(4, rate);
             stmt.setInt(5, employee.getLeaveBalance().getSick());
             stmt.setInt(6, employee.getLeaveBalance().getVacation());
             stmt.setInt(7, employee.getLeaveBalance().getEmergency());
             stmt.setDouble(8, employee.getLoanBalance().getBalance());
-            
+
             stmt.executeUpdate();
         }
     }

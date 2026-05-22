@@ -38,6 +38,7 @@ public class PayrollService {
     private final PayrollRepository payrollRepository = new PayrollRepository();
     private final LeaveTransactionRepository leaveTransactionRepository = new LeaveTransactionRepository();
     private final LoanTransactionRepository loanTransactionRepository = new LoanTransactionRepository();
+    
     /**
      * Authenticates a user by username and password.
      * Returns the matching EndUser or null if credentials are invalid.
@@ -90,6 +91,38 @@ public class PayrollService {
     public void deleteEmployee(String id) throws SQLException {
         accountRepository.deleteByEmployeeId(id);
         employeeRepository.delete(id);
+    }
+
+    public void deleteSubmission(String employeeId) throws SQLException {
+        submissionRepository.deleteByEmployeeId(employeeId);
+    }
+
+    public void updateTimeIn(String employeeId, LocalDate date, double timeIn) throws SQLException {
+        attendanceRepository.updateTimeIn(employeeId, date, timeIn);
+    }
+
+    public void updateTimeOut(String employeeId, LocalDate date, double timeOut) throws SQLException {
+        attendanceRepository.updateTimeOut(employeeId, date, timeOut);
+    }
+
+    public void deleteAttendance(String employeeId, LocalDate date) throws SQLException {
+        attendanceRepository.deleteByEmployeeAndDate(employeeId, date);
+    }
+
+    public void upsertAttendance(String employeeId, LocalDate date, Double timeIn, Double timeOut) throws SQLException {
+        attendanceRepository.upsert(employeeId, date, timeIn, timeOut);
+    }
+
+    public void clockIn(String employeeId, LocalDate date, double timeIn) throws SQLException {
+        attendanceRepository.clockIn(employeeId, date, timeIn);
+    }
+
+    public void clockOut(String employeeId, LocalDate date, double timeOut) throws SQLException {
+        attendanceRepository.clockOut(employeeId, date, timeOut);
+    }
+
+    public List<AttendanceRecord> getAttendanceHistory(String employeeId, LocalDate from, LocalDate to) throws SQLException {
+        return attendanceRepository.getAttendance(employeeId, from, to);
     }
     
     /**

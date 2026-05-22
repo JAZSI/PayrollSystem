@@ -1,6 +1,7 @@
 package com.com253.payrollsystem.Model.EmployeeTypes;
 
 import com.com253.payrollsystem.Model.Employee;
+import com.com253.payrollsystem.Model.Employee.EmployeeType;
 import com.com253.payrollsystem.Model.LeaveBalance;
 import com.com253.payrollsystem.Model.LoanBalance;
 
@@ -10,7 +11,7 @@ import com.com253.payrollsystem.Model.LoanBalance;
 public class Regular extends Employee {
 
     /**
-     * Creates a contractual employee record.
+     * Creates a regular employee record.
      *
      * @param employeeId   employee identifier
      * @param name         employee name
@@ -20,12 +21,7 @@ public class Regular extends Employee {
      */
     public Regular(String employeeId, String name, double monthlyRate,
             LeaveBalance leaveBalance, LoanBalance loanBalance) {
-        super(employeeId, name, monthlyRate, 0.0, true,
+        super(employeeId, name, EmployeeType.REGULAR, monthlyRate, 0.0, true,
             leaveBalance, loanBalance);
-    }
-
-    @Override
-    public double computeDailyRate() {
-        return getMonthlyRate() / 26.0;
     }
 }

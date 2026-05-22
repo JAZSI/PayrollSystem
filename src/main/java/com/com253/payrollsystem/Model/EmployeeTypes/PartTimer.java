@@ -1,6 +1,7 @@
 package com.com253.payrollsystem.Model.EmployeeTypes;
 
 import com.com253.payrollsystem.Model.Employee;
+import com.com253.payrollsystem.Model.Employee.EmployeeType;
 import com.com253.payrollsystem.Model.LeaveBalance;
 import com.com253.payrollsystem.Model.LoanBalance;
 
@@ -10,22 +11,17 @@ import com.com253.payrollsystem.Model.LoanBalance;
 public class PartTimer extends Employee {
 
     /**
-     * Creates a contractual employee record.
+     * Creates a part-time employee record.
      *
      * @param employeeId   employee identifier
      * @param name         employee name
-     * @param monthlyRate  monthly compensation rate
+     * @param hourlyRate   hourly compensation rate
      * @param leaveBalance employee's leave credit balances
      * @param loanBalance  employee's outstanding loan balance
      */
-    public PartTimer(String employeeId, String name, double hourlyRate, 
+    public PartTimer(String employeeId, String name, double hourlyRate,
             LeaveBalance leaveBalance, LoanBalance loanBalance) {
-        super(employeeId, name, 0.0, hourlyRate, false,
+        super(employeeId, name, EmployeeType.PARTTIMER, 0.0, hourlyRate, false,
             leaveBalance, loanBalance);
-    }
-
-    @Override
-    public double computeDailyRate() {
-        return getHourlyRate() * 8.0;
     }
 }

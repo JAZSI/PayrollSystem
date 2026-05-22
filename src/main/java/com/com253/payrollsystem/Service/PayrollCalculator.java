@@ -1,7 +1,7 @@
 package com.com253.payrollsystem.Service;
 
 import com.com253.payrollsystem.Model.Employee;
-import com.com253.payrollsystem.Model.EmployeeTypes.PartTimer;
+import com.com253.payrollsystem.Model.Employee.EmployeeType;
 import com.com253.payrollsystem.Model.PayrollEntry;
 import com.com253.payrollsystem.Model.PayrollSettings;
 import com.com253.payrollsystem.Model.TimeRecord;
@@ -32,6 +32,10 @@ public class PayrollCalculator {
 
     private static final double STANDARD_HOURS_PER_DAY = 8.0;
 
+    // Minimum hours required to receive pay for the day.
+    // Working less than this results in 0 hours credited (no pay, no penalty).
+    private static final double MINIMUM_PAID_HOURS = 1.0;
+
     /**
      * Computes worked hours for one time record.
      * Lunch break is subtracted only when the shift extends past 11:00 AM.
@@ -55,6 +59,11 @@ public class PayrollCalculator {
         double inHours  = (timeIn  / 100) + (timeIn  % 100) / 60.0;
         double outHours = (timeOut / 100) + (timeOut % 100) / 60.0;
 
+        // Handle midnight-crossing shifts (e.g., 22:00 to 06:00)
+        if (outHours <= inHours) {
+            outHours += 24.0;
+        }
+
         double effectiveStartHour = Math.max(settings.getWorkdayStartHour(), inHours);
 
         double hoursWorked = outHours - effectiveStartHour;
@@ -62,7 +71,13 @@ public class PayrollCalculator {
             hoursWorked -= 1.0;
         }
 
-        return Math.max(0.0, hoursWorked);
+        // Short shifts (less than minimum paid hours) receive no pay and are not penalized.
+        hoursWorked = Math.max(0.0, hoursWorked);
+        if (hoursWorked < MINIMUM_PAID_HOURS) {
+            return 0.0;
+        }
+
+        return hoursWorked;
     }
 
     /**
@@ -109,6 +124,10 @@ public class PayrollCalculator {
         for (TimeRecord record : records) {
             if (!record.isAbsent()) {
                 double hoursWorked = computeHoursWorked(record, settings);
+                // Skip short-shift records (computeHoursWorked returns 0 for < 1 hour).
+                if (hoursWorked == 0.0) {
+                    continue;
+                }
                 if (hoursWorked < STANDARD_HOURS_PER_DAY) {
                     undertimeTotal += (STANDARD_HOURS_PER_DAY - hoursWorked);
                 }
@@ -157,7 +176,7 @@ public class PayrollCalculator {
      * @return basic pay for the cut-off
      */
     public static double computeBasicPay(Employee employee, TimeRecord[] records, PayrollSettings settings) {
-        if (employee instanceof PartTimer) {
+        if (employee.getEmployeeType() == EmployeeType.PARTTIMER) {
             double totalHours = computeTotalHours(records, settings);
             return totalHours * employee.getHourlyRate();
         }
@@ -241,14 +260,14 @@ public class PayrollCalculator {
      * @return hourly rate
      */
     private static double getHourlyRate(Employee employee, PayrollSettings settings) {
-        if (employee instanceof PartTimer) {
+        if (employee.getEmployeeType() == EmployeeType.PARTTIMER) {
             return employee.getHourlyRate();
         }
-        return computeDailyRate(employee, settings) / STANDARD_HOURS_PER_DAY;
+        return employee.computeDailyRate() / STANDARD_HOURS_PER_DAY;
     }
 
     private static double computeDailyRate(Employee employee, PayrollSettings settings) {
-        if (employee instanceof PartTimer) {
+        if (employee.getEmployeeType() == EmployeeType.PARTTIMER) {
             return employee.getHourlyRate() * STANDARD_HOURS_PER_DAY;
         }
         return employee.getMonthlyRate() / settings.getWorkingDaysPerMonth();
@@ -461,7 +480,7 @@ public class PayrollCalculator {
 
       // Government-mandated deductions
       double monthlyRate = employee.getMonthlyRate();
-      if (employee instanceof PartTimer) {
+      if (employee.getEmployeeType() == EmployeeType.PARTTIMER) {
           monthlyRate = grossPay * 2.0;
       }
 

@@ -82,5 +82,6 @@ CREATE TABLE IF NOT EXISTS payroll_entries (
     absence_penalty         REAL        NOT NULL DEFAULT 0,
     net_pay                 REAL        NOT NULL DEFAULT 0,
     created_at              TEXT        DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE (employee_id, cutoff_period),
     FOREIGN KEY (employee_id) REFERENCES employees(id)
 );

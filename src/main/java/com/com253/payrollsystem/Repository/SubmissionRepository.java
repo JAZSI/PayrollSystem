@@ -138,12 +138,28 @@ public class SubmissionRepository {
      */   
     public void updateStatus(int submissionId, Submission.Status status) throws SQLException {
         String sql = "UPDATE submissions SET status = ? WHERE id = ?";
-        
+
         try (Connection connection = Database.getConnection();
             PreparedStatement stmt = connection.prepareStatement(sql)) {
-            
+
             stmt.setString(1, status.name());
             stmt.setInt(2, submissionId);
+            stmt.executeUpdate();
+        }
+    }
+
+    /**
+     * Deletes any submission for the given employee.
+     *
+     * @param employeeId employee identifier
+     */
+    public void deleteByEmployeeId(String employeeId) throws SQLException {
+        String sql = "DELETE FROM submissions WHERE employee_id = ?";
+
+        try (Connection connection = Database.getConnection();
+            PreparedStatement stmt = connection.prepareStatement(sql)) {
+
+            stmt.setString(1, employeeId);
             stmt.executeUpdate();
         }
     }
