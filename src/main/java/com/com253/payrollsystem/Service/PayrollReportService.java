@@ -1,8 +1,7 @@
 package com.com253.payrollsystem.Service;
 
-import com.com253.payrollsystem.Model.Employee;
 import com.com253.payrollsystem.Model.PayrollReportEntry;
-import com.com253.payrollsystem.Repository.PayrollRepository;
+import com.com253.payrollsystem.Repository.SubmissionRepository;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -15,7 +14,7 @@ import java.util.List;
  */
 public class PayrollReportService {
 
-    private final PayrollRepository payrollRepository = new PayrollRepository();
+    private final SubmissionRepository submissionRepository = new SubmissionRepository();
 
     /**
      * Retrieves all payroll entries for a specific cutoff period.
@@ -24,7 +23,7 @@ public class PayrollReportService {
      * @return list of report entries sorted by employee name
      */
     public List<PayrollReportEntry> getReportByPeriod(String cutOffPeriod) throws SQLException {
-        return payrollRepository.findByPeriod(cutOffPeriod);
+        return submissionRepository.findByPeriod(cutOffPeriod);
     }
 
     /**
@@ -33,7 +32,7 @@ public class PayrollReportService {
      * @return list of all report entries sorted by period then name
      */
     public List<PayrollReportEntry> getAllReports() throws SQLException {
-        return payrollRepository.findAll();
+        return submissionRepository.findAllReports();
     }
 
     /**

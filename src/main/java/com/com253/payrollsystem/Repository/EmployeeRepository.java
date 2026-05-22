@@ -3,7 +3,10 @@ package com.com253.payrollsystem.Repository;
 import com.com253.payrollsystem.Model.Employee;
 import com.com253.payrollsystem.Model.Employee.EmployeeType;
 import com.com253.payrollsystem.Model.LeaveBalance;
+import com.com253.payrollsystem.Model.LeaveTransaction;
+import com.com253.payrollsystem.Model.LeaveTransaction.LeaveType;
 import com.com253.payrollsystem.Model.LoanBalance;
+import com.com253.payrollsystem.Model.LoanTransaction;
 import com.com253.payrollsystem.Util.Database;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -132,10 +135,77 @@ public class EmployeeRepository {
 
         try (Connection connection = Database.getConnection();
             PreparedStatement stmt = connection.prepareStatement(sql)) {
-            
+
             stmt.setDouble(1, loanBalance.getBalance());
             stmt.setString(2, employeeId);
             stmt.executeUpdate();
         }
+    }
+
+    public void saveLeaveTransaction(String employeeId, LeaveType leaveType, int days, String cutOffPeriod)
+            throws SQLException {
+        String sql = "INSERT INTO leave_transactions (employee_id, leave_type, days, cutoff_period) VALUES (?, ?, ?, ?)";
+        try (Connection connection = Database.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, employeeId);
+            stmt.setString(2, leaveType.name());
+            stmt.setInt(3, days);
+            stmt.setString(4, cutOffPeriod);
+            stmt.executeUpdate();
+        }
+    }
+
+    public List<LeaveTransaction> findLeaveHistory(String employeeId) throws SQLException {
+        String sql = "SELECT id, employee_id, leave_type, days, cutoff_period, created_at "
+                   + "FROM leave_transactions WHERE employee_id = ? ORDER BY created_at DESC";
+        List<LeaveTransaction> list = new ArrayList<>();
+        try (Connection connection = Database.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, employeeId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    list.add(new LeaveTransaction(
+                        rs.getInt("id"),
+                        rs.getString("employee_id"),
+                        LeaveType.valueOf(rs.getString("leave_type")),
+                        rs.getInt("days"),
+                        rs.getString("cutoff_period"),
+                        rs.getString("created_at")));
+                }
+            }
+        }
+        return list;
+    }
+
+    public void saveLoanTransaction(String employeeId, double amount, String cutOffPeriod) throws SQLException {
+        String sql = "INSERT INTO loan_transactions (employee_id, amount, cutoff_period) VALUES (?, ?, ?)";
+        try (Connection connection = Database.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, employeeId);
+            stmt.setDouble(2, amount);
+            stmt.setString(3, cutOffPeriod);
+            stmt.executeUpdate();
+        }
+    }
+
+    public List<LoanTransaction> findLoanHistory(String employeeId) throws SQLException {
+        String sql = "SELECT id, employee_id, amount, cutoff_period, created_at "
+                   + "FROM loan_transactions WHERE employee_id = ? ORDER BY created_at DESC";
+        List<LoanTransaction> list = new ArrayList<>();
+        try (Connection connection = Database.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, employeeId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    list.add(new LoanTransaction(
+                        rs.getInt("id"),
+                        rs.getString("employee_id"),
+                        rs.getDouble("amount"),
+                        rs.getString("cutoff_period"),
+                        rs.getString("created_at")));
+                }
+            }
+        }
+        return list;
     }
 }

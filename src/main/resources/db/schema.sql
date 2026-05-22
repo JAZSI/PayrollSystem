@@ -17,8 +17,6 @@ CREATE TABLE IF NOT EXISTS accounts (
     FOREIGN KEY (linked_employee_id) REFERENCES employees(id)
 );
 
-INSERT OR IGNORE INTO accounts (username, password_hash, role, linked_employee_id)
-VALUES ('admin', 'admin123', 'ADMIN', NULL);
 
 CREATE TABLE IF NOT EXISTS attendance (
     id                  INTEGER     PRIMARY KEY AUTOINCREMENT,
