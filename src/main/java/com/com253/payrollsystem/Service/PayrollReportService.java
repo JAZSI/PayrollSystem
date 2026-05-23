@@ -45,8 +45,8 @@ public class PayrollReportService {
         double totalGross = 0.0;
         double totalNet   = 0.0;
         for (PayrollReportEntry e : entries) {
-            totalGross += e.getGrossPay();
-            totalNet   += e.getNetPay();
+            totalGross += e.grossPay();
+            totalNet   += e.netPay();
         }
         double totalDeductions = totalGross - totalNet;
         return new double[] { totalGross, totalDeductions, totalNet };
@@ -71,26 +71,26 @@ public class PayrollReportService {
             for (PayrollReportEntry e : entries) {
                 writer.printf("%s,%s,%s,%.2f,%.2f,%.2f,%d,%.2f,%.2f,%.2f,%.2f,%.2f,"
                             + "%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f%n",
-                    csvEscape(e.getEmployeeId()),
-                    csvEscape(e.getEmployeeName()),
-                    csvEscape(e.getCutOffPeriod()),
-                    e.getTotalHours(),
-                    e.getOvertimeHours(),
-                    e.getUndertimeHours(),
-                    e.getAbsentDays(),
-                    e.getBasicPay(),
-                    e.getOvertimePay(),
-                    e.getHolidayPay(),
-                    e.getNightShiftDifferential(),
-                    e.getGrossPay(),
-                    e.getSssDeduction(),
-                    e.getPhilhealthDeduction(),
-                    e.getPagibigDeduction(),
-                    e.getTaxDeduction(),
-                    e.getLoanDeduction(),
-                    e.getUndertimePenalty(),
-                    e.getAbsencePenalty(),
-                    e.getNetPay()
+                    csvEscape(e.employeeId()),
+                    csvEscape(e.employeeName()),
+                    csvEscape(e.cutOffPeriod()),
+                    e.totalHours(),
+                    e.overtimeHours(),
+                    e.undertimeHours(),
+                    e.absentDays(),
+                    e.basicPay(),
+                    e.overtimePay(),
+                    e.holidayPay(),
+                    e.nightShiftDifferential(),
+                    e.grossPay(),
+                    e.sssDeduction(),
+                    e.philhealthDeduction(),
+                    e.pagibigDeduction(),
+                    e.taxDeduction(),
+                    e.loanDeduction(),
+                    e.undertimePenalty(),
+                    e.absencePenalty(),
+                    e.netPay()
                 );
             }
         }

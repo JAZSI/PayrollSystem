@@ -15,12 +15,15 @@ import com.com253.payrollsystem.Model.TimeRecord;
 import com.com253.payrollsystem.Repository.AccountRepository;
 import com.com253.payrollsystem.Repository.AttendanceRepository;
 import com.com253.payrollsystem.Repository.EmployeeRepository;
+import com.com253.payrollsystem.Repository.LeaveTransactionRepository;
+import com.com253.payrollsystem.Repository.LoanTransactionRepository;
 import com.com253.payrollsystem.Repository.SubmissionRepository;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import org.mindrot.jbcrypt.BCrypt;
 
 /**
@@ -32,6 +35,8 @@ public class PayrollService {
     private final AccountRepository accountRepository = new AccountRepository();
     private final AttendanceRepository attendanceRepository = new AttendanceRepository();
     private final EmployeeRepository employeeRepository = new EmployeeRepository();
+    private final LeaveTransactionRepository leaveTransactionRepository = new LeaveTransactionRepository();
+    private final LoanTransactionRepository loanTransactionRepository = new LoanTransactionRepository();
     private final SubmissionRepository submissionRepository = new SubmissionRepository();
     
     /**
@@ -43,10 +48,11 @@ public class PayrollService {
      * @return authenticated EndUser, or null if login fails
      */
     public EndUser authenticate(String username, String password) throws SQLException {
-        EndUser user = accountRepository.findByUsername(username);
-        if (user == null) {
+        Optional<EndUser> userOpt = accountRepository.findByUsername(username);
+        if (userOpt.isEmpty()) {
             return null;
         }
+        EndUser user = userOpt.get();
         if (!BCrypt.checkpw(password, user.getPasswordHash())) {
             return null;
         }
@@ -72,7 +78,7 @@ public class PayrollService {
     }
     
     public Employee findEmployee(String id) throws SQLException {
-        return employeeRepository.findById(id);
+        return employeeRepository.findById(id).orElse(null);
     }
     
     public List<Employee> getAllEmployees() throws SQLException {
@@ -141,15 +147,15 @@ public class PayrollService {
             employeeRepository.updateLeaveBalance(employee.getEmployeeId(), updatedLeave);
 
             if (result.getSick() > 0) {
-                employeeRepository.saveLeaveTransaction(employee.getEmployeeId(),
+                leaveTransactionRepository.save(employee.getEmployeeId(),
                         LeaveType.SICK, result.getSick(), cutOffPeriod);
             }
             if (result.getVacation() > 0) {
-                employeeRepository.saveLeaveTransaction(employee.getEmployeeId(),
+                leaveTransactionRepository.save(employee.getEmployeeId(),
                         LeaveType.VACATION, result.getVacation(), cutOffPeriod);
             }
             if (result.getEmergency() > 0) {
-                employeeRepository.saveLeaveTransaction(employee.getEmployeeId(),
+                leaveTransactionRepository.save(employee.getEmployeeId(),
                         LeaveType.EMERGENCY, result.getEmergency(), cutOffPeriod);
             }
         }
@@ -160,7 +166,7 @@ public class PayrollService {
                 LoanBalance updatedLoan = employee.getLoanBalance().apply(actualDeducted);
                 employee.setLoanBalance(updatedLoan);
                 employeeRepository.updateLoanBalance(employee.getEmployeeId(), updatedLoan);
-                employeeRepository.saveLoanTransaction(employee.getEmployeeId(), actualDeducted, cutOffPeriod);
+                loanTransactionRepository.save(employee.getEmployeeId(), actualDeducted, cutOffPeriod);
             }
         }
     }
@@ -172,7 +178,7 @@ public class PayrollService {
      * @return list of leave transactions ordered by date descending
      */
     public List<LeaveTransaction> getLeaveHistory(String employeeId) throws SQLException {
-        return employeeRepository.findLeaveHistory(employeeId);
+        return leaveTransactionRepository.findByEmployeeId(employeeId);
     }
 
     /**
@@ -182,7 +188,7 @@ public class PayrollService {
      * @return list of loan transactions ordered by date descending
      */
     public List<LoanTransaction> getLoanHistory(String employeeId) throws SQLException {
-        return employeeRepository.findLoanHistory(employeeId);
+        return loanTransactionRepository.findByEmployeeId(employeeId);
     }
 
     /**
@@ -214,7 +220,7 @@ public class PayrollService {
      * @return submission, or null
      */    
     public Submission getSubmission(String employeeId) throws SQLException {
-        return submissionRepository.findByEmployeeId(employeeId);
+        return submissionRepository.findByEmployeeId(employeeId).orElse(null);
     }
     
     /**
@@ -236,13 +242,15 @@ public class PayrollService {
      */    
     public PayrollEntry buildPayrollEntry(String employeeId, String cutOffPeriod) throws SQLException {
 
-        Submission sub = submissionRepository.findByEmployeeId(employeeId);
-        if (sub == null || sub.getStatus() != Submission.Status.APPROVED) {
+        Optional<Submission> subOpt = submissionRepository.findByEmployeeId(employeeId);
+        if (subOpt.isEmpty() || subOpt.get().status() != Submission.Status.APPROVED) {
             return null;
         }
+        Submission sub = subOpt.get();
 
-        Employee emp = employeeRepository.findById(employeeId);
-        if (emp == null) return null;
+        Optional<Employee> empOpt = employeeRepository.findById(employeeId);
+        if (empOpt.isEmpty()) return null;
+        Employee emp = empOpt.get();
 
         PayrollSettings settings = new PayrollSettings(26, 8.0, 17.0, 11.0);
 
@@ -256,7 +264,7 @@ public class PayrollService {
         TimeRecord[] recordArray = records.toArray(new TimeRecord[0]);
 
         PayrollEntry entry = com.com253.payrollsystem.Service.PayrollCalculator.buildPayrollEntry(
-                                                      emp, recordArray, cutOffPeriod, sub.getLoanDeduction(), settings);
+                                                      emp, recordArray, cutOffPeriod, sub.loanDeduction(), settings);
         submissionRepository.savePayrollEntry(entry);
         
         return entry;
@@ -338,18 +346,19 @@ public class PayrollService {
      */
     public void updateSubmissionStatus(int submissionId, Submission.Status status,
                                        String cutOffPeriod) throws SQLException {
-        Submission sub = submissionRepository.findById(submissionId);
-        if (sub == null) {
+        Optional<Submission> subOpt = submissionRepository.findById(submissionId);
+        if (subOpt.isEmpty()) {
             throw new IllegalArgumentException("Submission not found: " + submissionId);
         }
-        
+        Submission sub = subOpt.get();
+
         submissionRepository.updateStatus(submissionId, status);
-        
+
         if (status == Submission.Status.APPROVED) {
-            Employee emp = employeeRepository.findById(sub.getEmployeeId());
-            if (emp != null) {
-                applyDeductions(emp, (int) Math.round(sub.getLeaveDays()),
-                        sub.getLoanDeduction(), cutOffPeriod);
+            Optional<Employee> empOpt = employeeRepository.findById(sub.employeeId());
+            if (empOpt.isPresent()) {
+                applyDeductions(empOpt.get(), (int) Math.round(sub.leaveDays()),
+                        sub.loanDeduction(), cutOffPeriod);
             }
         }
     }

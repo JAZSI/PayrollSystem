@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS accounts (
     password_hash       TEXT        NOT NULL,
     role                TEXT        NOT NULL,
     linked_employee_id  TEXT,
-    FOREIGN KEY (linked_employee_id) REFERENCES employees(id)
+    FOREIGN KEY (linked_employee_id) REFERENCES employees(id) ON DELETE SET NULL
 );
 
 
@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS attendance (
     time_in             REAL,
     time_out            REAL,
     UNIQUE (employee_id, record_date),
-    FOREIGN KEY (employee_id) REFERENCES employees(id)
+    FOREIGN KEY (employee_id) REFERENCES employees(id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS submissions (
@@ -36,7 +36,7 @@ CREATE TABLE IF NOT EXISTS submissions (
     loan_deduction      REAL        NOT NULL DEFAULT 0,
     status              TEXT        NOT NULL DEFAULT 'PENDING',
     submitted_at        TEXT        NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (employee_id) REFERENCES employees(id)
+    FOREIGN KEY (employee_id) REFERENCES employees(id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS leave_transactions (
@@ -46,7 +46,7 @@ CREATE TABLE IF NOT EXISTS leave_transactions (
     days                INTEGER     NOT NULL,
     cutoff_period       TEXT        NOT NULL,
     created_at          TEXT        DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (employee_id) REFERENCES employees(id)
+    FOREIGN KEY (employee_id) REFERENCES employees(id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS loan_transactions (
@@ -55,7 +55,7 @@ CREATE TABLE IF NOT EXISTS loan_transactions (
     amount              REAL        NOT NULL,
     cutoff_period       TEXT        NOT NULL,
     created_at          TEXT        DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (employee_id) REFERENCES employees(id)
+    FOREIGN KEY (employee_id) REFERENCES employees(id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS payroll_entries (
@@ -81,5 +81,5 @@ CREATE TABLE IF NOT EXISTS payroll_entries (
     net_pay                 REAL        NOT NULL DEFAULT 0,
     created_at              TEXT        DEFAULT CURRENT_TIMESTAMP,
     UNIQUE (employee_id, cutoff_period),
-    FOREIGN KEY (employee_id) REFERENCES employees(id)
+    FOREIGN KEY (employee_id) REFERENCES employees(id) ON DELETE CASCADE
 );

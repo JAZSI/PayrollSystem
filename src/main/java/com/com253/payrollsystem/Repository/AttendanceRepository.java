@@ -1,7 +1,6 @@
 package com.com253.payrollsystem.Repository;
 
 import com.com253.payrollsystem.Model.AttendanceRecord;
-import com.com253.payrollsystem.Util.Database;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -14,207 +13,191 @@ import java.util.List;
 /**
  * Handles all database operations for employee attendance records.
  */
-public class AttendanceRepository {
+public class AttendanceRepository extends BaseRepository {
 
-    /**
-     * Records a clock-in for the given employee on the given date.
-     * Ignored if the employee has already clocked in that day.
-     *
-     * @param employeeId employee identifier
-     * @param date       date of clock-in
-     * @param timeIn     clock-in time in decimal hours
-     */
     public void clockIn(String employeeId, LocalDate date, double timeIn) throws SQLException {
         String checkSql = "SELECT 1 FROM attendance WHERE employee_id = ? AND record_date = ?";
-        String insertSql = "INSERT INTO attendance (employee_id, record_date, time_in) "
-                + "VALUES (?, ?, ?)";
-        
-        try (Connection connection = Database.getConnection()) {
-            
-            try (PreparedStatement check = connection.prepareStatement(checkSql)) {
+        String insertSql = "INSERT INTO attendance (employee_id, record_date, time_in) VALUES (?, ?, ?)";
+
+        Connection connection = getConnection();
+        try {
+            PreparedStatement check = connection.prepareStatement(checkSql);
+            try {
                 check.setString(1, employeeId);
                 check.setDate(2, Date.valueOf(date));
-                
-                try (ResultSet rs = check.executeQuery()) {
-                    if (rs.next()) {
-                        return; // already clocked in
-                    }
+                ResultSet rs = check.executeQuery();
+                try {
+                    if (rs.next()) return;
+                } finally {
+                    rs.close();
                 }
+            } finally {
+                check.close();
             }
-            
-            try (PreparedStatement insert = connection.prepareStatement(insertSql)) {
+
+            PreparedStatement insert = connection.prepareStatement(insertSql);
+            try {
                 insert.setString(1, employeeId);
                 insert.setDate(2, Date.valueOf(date));
                 insert.setDouble(3, timeIn);
                 insert.executeUpdate();
+            } finally {
+                insert.close();
             }
+        } finally {
+            close(connection);
         }
     }
-    /**
-     * Records a clock-out for the given employee on the given date.
-     * If no clock-in exists for that day, inserts a new row with only time-out.
-     *
-     * @param employeeId employee identifier
-     * @param date       date of clock-out
-     * @param timeOut    clock-out time in decimal hours
-     */
+
     public void clockOut(String employeeId, LocalDate date, double timeOut) throws SQLException {
-        String updateSql = "UPDATE attendance SET time_out = ? "
-                + "WHERE employee_id = ? AND record_date = ?";
-        String insertSql = "INSERT INTO attendance (employee_id, record_date, time_out) "
-                + "VALUES (?, ?, ?)";
-        
-        try (Connection connection = Database.getConnection()) {
-            
-            try (PreparedStatement update = connection.prepareStatement(updateSql)) {
+        String updateSql = "UPDATE attendance SET time_out = ? WHERE employee_id = ? AND record_date = ?";
+        String insertSql = "INSERT INTO attendance (employee_id, record_date, time_out) VALUES (?, ?, ?)";
+
+        Connection connection = getConnection();
+        try {
+            PreparedStatement update = connection.prepareStatement(updateSql);
+            try {
                 update.setDouble(1, timeOut);
                 update.setString(2, employeeId);
                 update.setDate(3, Date.valueOf(date));
                 int rows = update.executeUpdate();
-                
                 if (rows == 0) {
-                    
-                    try (PreparedStatement insert = connection.prepareStatement(insertSql)) {
+                    PreparedStatement insert = connection.prepareStatement(insertSql);
+                    try {
                         insert.setString(1, employeeId);
                         insert.setDate(2, Date.valueOf(date));
                         insert.setDouble(3, timeOut);
                         insert.executeUpdate();
+                    } finally {
+                        insert.close();
                     }
                 }
+            } finally {
+                update.close();
             }
+        } finally {
+            close(connection);
         }
     }
-    
-    /**
-     * Fetches attendance records for an employee within a date range.
-     *
-     * @param employeeId employee identifier
-     * @param from       start date inclusive
-     * @param to         end date inclusive
-     * @return list of attendance records ordered by date
-     */
+
     public List<AttendanceRecord> getAttendance(String employeeId, LocalDate from, LocalDate to) throws SQLException {
         String sql = "SELECT employee_id, record_date, time_in, time_out "
                    + "FROM attendance WHERE employee_id = ? "
                    + "AND record_date >= ? AND record_date <= ? "
                    + "ORDER BY record_date ASC";
-        
+
         List<AttendanceRecord> records = new ArrayList<>();
-        
-        try (Connection connection = Database.getConnection();
-            PreparedStatement stmt = connection.prepareStatement(sql)) {
-            
-            stmt.setString(1, employeeId);
-            stmt.setDate(2, Date.valueOf(from));
-            stmt.setDate(3, Date.valueOf(to));
-            
-            try (ResultSet rs = stmt.executeQuery()) {
-                while (rs.next()) {
-                    Double timeIn = rs.getObject("time_in") != null ? rs.getDouble("time_in") : null;
-                    Double timeOut = rs.getObject("time_out") != null ? rs.getDouble("time_out") : null;
-                
-                    records.add(new AttendanceRecord(
-                            rs.getString("employee_id"),
-                            rs.getDate("record_date").toLocalDate(),
-                            timeIn,
-                            timeOut));
+        Connection connection = getConnection();
+        try {
+            PreparedStatement stmt = connection.prepareStatement(sql);
+            try {
+                stmt.setString(1, employeeId);
+                stmt.setDate(2, Date.valueOf(from));
+                stmt.setDate(3, Date.valueOf(to));
+                ResultSet rs = stmt.executeQuery();
+                try {
+                    while (rs.next()) {
+                        Double timeIn = rs.getObject("time_in") != null ? rs.getDouble("time_in") : null;
+                        Double timeOut = rs.getObject("time_out") != null ? rs.getDouble("time_out") : null;
+                        records.add(new AttendanceRecord(
+                                rs.getString("employee_id"),
+                                rs.getDate("record_date").toLocalDate(),
+                                timeIn,
+                                timeOut));
+                    }
+                } finally {
+                    rs.close();
                 }
+            } finally {
+                stmt.close();
             }
+        } finally {
+            close(connection);
         }
         return records;
     }
 
-    /**
-     * Updates the time_in for an existing attendance record.
-     *
-     * @param employeeId employee identifier
-     * @param date       record date
-     * @param timeIn     new clock-in time (decimal hours)
-     */
     public void updateTimeIn(String employeeId, LocalDate date, double timeIn) throws SQLException {
-        String sql = "UPDATE attendance SET time_in = ? "
-                   + "WHERE employee_id = ? AND record_date = ?";
-
-        try (Connection connection = Database.getConnection();
-            PreparedStatement stmt = connection.prepareStatement(sql)) {
-
-            stmt.setDouble(1, timeIn);
-            stmt.setString(2, employeeId);
-            stmt.setDate(3, Date.valueOf(date));
-            stmt.executeUpdate();
+        String sql = "UPDATE attendance SET time_in = ? WHERE employee_id = ? AND record_date = ?";
+        Connection connection = getConnection();
+        try {
+            PreparedStatement stmt = connection.prepareStatement(sql);
+            try {
+                stmt.setDouble(1, timeIn);
+                stmt.setString(2, employeeId);
+                stmt.setDate(3, Date.valueOf(date));
+                stmt.executeUpdate();
+            } finally {
+                stmt.close();
+            }
+        } finally {
+            close(connection);
         }
     }
 
-    /**
-     * Updates the time_out for an existing attendance record.
-     *
-     * @param employeeId employee identifier
-     * @param date       record date
-     * @param timeOut    new clock-out time (decimal hours)
-     */
     public void updateTimeOut(String employeeId, LocalDate date, double timeOut) throws SQLException {
-        String sql = "UPDATE attendance SET time_out = ? "
-                   + "WHERE employee_id = ? AND record_date = ?";
-
-        try (Connection connection = Database.getConnection();
-            PreparedStatement stmt = connection.prepareStatement(sql)) {
-
-            stmt.setDouble(1, timeOut);
-            stmt.setString(2, employeeId);
-            stmt.setDate(3, Date.valueOf(date));
-            stmt.executeUpdate();
+        String sql = "UPDATE attendance SET time_out = ? WHERE employee_id = ? AND record_date = ?";
+        Connection connection = getConnection();
+        try {
+            PreparedStatement stmt = connection.prepareStatement(sql);
+            try {
+                stmt.setDouble(1, timeOut);
+                stmt.setString(2, employeeId);
+                stmt.setDate(3, Date.valueOf(date));
+                stmt.executeUpdate();
+            } finally {
+                stmt.close();
+            }
+        } finally {
+            close(connection);
         }
     }
 
-    /**
-     * Deletes a specific attendance record.
-     *
-     * @param employeeId employee identifier
-     * @param date       record date
-     */
     public void deleteByEmployeeAndDate(String employeeId, LocalDate date) throws SQLException {
         String sql = "DELETE FROM attendance WHERE employee_id = ? AND record_date = ?";
-
-        try (Connection connection = Database.getConnection();
-            PreparedStatement stmt = connection.prepareStatement(sql)) {
-
-            stmt.setString(1, employeeId);
-            stmt.setDate(2, Date.valueOf(date));
-            stmt.executeUpdate();
+        Connection connection = getConnection();
+        try {
+            PreparedStatement stmt = connection.prepareStatement(sql);
+            try {
+                stmt.setString(1, employeeId);
+                stmt.setDate(2, Date.valueOf(date));
+                stmt.executeUpdate();
+            } finally {
+                stmt.close();
+            }
+        } finally {
+            close(connection);
         }
     }
 
-    /**
-     * Inserts or updates (upsert) an attendance record.
-     *
-     * @param employeeId employee identifier
-     * @param date       record date
-     * @param timeIn     clock-in time (decimal hours), or null to leave unchanged
-     * @param timeOut    clock-out time (decimal hours), or null to leave unchanged
-     */
     public void upsert(String employeeId, LocalDate date, Double timeIn, Double timeOut) throws SQLException {
         String sql = "INSERT INTO attendance (employee_id, record_date, time_in, time_out) "
                    + "VALUES (?, ?, ?, ?) "
                    + "ON CONFLICT(employee_id, record_date) DO UPDATE SET "
                    + "time_in = COALESCE(excluded.time_in, attendance.time_in), "
                    + "time_out = COALESCE(excluded.time_out, attendance.time_out)";
-
-        try (Connection connection = Database.getConnection();
-            PreparedStatement stmt = connection.prepareStatement(sql)) {
-
-            stmt.setString(1, employeeId);
-            stmt.setDate(2, Date.valueOf(date));
-            if (timeIn != null) {
-                stmt.setDouble(3, timeIn);
-            } else {
-                stmt.setNull(3, java.sql.Types.DOUBLE);
+        Connection connection = getConnection();
+        try {
+            PreparedStatement stmt = connection.prepareStatement(sql);
+            try {
+                stmt.setString(1, employeeId);
+                stmt.setDate(2, Date.valueOf(date));
+                if (timeIn != null) {
+                    stmt.setDouble(3, timeIn);
+                } else {
+                    stmt.setNull(3, java.sql.Types.DOUBLE);
+                }
+                if (timeOut != null) {
+                    stmt.setDouble(4, timeOut);
+                } else {
+                    stmt.setNull(4, java.sql.Types.DOUBLE);
+                }
+                stmt.executeUpdate();
+            } finally {
+                stmt.close();
             }
-            if (timeOut != null) {
-                stmt.setDouble(4, timeOut);
-            } else {
-                stmt.setNull(4, java.sql.Types.DOUBLE);
-            }
-            stmt.executeUpdate();
+        } finally {
+            close(connection);
         }
     }
 }

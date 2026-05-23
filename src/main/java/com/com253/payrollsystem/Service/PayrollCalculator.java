@@ -442,14 +442,14 @@ public class PayrollCalculator {
      * @return final net pay
      */
     public static double computeNetPay(PayrollEntry entry) {
-        return entry.getGrossPay()
-             - entry.getUndertimePenalty()
-             - entry.getAbsencePenalty()
-             - entry.getSssDeduction()
-             - entry.getPhilhealthDeduction()
-             - entry.getPagibigDeduction()
-             - entry.getTaxDeduction()
-             - entry.getLoanDeduction();
+        return entry.grossPay()
+             - entry.undertimePenalty()
+             - entry.absencePenalty()
+             - entry.sssDeduction()
+             - entry.philhealthDeduction()
+             - entry.pagibigDeduction()
+             - entry.taxDeduction()
+             - entry.loanDeduction();
     }
 
       /**
