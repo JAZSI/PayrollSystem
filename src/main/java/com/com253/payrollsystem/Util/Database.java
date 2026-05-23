@@ -40,13 +40,12 @@ public final class Database {
     }
 
     /**
-     * Initializes the schema and seeds the admin account.
-     * Drops all tables first to ensure a clean schema with current FK CASCADE rules.
+     * Ensures all schema tables exist (CREATE TABLE IF NOT EXISTS is idempotent).
+     * Seeds the admin account if no accounts exist.
      */
     public static void initialize() throws SQLException, IOException {
         try (Connection conn = getConnection();
              Statement stmt = conn.createStatement()) {
-            stmt.execute("DROP TABLE IF EXISTS employees");
             stmt.executeUpdate(loadSchema());
         }
         seedAdminIfEmpty();
