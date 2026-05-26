@@ -6,100 +6,55 @@
 
 ```mermaid
 classDiagram
-    %% --- CONTROLLERS (Presentation / Controller in MVC) ---
-    class AdminDashboardController <<Controller>> {
-        +initialize()
-        +showEmployees()
-        +saveEmployee()
-        +loadAttendance()
-        +computePayroll()
-        +handleLogout()
-    }
+    class AdminDashboardController
+    class KioskTerminalController
 
-    class KioskTerminalController <<Controller>> {
-        +initialize()
-        +handleSubmit()
-        +handleTimeIn()
-        +handleTimeOut()
-    }
+    class EmployeeService
+    class AttendanceService
+    class SimplePayrollService
 
-    class EmployeePortalController <<Controller>> {
-        +initialize()
-        +handleLogin()
-        +handleDownloadPdf()
-    }
+    class AccountRepositoryPort
+    class EmployeeRepositoryPort
+    class AttendanceRepositoryPort
 
-    class SceneManager <<ViewHelper>>
-    class Routes <<enumeration>>
+    class AccountRepository
+    class EmployeeRepository
+    class EmployeeDao
+    class AttendanceRepository
+    class AttendanceDao
 
-    %% --- SERVICES (Application Layer) ---
-    class AuthService <<Service>>
-    class EmployeeService <<Service>>
-    class AttendanceService <<Service>>
-    class PayrollGenerationService <<Service>>
-    class SubmissionService <<Service>>
-    class DeductionService <<Service>>
-    class HolidayService <<Service>>
+    class Employee
+    class EndUser
+    class AttendanceRecord
+    class LeaveBalance
+    class LoanBalance
 
-    %% --- PORTS / INTERFACES ---
-    class AccountRepositoryPort <<Port>>
-    class EmployeeRepositoryPort <<Port>>
-    class AttendanceRepositoryPort <<Port>>
-    class SubmissionRepositoryPort <<Port>>
-
-    %% --- INFRASTRUCTURE (Repository implementations) ---
-    class EmployeeRepository <<Repository>>
-    class EmployeeDao <<Repository>>
-    class AttendanceRepository <<Repository>>
-    class AttendanceDao <<Repository>>
-    class SubmissionRepository <<Repository>>
-    class Database <<Infrastructure>>
-    class TransactionManager <<Infrastructure>>
-
-    %% --- DOMAIN (Model in MVC) ---
-    class Employee <<Entity>> {
-        -employeeId
-        -name
-        -monthlyRate
-        -hourlyRate
-    }
-
-    class PayrollEntry <<Entity>>
-    class AttendanceRecord <<Entity>>
-    class LeaveBalance <<ValueObject>>
-    class LoanBalance <<ValueObject>>
-    class EndUser <<Entity>>
-
-    %% --- RELATIONSHIPS (clear MVC mapping) ---
-    %% Controllers -> Services
     AdminDashboardController --> EmployeeService
     AdminDashboardController --> AttendanceService
-    AdminDashboardController --> PayrollGenerationService
+    AdminDashboardController --> SimplePayrollService
+    KioskTerminalController --> EmployeeService
     KioskTerminalController --> AttendanceService
-    EmployeePortalController --> AuthService
 
-    %% Services -> Ports (use interfaces)
+    EmployeeService --> AccountRepositoryPort
     EmployeeService --> EmployeeRepositoryPort
-    AttendanceService --> AttendanceRepositoryPort
-    SubmissionService --> SubmissionRepositoryPort
-    PayrollGenerationService --> AttendanceRepositoryPort
+    EmployeeService ..> Employee
+    EmployeeService ..> EndUser : creates
 
-    %% Ports implemented by repositories
+    AttendanceService --> AttendanceRepositoryPort
+    AttendanceService ..> AttendanceRecord
+
+    SimplePayrollService ..> Employee
+    SimplePayrollService ..> AttendanceRecord
+
+    AccountRepositoryPort <|.. AccountRepository
     EmployeeRepositoryPort <|.. EmployeeRepository
     EmployeeRepositoryPort <|.. EmployeeDao
     AttendanceRepositoryPort <|.. AttendanceRepository
     AttendanceRepositoryPort <|.. AttendanceDao
-    SubmissionRepositoryPort <|.. SubmissionRepository
 
-    %% Domain ownership
+    AccountRepository ..> EndUser
     Employee *-- LeaveBalance
     Employee *-- LoanBalance
-    PayrollEntry o-- Employee
-    SubmissionRepository ..> Database : uses
-    Database --> TransactionManager
-
-    %% View helpers
-    SceneManager o-- Routes
 ```
 
 ---
