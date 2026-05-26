@@ -235,7 +235,6 @@ flowchart LR
     %% Notes for clarity
     %% Note: click links removed to avoid empty href parse issues
 ```
-```
 
 ---
 
