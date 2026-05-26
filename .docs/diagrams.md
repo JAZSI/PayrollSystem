@@ -6,29 +6,187 @@
 
 ```mermaid
 classDiagram
-    class AdminDashboardController
-    class KioskTerminalController
 
-    class EmployeeService
-    class AttendanceService
-    class SimplePayrollService
+    %% Controllers
+    class AdminDashboardController {
+        - employeeService: EmployeeService
+        - attendanceService: AttendanceService
+        - payrollService: SimplePayrollService
+        + initialize(): void
+        + saveEmployee(): void
+        + loadAttendance(): void
+        + computePayroll(): void
+    }
 
-    class AccountRepositoryPort
-    class EmployeeRepositoryPort
-    class AttendanceRepositoryPort
+    class KioskTerminalController {
+        - employeeService: EmployeeService
+        - attendanceService: AttendanceService
+        + initialize(): void
+        + handleSubmit(): void
+        + handleTimeIn(): void
+        + handleTimeOut(): void
+    }
 
-    class AccountRepository
-    class EmployeeRepository
-    class EmployeeDao
-    class AttendanceRepository
-    class AttendanceDao
+    %% Services
+    class EmployeeService {
+        - accountRepository: AccountRepositoryPort
+        - employeeRepository: EmployeeRepositoryPort
+        + registerEmployee(emp: Employee, username: String, password: String): void
+        + saveEmployee(emp: Employee): void
+        + updateEmployee(emp: Employee): void
+        + findEmployee(id: String): Employee
+        + getAllEmployees(): List~Employee~
+        + deleteEmployee(id: String): void
+    }
 
-    class Employee
-    class EndUser
-    class AttendanceRecord
-    class LeaveBalance
-    class LoanBalance
+    class AttendanceService {
+        - attendanceRepository: AttendanceRepositoryPort
+        + updateTimeIn(employeeId: String, date: LocalDate, timeIn: double): void
+        + updateTimeOut(employeeId: String, date: LocalDate, timeOut: double): void
+        + upsertAttendance(employeeId: String, date: LocalDate, timeIn: Double, timeOut: Double): void
+        + clockIn(employeeId: String, date: LocalDate, timeIn: double): void
+        + clockOut(employeeId: String, date: LocalDate, timeOut: double): void
+        + getAttendanceHistory(employeeId: String, from: LocalDate, to: LocalDate): List~AttendanceRecord~
+    }
 
+    class SimplePayrollService {
+        + calculate(employee: Employee, attendance: List~AttendanceRecord~, from: LocalDate, to: LocalDate): SimplePayrollResult
+    }
+
+    %% Ports (interfaces)
+    class AccountRepositoryPort {
+        + save(user: EndUser): void
+        + findByUsername(username: String): Optional~EndUser~
+        + deleteByEmployeeId(employeeId: String): void
+    }
+
+    class EmployeeRepositoryPort {
+        + save(emp: Employee): void
+        + findById(id: String): Optional~Employee~
+        + findAll(): List~Employee~
+        + delete(id: String): void
+        + updateLeaveBalance(employeeId: String, leaveBalance: LeaveBalance): void
+        + updateLoanBalance(employeeId: String, loanBalance: LoanBalance): void
+    }
+
+    class AttendanceRepositoryPort {
+        + clockIn(employeeId: String, date: LocalDate, timeIn: double): void
+        + clockOut(employeeId: String, date: LocalDate, timeOut: double): void
+        + getAttendance(employeeId: String, from: LocalDate, to: LocalDate): List~AttendanceRecord~
+        + updateTimeIn(employeeId: String, date: LocalDate, timeIn: double): void
+        + updateTimeOut(employeeId: String, date: LocalDate, timeOut: double): void
+        + deleteByEmployeeAndDate(employeeId: String, date: LocalDate): void
+        + upsert(employeeId: String, date: LocalDate, timeIn: Double, timeOut: Double): void
+    }
+
+    %% Repository implementations (selected)
+    class AccountRepository {
+        + save(user: EndUser): void
+        + findByUsername(username: String): Optional~EndUser~
+        + deleteByEmployeeId(employeeId: String): void
+    }
+
+    class EmployeeRepository {
+        + save(emp: Employee): void
+        + findById(id: String): Optional~Employee~
+        + findAll(): List~Employee~
+        + delete(id: String): void
+        + updateLeaveBalance(employeeId: String, leaveBalance: LeaveBalance): void
+        + updateLoanBalance(employeeId: String, loanBalance: LoanBalance): void
+    }
+
+    class EmployeeDao {
+        + save(emp: Employee): void
+        + findById(id: String): Optional~Employee~
+        + findAll(): List~Employee~
+        + delete(id: String): void
+        + updateLeaveBalance(employeeId: String, leaveBalance: LeaveBalance): void
+        + updateLoanBalance(employeeId: String, loanBalance: LoanBalance): void
+    }
+
+    class AttendanceRepository {
+        + clockIn(employeeId: String, date: LocalDate, timeIn: double): void
+        + clockOut(employeeId: String, date: LocalDate, timeOut: double): void
+        + getAttendance(employeeId: String, from: LocalDate, to: LocalDate): List~AttendanceRecord~
+        + updateTimeIn(employeeId: String, date: LocalDate, timeIn: double): void
+        + updateTimeOut(employeeId: String, date: LocalDate, timeOut: double): void
+        + deleteByEmployeeAndDate(employeeId: String, date: LocalDate): void
+        + upsert(employeeId: String, date: LocalDate, timeIn: Double, timeOut: Double): void
+    }
+
+    class AttendanceDao {
+        + clockIn(employeeId: String, date: LocalDate, timeIn: double): void
+        + clockOut(employeeId: String, date: LocalDate, timeOut: double): void
+        + getAttendance(employeeId: String, from: LocalDate, to: LocalDate): List~AttendanceRecord~
+        + updateTimeIn(employeeId: String, date: LocalDate, timeIn: double): void
+        + updateTimeOut(employeeId: String, date: LocalDate, timeOut: double): void
+        + deleteByEmployeeAndDate(employeeId: String, date: LocalDate): void
+        + upsert(employeeId: String, date: LocalDate, timeIn: Double, timeOut: Double): void
+    }
+
+    %% Domain models (selected)
+    class Employee {
+        - employeeId: String
+        - name: String
+        - type: EmployeeType
+        - monthlyRate: double
+        - hourlyRate: double
+        - hasLeave: boolean
+        - leaveBalance: LeaveBalance
+        - loanBalance: LoanBalance
+        + getEmployeeId(): String
+        + getName(): String
+        + getEmployeeType(): EmployeeType
+        + getMonthlyRate(): double
+        + getHourlyRate(): double
+        + isHasLeave(): boolean
+        + getLeaveBalance(): LeaveBalance
+        + getLoanBalance(): LoanBalance
+    }
+
+    class EndUser {
+        - username: String
+        - passwordHash: String
+        - role: Role
+        - linkedEmployeeId: String
+        + getUsername(): String
+        + getPasswordHash(): String
+        + getRole(): Role
+        + getLinkedEmployeeId(): String
+    }
+
+    class AttendanceRecord {
+        - employeeId: String
+        - recordDate: LocalDate
+        - timeIn: Double
+        - timeOut: Double
+        + getEmployeeId(): String
+        + getRecordDate(): LocalDate
+        + getTimeIn(): Double
+        + getTimeOut(): Double
+        + isAbsent(): boolean
+    }
+
+    class LeaveBalance {
+        - sick: int
+        - vacation: int
+        - emergency: int
+        + getSick(): int
+        + getVacation(): int
+        + getEmergency(): int
+        + getTotal(): int
+        + deduct(days: int): DeductionResult
+        + apply(res: DeductionResult): LeaveBalance
+    }
+
+    class LoanBalance {
+        - balance: double
+        + getBalance(): double
+        + deduct(amount: double): double
+        + apply(amount: double): LoanBalance
+    }
+
+    %% Relationships
     AdminDashboardController --> EmployeeService
     AdminDashboardController --> AttendanceService
     AdminDashboardController --> SimplePayrollService
@@ -38,7 +196,7 @@ classDiagram
     EmployeeService --> AccountRepositoryPort
     EmployeeService --> EmployeeRepositoryPort
     EmployeeService ..> Employee
-    EmployeeService ..> EndUser : creates
+    EmployeeService ..> EndUser
 
     AttendanceService --> AttendanceRepositoryPort
     AttendanceService ..> AttendanceRecord
@@ -56,6 +214,7 @@ classDiagram
     Employee *-- LeaveBalance
     Employee *-- LoanBalance
 ```
+
 
 ---
 
