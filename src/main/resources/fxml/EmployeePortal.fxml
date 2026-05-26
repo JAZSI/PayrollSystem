@@ -104,7 +104,7 @@
                 <ImageView styleClass="header-logo"
                            fitWidth="34" fitHeight="34" preserveRatio="true">
                     <image>
-                        <Image url="https://upload.wikimedia.org/wikipedia/commons/9/90/NU_shield.svg"/>
+                        <Image url="@/image/logo.png"/>
                     </image>
                 </ImageView>
                 <Label text="NU Payroll" styleClass="header-wordmark"/>
@@ -170,11 +170,11 @@
                     
                     <HBox styleClass="tab-bar" spacing="0">
                         <Button fx:id="attTab1"
-                                text="1st Cut-off   Jun 1â€“15"
+                                text="1st Cut-off   Jun 1-15"
                                 styleClass="tab-btn, active"
                                 onAction="#switchToFirstCutoff"/>
                         <Button fx:id="attTab2"
-                                text="2nd Cut-off   Jun 16â€“30"
+                                text="2nd Cut-off   Jun 16-30"
                                 styleClass="tab-btn"
                                 onAction="#switchToSecondCutoff"/>
                     </HBox>
@@ -258,7 +258,7 @@
                                                  </graphic>
                                           </Label>
                         <Label fx:id="payslipPeriodLabel"
-                               text="Jun 1â€“15, 2026"
+                               text="Jun 1-15, 2026"
                                styleClass="period-chip"/>
                     </HBox>
 
@@ -268,10 +268,10 @@
 
                             
                             <VBox styleClass="payslip-header" spacing="4">
-                                <Label text="NATIONAL UNIVERSITY Â· PAYROLL SYSTEM"
+                                <Label text="NATIONAL UNIVERSITY - PAYROLL SYSTEM"
                                        styleClass="payslip-company"/>
                                 <Label fx:id="payslipTitle"
-                                       text="Payslip â€” Jun 1â€“15, 2026"
+                                       text="Payslip - Jun 1-15, 2026"
                                        styleClass="payslip-title"/>
                                 <GridPane hgap="12" vgap="4"
                                           style="-fx-padding: 10 0 0 0;">
@@ -308,15 +308,15 @@
                                            styleClass="payslip-row-label"
                                            HBox.hgrow="ALWAYS"/>
                                     <Label fx:id="slipBasic"
-                                           text="â‚± 15,835.23"
+                                           text="PHP 15,835.23"
                                            styleClass="payslip-row-amount"/>
                                 </HBox>
                                 <HBox>
-                                    <Label text="Overtime Pay (2.0 hrs Ã— â‚±215.91 Ã— 1.25)"
+                                    <Label text="Overtime Pay (2.0 hrs x PHP 215.91 x 1.25)"
                                            styleClass="payslip-row-label"
                                            HBox.hgrow="ALWAYS"/>
                                     <Label fx:id="slipOT"
-                                           text="â‚± 539.77"
+                                           text="PHP 539.77"
                                            styleClass="payslip-row-amount"/>
                                 </HBox>
 
@@ -327,7 +327,7 @@
                                            styleClass="payslip-subtotal-label"
                                            HBox.hgrow="ALWAYS"/>
                                     <Label fx:id="slipGross"
-                                           text="â‚± 16,375.00"
+                                           text="PHP 16,375.00"
                                            styleClass="payslip-subtotal-label"/>
                                 </HBox>
                             </VBox>
@@ -340,49 +340,49 @@
                                     <Label text="SSS Contribution"
                                            styleClass="payslip-row-label" HBox.hgrow="ALWAYS"/>
                                     <Label fx:id="slipSSS"
-                                           text="(â‚± 900.00)"
+                                           text="(PHP 900.00)"
                                            styleClass="payslip-row-deduction"/>
                                 </HBox>
                                 <HBox>
                                     <Label text="PhilHealth"
                                            styleClass="payslip-row-label" HBox.hgrow="ALWAYS"/>
                                     <Label fx:id="slipPH"
-                                           text="(â‚± 750.00)"
+                                           text="(PHP 750.00)"
                                            styleClass="payslip-row-deduction"/>
                                 </HBox>
                                 <HBox>
                                     <Label text="Pag-IBIG"
                                            styleClass="payslip-row-label" HBox.hgrow="ALWAYS"/>
                                     <Label fx:id="slipPIG"
-                                           text="(â‚± 100.00)"
+                                           text="(PHP 100.00)"
                                            styleClass="payslip-row-deduction"/>
                                 </HBox>
                                 <HBox>
                                     <Label text="Withholding Tax (BIR)"
                                            styleClass="payslip-row-label" HBox.hgrow="ALWAYS"/>
                                     <Label fx:id="slipTax"
-                                           text="(â‚± 2,150.00)"
+                                           text="(PHP 2,150.00)"
                                            styleClass="payslip-row-deduction"/>
                                 </HBox>
                                 <HBox>
                                     <Label text="Loan Deduction"
                                            styleClass="payslip-row-label" HBox.hgrow="ALWAYS"/>
                                     <Label fx:id="slipLoan"
-                                           text="(â‚± 2,500.00)"
+                                           text="(PHP 2,500.00)"
                                            styleClass="payslip-row-deduction"/>
                                 </HBox>
                                 <HBox>
                                     <Label text="Absence Penalty (1 day)"
                                            styleClass="payslip-row-label" HBox.hgrow="ALWAYS"/>
                                     <Label fx:id="slipAbsent"
-                                           text="(â‚± 1,227.27)"
+                                           text="(PHP 1,227.27)"
                                            styleClass="payslip-row-deduction"/>
                                 </HBox>
                                 <HBox>
                                     <Label text="Undertime Penalty"
                                            styleClass="payslip-row-label" HBox.hgrow="ALWAYS"/>
                                     <Label fx:id="slipUT"
-                                           text="(â‚± 15.34)"
+                                           text="(PHP 15.34)"
                                            styleClass="payslip-row-deduction"/>
                                 </HBox>
 
@@ -393,7 +393,7 @@
                                            styleClass="payslip-subtotal-label"
                                            HBox.hgrow="ALWAYS"/>
                                     <Label fx:id="slipTotalDed"
-                                           text="(â‚± 7,642.61)"
+                                           text="(PHP 7,642.61)"
                                            style="-fx-font-weight: bold; -fx-text-fill: #991B1B;
                                                   -fx-font-family: 'JetBrains Mono', monospace;
                                                   -fx-font-size: 12px;"/>
@@ -406,7 +406,7 @@
                                        styleClass="payslip-net-label"
                                        HBox.hgrow="ALWAYS"/>
                                 <Label fx:id="slipNetPay"
-                                       text="â‚± 8,732.39"
+                                       text="PHP 8,732.39"
                                        styleClass="payslip-net-amount"/>
                             </HBox>
 

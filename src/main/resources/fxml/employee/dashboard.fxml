@@ -100,11 +100,11 @@
                         
                         <HBox styleClass="tab-bar" spacing="0">
                             <Button fx:id="attTab1"
-                                    text="1st Cut-off   Jun 1â€“15"
+                                    text="1st Cut-off   Jun 1-15"
                                     styleClass="tab-btn, active"
                                     onAction="#switchToFirstCutoff"/>
                             <Button fx:id="attTab2"
-                                    text="2nd Cut-off   Jun 16â€“30"
+                                    text="2nd Cut-off   Jun 16-30"
                                     styleClass="tab-btn"
                                     onAction="#switchToSecondCutoff"/>
                         </HBox>
@@ -189,7 +189,7 @@
                                 </graphic>
                             </Label>
                             <Label fx:id="payslipPeriodLabel"
-                                   text="Jun 1â€“15, 2026"
+                                   text="Jun 1-15, 2026"
                                    styleClass="period-chip"/>
                         </HBox>
 
@@ -200,10 +200,10 @@
                                 
                                 <VBox styleClass="payslip-header" spacing="4"
                                       style="-fx-padding: 20;">
-                                    <Label text="NATIONAL UNIVERSITY Â· PAYROLL SYSTEM"
+                                    <Label text="NATIONAL UNIVERSITY - PAYROLL SYSTEM"
                                            styleClass="payslip-company"/>
                                     <Label fx:id="payslipTitle"
-                                           text="Payslip â€” Jun 1â€“15, 2026"
+                                           text="Payslip - Jun 1-15, 2026"
                                            styleClass="payslip-title"/>
                                 </VBox>
 

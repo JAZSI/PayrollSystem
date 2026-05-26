@@ -30,7 +30,7 @@
                 <ImageView styleClass="login-logo-image"
                            fitWidth="64" fitHeight="64" preserveRatio="true">
                     <image>
-                        <Image url="https://upload.wikimedia.org/wikipedia/commons/9/90/NU_shield.svg"/>
+                        <Image url="@/image/logo.png"/>
                     </image>
                 </ImageView>
                 <Label text="NU Payroll" styleClass="login-wordmark"/>

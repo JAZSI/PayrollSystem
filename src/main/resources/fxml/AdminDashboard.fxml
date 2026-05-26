@@ -29,7 +29,7 @@
                 <ImageView styleClass="sidebar-logo-image"
                            fitWidth="36" fitHeight="36" preserveRatio="true">
                     <image>
-                        <Image url="https://upload.wikimedia.org/wikipedia/commons/9/90/NU_shield.svg"/>
+                        <Image url="@/image/logo.png"/>
                     </image>
                 </ImageView>
                 <VBox spacing="1">

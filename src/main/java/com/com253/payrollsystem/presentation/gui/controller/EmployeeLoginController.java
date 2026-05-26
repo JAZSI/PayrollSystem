@@ -6,7 +6,7 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 
-public class EmployeePortalController {
+public class EmployeeLoginController {
 
     @FXML
     private VBox loginScreen;
@@ -30,9 +30,7 @@ public class EmployeePortalController {
 
     @FXML
     public void handleLogin() {
-        String employeeId = loginIdField != null && loginIdField.getText() != null
-                ? loginIdField.getText().trim()
-                : "Employee";
+        String employeeId = loginIdField.getText() == null ? "Employee" : loginIdField.getText().trim();
         if (employeeId.isEmpty()) {
             employeeId = "Employee";
         }
@@ -41,11 +39,10 @@ public class EmployeePortalController {
             greetingName.setText(employeeId);
         }
 
+        showDashboardScreen();
         if (loginPinField != null) {
             loginPinField.clear();
         }
-
-        showDashboardScreen();
     }
 
     @FXML
