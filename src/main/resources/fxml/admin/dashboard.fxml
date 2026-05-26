@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.*?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+
+
+<BorderPane
+    xmlns="http://javafx.com/javafx/20"
+    xmlns:fx="http://javafx.com/fxml/1"
+    fx:controller="com.com253.payrollsystem.presentation.gui.controller.AdminDashboardController"
+    prefWidth="1280" prefHeight="820"
+    style="-fx-background-color: #F0EEE8;">
+
+    
+    <left>
+        <fx:include source="components/sidebar.fxml"/>
+    </left>
+
+    
+    <center>
+        <VBox spacing="0">
+            
+            <fx:include source="components/topbar.fxml"/>
+
+            
+            <StackPane VBox.vgrow="ALWAYS">
+                <ScrollPane fitToWidth="true" styleClass="scroll-pane">
+                    <VBox fx:id="contentArea"
+                          styleClass="content-area"
+                          spacing="20"
+                          fillWidth="true"
+                          style="-fx-padding: 20;">
+
+                        
+                        
+                        
+                        <VBox fx:id="viewDashboard" spacing="20" visible="true" managed="true">
+                            <fx:include source="components/kpi-cards.fxml"/>
+                            <HBox spacing="20" fillHeight="true">
+                                <fx:include source="components/activity-feed.fxml"/>
+                                <fx:include source="components/quick-actions.fxml"/>
+                            </HBox>
+                        </VBox>
+                        
+
+                        
+                        <VBox fx:id="viewEmployees" spacing="16" visible="false" managed="false">
+                            <Label text="Employee Management" styleClass="h3">
+                                <graphic>
+                                    <FontIcon iconLiteral="fas-users" iconSize="16"/>
+                                </graphic>
+                            </Label>
+                            <Button text="Add Employee"
+                                    styleClass="btn-gold"
+                                    onAction="#openAddEmployeeModal"/>
+                            <TableView styleClass="table-view" prefHeight="400">
+                                <columns>
+                                    <TableColumn text="ID"/>
+                                    <TableColumn text="Name"/>
+                                    <TableColumn text="Department"/>
+                                    <TableColumn text="Status"/>
+                                </columns>
+                                <placeholder>
+                                    <Label text="No employees loaded. This will be connected to the Employee service."/>
+                                </placeholder>
+                            </TableView>
+                        </VBox>
+                        
+
+                        
+                        <VBox fx:id="viewAttendance" spacing="16" visible="false" managed="false">
+                            <Label text="Attendance Records" styleClass="h3">
+                                <graphic>
+                                    <FontIcon iconLiteral="fas-clock" iconSize="16"/>
+                                </graphic>
+                            </Label>
+                            <TableView styleClass="table-view" prefHeight="400">
+                                <columns>
+                                    <TableColumn text="Date"/>
+                                    <TableColumn text="Employee"/>
+                                    <TableColumn text="Time In"/>
+                                    <TableColumn text="Time Out"/>
+                                    <TableColumn text="Status"/>
+                                </columns>
+                                <placeholder>
+                                    <Label text="No attendance records. This will be connected to the Attendance service."/>
+                                </placeholder>
+                            </TableView>
+                        </VBox>
+                        
+
+                        
+                        <VBox fx:id="viewPayroll" spacing="16" visible="false" managed="false">
+                            <Label text="Payroll Generation" styleClass="h3">
+                                <graphic>
+                                    <FontIcon iconLiteral="fas-calculator" iconSize="16"/>
+                                </graphic>
+                            </Label>
+                            <Button text="Generate Payroll"
+                                    styleClass="btn-gold"
+                                    onAction="#computePayroll"/>
+                            <TableView styleClass="table-view" prefHeight="400">
+                                <columns>
+                                    <TableColumn text="Cut-off"/>
+                                    <TableColumn text="Generated Date"/>
+                                    <TableColumn text="Status"/>
+                                    <TableColumn text="Actions"/>
+                                </columns>
+                                <placeholder>
+                                    <Label text="No payroll records. Payroll generation not connected yet."/>
+                                </placeholder>
+                            </TableView>
+                        </VBox>
+                        
+
+                        
+                        <VBox fx:id="viewReports" spacing="16" visible="false" managed="false">
+                            <Label text="Reports" styleClass="h3">
+                                <graphic>
+                                    <FontIcon iconLiteral="fas-file-alt" iconSize="16"/>
+                                </graphic>
+                            </Label>
+                            <HBox spacing="10">
+                                <Button text="Export CSV" styleClass="btn-outline" onAction="#handleExportCsv">
+                                    <graphic>
+                                        <FontIcon iconLiteral="fas-download" iconSize="14"/>
+                                    </graphic>
+                                </Button>
+                                <Button text="Export PDF" styleClass="btn-outline" onAction="#handlePdfPayslips">
+                                    <graphic>
+                                        <FontIcon iconLiteral="fas-file-pdf" iconSize="14"/>
+                                    </graphic>
+                                </Button>
+                            </HBox>
+                            <Label text="Report generation features coming soon." styleClass="text-muted"/>
+                        </VBox>
+                        
+
+                        
+                        <VBox fx:id="viewSettings" spacing="16" visible="false" managed="false">
+                            <Label text="System Settings" styleClass="h3">
+                                <graphic>
+                                    <FontIcon iconLiteral="fas-cog" iconSize="16"/>
+                                </graphic>
+                            </Label>
+                            <Label text="Settings panel not yet implemented." styleClass="text-muted"/>
+                        </VBox>
+                        
+
+                    </VBox>
+                </ScrollPane>
+            </StackPane>
+        </VBox>
+    </center>
+</BorderPane>
+

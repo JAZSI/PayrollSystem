@@ -1,13 +1,13 @@
 package com.com253.payrollsystem;
 
-import com.com253.payrollsystem.Model.Employee;
-import com.com253.payrollsystem.Model.Employee.EmployeeType;
-import com.com253.payrollsystem.Model.EndUser;
-import com.com253.payrollsystem.Model.PayrollEntry;
-import com.com253.payrollsystem.Model.Submission;
-import com.com253.payrollsystem.Service.PayrollReportService;
-import com.com253.payrollsystem.Service.PayrollService;
-import com.com253.payrollsystem.Util.Database;
+import com.com253.payrollsystem.domain.model.Employee;
+import com.com253.payrollsystem.domain.model.Employee.EmployeeType;
+import com.com253.payrollsystem.domain.model.EndUser;
+import com.com253.payrollsystem.domain.model.PayrollEntry;
+import com.com253.payrollsystem.domain.model.Submission;
+import com.com253.payrollsystem.app.service.PayrollReportService;
+import com.com253.payrollsystem.app.service.PayrollService;
+import com.com253.payrollsystem.infrastructure.config.Database;
 import org.junit.jupiter.api.*;
 
 /**
@@ -24,11 +24,14 @@ class PayrollServiceIntegrationTest {
     private static final PayrollReportService REPORT_SERVICE = new PayrollReportService();
     private static final String TEST_EMP_ID = "TEST-001";
     private static final String TEST_PERIOD = "1st-15th";
+    private static final String TEST_ADMIN_PASSWORD = "admin123";
 
     @BeforeAll
     static void init() throws Exception {
+        // Set admin password for testing before database initialization
+        System.setProperty("payroll.admin.password", TEST_ADMIN_PASSWORD);
         Database.wipeAndReinitialize();
-        // Admin account seeded by wipeAndReinitialize() for auth tests
+        // Admin account seeded by wipeAndReinitialize() with TEST_ADMIN_PASSWORD
     }
 
     @BeforeEach
@@ -157,9 +160,9 @@ class PayrollServiceIntegrationTest {
 
     private void registerTestEmployee() throws Exception {
         Employee emp = new Employee(TEST_EMP_ID, "Test Employee",
-                EmployeeType.REGULAR, 30000.0, 0.0, true,
-                new com.com253.payrollsystem.Model.LeaveBalance(5, 10, 3),
-                new com.com253.payrollsystem.Model.LoanBalance(3000.0));
+            EmployeeType.REGULAR, 30000.0, 0.0, true,
+            new com.com253.payrollsystem.domain.model.LeaveBalance(5, 10, 3),
+            new com.com253.payrollsystem.domain.model.LoanBalance(3000.0));
         SERVICE.registerEmployee(emp, "testuser", "testpass");
     }
 }

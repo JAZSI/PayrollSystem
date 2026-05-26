@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.geometry.*?>
+
+
+
+<StackPane
+    xmlns="http://javafx.com/javafx/20"
+    xmlns:fx="http://javafx.com/fxml/1"
+    fx:controller="com.com253.payrollsystem.presentation.gui.controller.EmployeeLoginController"
+    prefWidth="1100" prefHeight="760"
+    style="-fx-background-color: #F2F0EB;">
+
+    <VBox styleClass="login-root"
+          alignment="CENTER"
+          spacing="20">
+
+        
+        <VBox styleClass="login-card"
+              alignment="CENTER"
+              maxWidth="420" minWidth="380"
+              spacing="0">
+
+            
+            <VBox alignment="CENTER" spacing="8"
+                  style="-fx-padding: 0 0 12 0;">
+                <ImageView styleClass="login-logo-image"
+                           fitWidth="64" fitHeight="64" preserveRatio="true">
+                    <image>
+                        <Image url="https://upload.wikimedia.org/wikipedia/commons/9/90/NU_shield.svg"/>
+                    </image>
+                </ImageView>
+                <Label text="NU Payroll" styleClass="login-wordmark"/>
+                <Label text="EMPLOYEE SELF-SERVICE PORTAL" styleClass="login-subtitle"/>
+            </VBox>
+
+            
+            <Region styleClass="login-divider"
+                    minHeight="1" maxHeight="1"
+                    style="-fx-padding: 0 0 12 0;"/>
+
+            
+            <Label text="Sign In to Your Account"
+                   styleClass="login-title"
+                   style="-fx-padding: 14 0 18 0;"/>
+
+            
+            <VBox spacing="14"
+                  style="-fx-padding: 0 0 16 0;"
+                  maxWidth="9999" fillWidth="true">
+
+                
+                <VBox spacing="5">
+                    <Label text="EMPLOYEE ID" styleClass="field-label"/>
+                    <TextField fx:id="loginIdField"
+                               styleClass="field-input"
+                               promptText="e.g. EMP-001"
+                               text="EMP-001"/>
+                </VBox>
+
+                
+                <VBox spacing="5">
+                    <Label text="PIN / PASSWORD" styleClass="field-label"/>
+                    <PasswordField fx:id="loginPinField"
+                                  styleClass="field-input"
+                                  promptText="Enter your PIN"/>
+                </VBox>
+
+                
+                <Button fx:id="loginBtn"
+                        text="Sign In"
+                        styleClass="btn-login"
+                        onAction="#handleLogin"
+                        maxWidth="Infinity"/>
+            </VBox>
+
+            
+            <Label text="Forgot your PIN? Contact HR at ext. 100"
+                   styleClass="login-hint"/>
+
+        </VBox>
+    </VBox>
+
+</StackPane>
+

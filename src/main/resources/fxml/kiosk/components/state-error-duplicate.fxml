@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.*?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+
+
+<VBox fx:id="stateErrorDuplicate"
+      spacing="20"
+      alignment="CENTER"
+      maxWidth="520"
+      visible="false" managed="false"
+      xmlns="http://javafx.com/javafx/20"
+      xmlns:fx="http://javafx.com/fxml/1">
+
+    <VBox styleClass="error-card" spacing="16">
+        <Label styleClass="error-icon-warning">
+            <graphic>
+                <FontIcon iconLiteral="fas-exclamation-triangle" iconSize="24"/>
+            </graphic>
+        </Label>
+        <Label text="Already Timed In" styleClass="error-title"/>
+        <Label fx:id="alreadyTimedLabel"
+               text="You are already clocked in today. Please clock out before clocking in again."
+               styleClass="error-message"
+               wrapText="true"
+               maxWidth="400"/>
+        <Label text="Returning to idle screen..."
+               styleClass="error-countdown"/>
+    </VBox>
+
+</VBox>
+

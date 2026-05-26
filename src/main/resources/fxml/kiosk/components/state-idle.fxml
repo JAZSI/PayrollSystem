@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.geometry.*?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+
+
+<VBox fx:id="stateIdle"
+      styleClass="screen-container"
+      spacing="20"
+      alignment="CENTER"
+      maxWidth="520"
+      visible="true" managed="true"
+      xmlns="http://javafx.com/javafx/20"
+      xmlns:fx="http://javafx.com/fxml/1">
+
+    
+    <VBox alignment="CENTER" spacing="10">
+        <VBox styleClass="logo-icon-wrap" alignment="CENTER">
+                        <ImageView styleClass="logo-icon-image"
+                                           fitWidth="52" fitHeight="52" preserveRatio="true">
+                                <image>
+                                        <Image url="@/image/logo.png"/>
+                                </image>
+                        </ImageView>
+        </VBox>
+        <Label text="NU Payroll" styleClass="kiosk-app-name"/>
+        <Label text="EMPLOYEE TIME TERMINAL" styleClass="kiosk-app-sub"/>
+    </VBox>
+
+    
+    <Label text="Tap your ID or enter your employee number"
+           styleClass="prompt-main"
+           wrapText="true"
+           maxWidth="460"
+           alignment="CENTER"/>
+    <Label text="Use the keypad below or scan your company ID card"
+           styleClass="prompt-sub"
+           wrapText="true"
+           maxWidth="420"
+           alignment="CENTER"/>
+
+    
+    <HBox styleClass="input-display-pane"
+          fx:id="inputDisplayPane"
+          alignment="CENTER_LEFT"
+          spacing="8"
+          maxWidth="9999">
+        <Label fx:id="inputValueLabel"
+               text="Enter employee IDâ€¦"
+               styleClass="input-value-label, empty"
+               HBox.hgrow="ALWAYS"/>
+                <Button styleClass="input-clear-btn"
+                                onAction="#handleBackspace">
+                        <graphic>
+                                <FontIcon iconLiteral="fas-backspace" iconSize="14"/>
+                        </graphic>
+                </Button>
+    </HBox>
+
+    
+    <GridPane fx:id="keypadGrid"
+              styleClass="keypad-grid"
+              hgap="10" vgap="10"
+              alignment="CENTER"
+              maxWidth="9999">
+
+        <columnConstraints>
+            <ColumnConstraints hgrow="ALWAYS" percentWidth="33.33"/>
+            <ColumnConstraints hgrow="ALWAYS" percentWidth="33.33"/>
+            <ColumnConstraints hgrow="ALWAYS" percentWidth="33.33"/>
+        </columnConstraints>
+
+        
+        <Button text="1" styleClass="key-btn"
+                GridPane.columnIndex="0" GridPane.rowIndex="0"
+                maxWidth="Infinity"
+                onAction="#handleKey1"/>
+        <Button text="2" styleClass="key-btn"
+                GridPane.columnIndex="1" GridPane.rowIndex="0"
+                maxWidth="Infinity"
+                onAction="#handleKey2"/>
+        <Button text="3" styleClass="key-btn"
+                GridPane.columnIndex="2" GridPane.rowIndex="0"
+                maxWidth="Infinity"
+                onAction="#handleKey3"/>
+
+        
+        <Button text="4" styleClass="key-btn"
+                GridPane.columnIndex="0" GridPane.rowIndex="1"
+                maxWidth="Infinity"
+                onAction="#handleKey4"/>
+        <Button text="5" styleClass="key-btn"
+                GridPane.columnIndex="1" GridPane.rowIndex="1"
+                maxWidth="Infinity"
+                onAction="#handleKey5"/>
+        <Button text="6" styleClass="key-btn"
+                GridPane.columnIndex="2" GridPane.rowIndex="1"
+                maxWidth="Infinity"
+                onAction="#handleKey6"/>
+
+        
+        <Button text="7" styleClass="key-btn"
+                GridPane.columnIndex="0" GridPane.rowIndex="2"
+                maxWidth="Infinity"
+                onAction="#handleKey7"/>
+        <Button text="8" styleClass="key-btn"
+                GridPane.columnIndex="1" GridPane.rowIndex="2"
+                maxWidth="Infinity"
+                onAction="#handleKey8"/>
+        <Button text="9" styleClass="key-btn"
+                GridPane.columnIndex="2" GridPane.rowIndex="2"
+                maxWidth="Infinity"
+                onAction="#handleKey9"/>
+
+        
+        <Button text="0" styleClass="key-btn-zero"
+                GridPane.columnIndex="0" GridPane.rowIndex="3"
+                GridPane.columnSpan="2"
+                maxWidth="Infinity"
+                onAction="#handleKey0"/>
+                <Button styleClass="key-btn-back"
+                GridPane.columnIndex="2" GridPane.rowIndex="3"
+                maxWidth="Infinity"
+                                onAction="#handleBackspace">
+                        <graphic>
+                                <FontIcon iconLiteral="fas-backspace" iconSize="14"/>
+                        </graphic>
+                </Button>
+
+        
+                <Button fx:id="submitBtn"
+                                text="Submit"
+                                styleClass="key-btn-submit"
+                                GridPane.columnIndex="0" GridPane.rowIndex="4"
+                                GridPane.columnSpan="3"
+                                maxWidth="Infinity"
+                                onAction="#handleSubmit">
+                        <graphic>
+                                <FontIcon iconLiteral="fas-arrow-right" iconSize="14"/>
+                        </graphic>
+                </Button>
+
+    </GridPane>
+
+    
+    <Label text="Screen resets after 10 seconds of inactivity"
+           styleClass="reset-note"/>
+
+</VBox>
+

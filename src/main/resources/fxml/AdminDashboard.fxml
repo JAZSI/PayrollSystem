@@ -1,0 +1,982 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.collections.*?>
+<?import java.lang.String?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.shape.*?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+<BorderPane
+    xmlns="http://javafx.com/javafx/20"
+    xmlns:fx="http://javafx.com/fxml/1"
+    fx:controller="com.com253.payrollsystem.presentation.gui.controller.AdminDashboardController"
+    stylesheets="@/css/AdminDashboard.css"
+    prefWidth="1280" prefHeight="820"
+    style="-fx-background-color: #F0EEE8;">
+
+    <!-- ══════════════════════════════════════════
+         SIDEBAR (LEFT)
+         ══════════════════════════════════════════ -->
+    <left>
+        <VBox styleClass="sidebar" prefWidth="248">
+
+            <!-- Logo -->
+            <HBox styleClass="sidebar-logo-pane" spacing="12" alignment="CENTER_LEFT">
+                <ImageView styleClass="sidebar-logo-image"
+                           fitWidth="36" fitHeight="36" preserveRatio="true">
+                    <image>
+                        <Image url="https://upload.wikimedia.org/wikipedia/commons/9/90/NU_shield.svg"/>
+                    </image>
+                </ImageView>
+                <VBox spacing="1">
+                    <Label text="NU Payroll" styleClass="sidebar-wordmark"/>
+                    <Label text="Admin Suite" styleClass="sidebar-suite-label"/>
+                </VBox>
+            </HBox>
+
+            
+            <VBox VBox.vgrow="ALWAYS">
+                <Label text="MAIN" styleClass="nav-section-label"/>
+                <Button fx:id="navDashboard"
+                    text="Dashboard"
+                    styleClass="nav-item, active"
+                    onAction="#showDashboard"
+                    maxWidth="Infinity">
+                    <graphic><FontIcon iconLiteral="fas-th-large" iconSize="14"/></graphic>
+                </Button>
+                <Button fx:id="navEmployees"
+                    text="Employees"
+                    styleClass="nav-item"
+                    onAction="#showEmployees"
+                    maxWidth="Infinity">
+                    <graphic><FontIcon iconLiteral="fas-users" iconSize="14"/></graphic>
+                </Button>
+                <Button fx:id="navAttendance"
+                    text="Attendance"
+                    styleClass="nav-item"
+                    onAction="#showAttendance"
+                    maxWidth="Infinity">
+                    <graphic><FontIcon iconLiteral="fas-clock" iconSize="14"/></graphic>
+                </Button>
+                <Button fx:id="navPayroll"
+                    text="Payroll Run"
+                    styleClass="nav-item"
+                    onAction="#showPayroll"
+                    maxWidth="Infinity">
+                    <graphic><FontIcon iconLiteral="fas-calculator" iconSize="14"/></graphic>
+                </Button>
+
+                <Label text="RECORDS" styleClass="nav-section-label"/>
+                <Button fx:id="navReports"
+                        text="Reports"
+                        styleClass="nav-item"
+                    visible="false"
+                    managed="false"
+                        onAction="#showReports"
+                        maxWidth="Infinity">
+                    <graphic>
+                        <FontIcon iconLiteral="fas-file-alt" iconSize="14"/>
+                    </graphic>
+                </Button>
+
+                <Label text="SYSTEM" styleClass="nav-section-label"/>
+                <Button fx:id="navSettings"
+                        text="Settings"
+                        styleClass="nav-item"
+                    visible="false"
+                    managed="false"
+                        onAction="#showSettings"
+                        maxWidth="Infinity">
+                    <graphic>
+                        <FontIcon iconLiteral="fas-cog" iconSize="14"/>
+                    </graphic>
+                </Button>
+            </VBox>
+
+            
+            <HBox styleClass="sidebar-footer" spacing="10" alignment="CENTER_LEFT">
+                <Label text="MA" styleClass="sidebar-avatar"
+                       minWidth="32" maxWidth="32" minHeight="32" maxHeight="32"
+                       alignment="CENTER"/>
+                <VBox spacing="1" HBox.hgrow="ALWAYS">
+                    <Label text="Maria Aquino" styleClass="sidebar-user-name"/>
+                    <Label text="HR Administrator" styleClass="sidebar-user-role"/>
+                </VBox>
+                <Button style="-fx-background-color: transparent;
+                                         -fx-text-fill: rgba(255,255,255,0.3);
+                                         -fx-font-size: 15px; -fx-cursor: hand;
+                                         -fx-border-width: 0;"
+                        onAction="#handleLogout">
+                    <graphic>
+                        <FontIcon iconLiteral="fas-sign-out-alt" iconSize="14"/>
+                    </graphic>
+                </Button>
+            </HBox>
+
+        </VBox>
+    </left>
+
+    
+    <center>
+        <VBox>
+
+            
+            <HBox styleClass="main-header" alignment="CENTER_LEFT" spacing="14">
+                <Label text="Cut-off:  June 1–15, 2026"
+                       styleClass="cutoff-chip"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Button styleClass="header-bell-btn"
+                        onAction="#handleNotifications">
+                    <graphic>
+                        <FontIcon iconLiteral="fas-bell" iconSize="14"/>
+                    </graphic>
+                </Button>
+                <HBox spacing="8" alignment="CENTER_LEFT">
+                    <Label text="MA" styleClass="header-avatar"
+                           minWidth="32" maxWidth="32" minHeight="32" maxHeight="32"
+                           alignment="CENTER"/>
+                    <Label text="Maria Aquino" styleClass="header-username"/>
+                    <Label style="-fx-text-fill: #7A8FA6; -fx-font-size: 12px;">
+                        <graphic>
+                            <FontIcon iconLiteral="fas-angle-down" iconSize="12"/>
+                        </graphic>
+                    </Label>
+                </HBox>
+            </HBox>
+
+            
+            <StackPane VBox.vgrow="ALWAYS">
+
+                <ScrollPane fitToWidth="true" styleClass="scroll-pane">
+                    <VBox fx:id="contentArea"
+                          styleClass="content-area"
+                          spacing="20"
+                          fillWidth="true">
+
+                        
+                        <VBox fx:id="viewDashboard" spacing="20" visible="true" managed="true">
+
+                            
+                            <HBox alignment="CENTER_LEFT">
+                                <VBox HBox.hgrow="ALWAYS" spacing="3">
+                                    <Label text="Overview" styleClass="sec-title"/>
+                                    <Label text="June 2026 · 1st Cut-off · Last updated: today, 08:14 AM"
+                                           styleClass="sec-subtitle"/>
+                                </VBox>
+                            </HBox>
+
+                            
+                            <GridPane hgap="16" vgap="16">
+                                <columnConstraints>
+                                    <ColumnConstraints hgrow="ALWAYS" percentWidth="25"/>
+                                    <ColumnConstraints hgrow="ALWAYS" percentWidth="25"/>
+                                    <ColumnConstraints hgrow="ALWAYS" percentWidth="25"/>
+                                    <ColumnConstraints hgrow="ALWAYS" percentWidth="25"/>
+                                </columnConstraints>
+
+                                
+                                <VBox styleClass="kpi-card" GridPane.columnIndex="0" spacing="4">
+                                    <Rectangle width="36" height="3" arcWidth="2" arcHeight="2"
+                                               styleClass="kpi-accent-navy"/>
+                                    <Label text="TOTAL EMPLOYEES" styleClass="kpi-label"/>
+                                    <Label text="47" styleClass="kpi-value"/>
+                                    <Label text="3 new this month" styleClass="kpi-sub"/>
+                                </VBox>
+
+                                
+                                <VBox styleClass="kpi-card" GridPane.columnIndex="1" spacing="4">
+                                    <Rectangle width="36" height="3" arcWidth="2" arcHeight="2"
+                                               styleClass="kpi-accent-gold"/>
+                                    <Label text="PAYROLL THIS PERIOD" styleClass="kpi-label"/>
+                                    <Label text="₱1,284,600" styleClass="kpi-value-sm"/>
+                                    <Label text="↑ ₱42,000 vs last cut-off" styleClass="kpi-sub"/>
+                                </VBox>
+
+                                
+                                <VBox styleClass="kpi-card" GridPane.columnIndex="2" spacing="4">
+                                    <Rectangle width="36" height="3" arcWidth="2" arcHeight="2"
+                                               styleClass="kpi-accent-green"/>
+                                    <Label text="ON-TIME TODAY" styleClass="kpi-label"/>
+                                    <Label text="39" styleClass="kpi-value"/>
+                                    <Label text="of 44 expected" styleClass="kpi-sub"/>
+                                </VBox>
+
+                                
+                                <VBox styleClass="kpi-card" GridPane.columnIndex="3" spacing="4">
+                                    <Rectangle width="36" height="3" arcWidth="2" arcHeight="2"
+                                               styleClass="kpi-accent-red"/>
+                                    <Label text="ABSENT TODAY" styleClass="kpi-label"/>
+                                    <Label text="5" styleClass="kpi-value"/>
+                                    <Label text="2 on approved leave" styleClass="kpi-sub"/>
+                                </VBox>
+                            </GridPane>
+
+                            
+                            <HBox spacing="20" fillHeight="true">
+
+                                
+                                <VBox styleClass="card" HBox.hgrow="ALWAYS">
+                                    <HBox styleClass="card-header" alignment="CENTER_LEFT">
+                                        <Label text="Recent Activity"
+                                               styleClass="card-header-title"
+                                               HBox.hgrow="ALWAYS"/>
+                                        <Label text="Live" styleClass="badge, badge-green"/>
+                                    </HBox>
+                                    <VBox styleClass="card-body" spacing="0">
+
+                                        
+                                        <HBox styleClass="holiday-row" spacing="12" alignment="CENTER_LEFT">
+                                            <Circle radius="4" styleClass="activity-dot-in"/>
+                                            <VBox HBox.hgrow="ALWAYS" spacing="2">
+                                                <Label text="Santos, Juan P. — Time In"
+                                                       styleClass="activity-title"/>
+                                                <Label text="08:02 AM · Engineering · June 10"
+                                                       styleClass="activity-meta"/>
+                                            </VBox>
+                                            <Label text="Present" styleClass="badge, badge-green"/>
+                                        </HBox>
+
+                                        <HBox styleClass="holiday-row" spacing="12" alignment="CENTER_LEFT">
+                                            <Circle radius="4" styleClass="activity-dot-in"/>
+                                            <VBox HBox.hgrow="ALWAYS" spacing="2">
+                                                <Label text="Reyes, Ana Marie C. — Time In"
+                                                       styleClass="activity-title"/>
+                                                <Label text="08:07 AM · Finance · June 10"
+                                                       styleClass="activity-meta"/>
+                                            </VBox>
+                                            <Label text="Present" styleClass="badge, badge-green"/>
+                                        </HBox>
+
+                                        <HBox styleClass="holiday-row" spacing="12" alignment="CENTER_LEFT">
+                                            <Circle radius="4" styleClass="activity-dot-absent"/>
+                                            <VBox HBox.hgrow="ALWAYS" spacing="2">
+                                                <Label text="Cruz, Rodrigo M. — No Time-In"
+                                                       styleClass="activity-title"/>
+                                                <Label text="Engineering · June 10"
+                                                       styleClass="activity-meta"/>
+                                            </VBox>
+                                            <Label text="Absent" styleClass="badge, badge-red"/>
+                                        </HBox>
+
+                                        <HBox styleClass="holiday-row" spacing="12" alignment="CENTER_LEFT">
+                                            <Circle radius="4" styleClass="activity-dot-out"/>
+                                            <VBox HBox.hgrow="ALWAYS" spacing="2">
+                                                <Label text="De Guzman, Liza T. — Time Out"
+                                                       styleClass="activity-title"/>
+                                                <Label text="05:34 PM · HR &amp; Admin · June 9"
+                                                       styleClass="activity-meta"/>
+                                            </VBox>
+                                            <Label text="OT: 0.5 hrs" styleClass="badge, badge-amber"/>
+                                        </HBox>
+
+                                        <HBox styleClass="holiday-row" spacing="12" alignment="CENTER_LEFT">
+                                            <Circle radius="4" styleClass="activity-dot-in"/>
+                                            <VBox HBox.hgrow="ALWAYS" spacing="2">
+                                                <Label text="Villanueva, Mark R. — Time In"
+                                                       styleClass="activity-title"/>
+                                                <Label text="07:58 AM · Operations · June 10"
+                                                       styleClass="activity-meta"/>
+                                            </VBox>
+                                            <Label text="Present" styleClass="badge, badge-green"/>
+                                        </HBox>
+
+                                        <HBox spacing="12" alignment="CENTER_LEFT"
+                                              style="-fx-padding: 9 0 0 0;">
+                                            <Circle radius="4" styleClass="activity-dot-absent"/>
+                                            <VBox HBox.hgrow="ALWAYS" spacing="2">
+                                                <Label text="Bautista, Rosa J. — On Leave"
+                                                       styleClass="activity-title"/>
+                                                <Label text="HR &amp; Admin · June 10"
+                                                       styleClass="activity-meta"/>
+                                            </VBox>
+                                            <Label text="Leave" styleClass="badge, badge-blue"/>
+                                        </HBox>
+
+                                    </VBox>
+                                </VBox>
+
+                                
+                                <VBox spacing="16" minWidth="300" maxWidth="340">
+
+                                    
+                                    <VBox styleClass="card">
+                                        <HBox styleClass="card-header">
+                                            <Label text="Quick Actions"
+                                                   styleClass="card-header-title"/>
+                                        </HBox>
+                                        <VBox styleClass="card-body" spacing="8">
+                                                <Button text="Run Payroll"
+                                                    styleClass="btn-gold"
+                                                    maxWidth="Infinity"
+                                                    onAction="#showPayroll">
+                                                <graphic><FontIcon iconLiteral="fas-calculator" iconSize="14"/></graphic>
+                                                </Button>
+                                                <Button text="Add Employee"
+                                                    styleClass="btn-primary"
+                                                    maxWidth="Infinity"
+                                                    onAction="#openAddEmployeeModal">
+                                                <graphic><FontIcon iconLiteral="fas-user-plus" iconSize="14"/></graphic>
+                                                </Button>
+                                                <Button text="Export Report"
+                                                    styleClass="btn-outline"
+                                                    visible="false"
+                                                    managed="false"
+                                                    maxWidth="Infinity"
+                                                    onAction="#handleExport">
+                                                <graphic><FontIcon iconLiteral="fas-download" iconSize="14"/></graphic>
+                                                </Button>
+                                                <Button text="Edit Attendance"
+                                                    styleClass="btn-outline"
+                                                    maxWidth="Infinity"
+                                                    onAction="#showAttendance">
+                                                <graphic><FontIcon iconLiteral="fas-clock" iconSize="14"/></graphic>
+                                                </Button>
+                                        </VBox>
+                                    </VBox>
+
+                                    
+                                    <VBox styleClass="card">
+                                        <HBox styleClass="card-header">
+                                            <Label text="Period Summary"
+                                                   styleClass="card-header-title"/>
+                                        </HBox>
+                                        <VBox styleClass="card-body" spacing="10">
+                                            <HBox alignment="CENTER_LEFT">
+                                                <Label text="Working Days"
+                                                       styleClass="period-row-label"
+                                                       HBox.hgrow="ALWAYS"/>
+                                                <Label text="13 / 13"
+                                                       styleClass="period-row-value"/>
+                                            </HBox>
+                                            <HBox alignment="CENTER_LEFT">
+                                                <Label text="Holidays"
+                                                       styleClass="period-row-label"
+                                                       HBox.hgrow="ALWAYS"/>
+                                                <Label text="0" styleClass="period-row-value"/>
+                                            </HBox>
+                                            <HBox alignment="CENTER_LEFT">
+                                                <Label text="Payroll Status"
+                                                       styleClass="period-row-label"
+                                                       HBox.hgrow="ALWAYS"/>
+                                                <Label text="Pending"
+                                                       styleClass="badge, badge-amber"/>
+                                            </HBox>
+                                            <HBox alignment="CENTER_LEFT">
+                                                <Label text="Last Run"
+                                                       styleClass="period-row-label"
+                                                       HBox.hgrow="ALWAYS"/>
+                                                <Label text="May 30, 2026"
+                                                       styleClass="period-row-value"/>
+                                            </HBox>
+                                        </VBox>
+                                    </VBox>
+
+                                </VBox>
+                            </HBox>
+
+                        </VBox>
+                        
+
+                        
+                        <VBox fx:id="viewEmployees" spacing="20" visible="false" managed="false">
+                            <HBox alignment="CENTER_LEFT">
+                                <VBox HBox.hgrow="ALWAYS" spacing="3">
+                                    <Label text="Employee Roster" styleClass="sec-title"/>
+                                    <Label text="47 employees · 4 types" styleClass="sec-subtitle"/>
+                                </VBox>
+                                <Button text="Add Employee"
+                                        styleClass="btn-primary"
+                                        onAction="#openAddEmployeeModal">
+                                    <graphic><FontIcon iconLiteral="fas-user-plus" iconSize="14"/></graphic>
+                                </Button>
+                            </HBox>
+
+                            
+                            <HBox spacing="8" alignment="CENTER_LEFT">
+                                <HBox styleClass="search-bar" spacing="8" alignment="CENTER_LEFT">
+                                    <Label styleClass="search-icon">
+                                        <graphic><FontIcon iconLiteral="fas-search" iconSize="14"/></graphic>
+                                    </Label>
+                                    <TextField styleClass="search-field"
+                                               promptText="Search by name or ID…"
+                                               prefWidth="200"/>
+                                </HBox>
+                                <ComboBox styleClass="period-combo" prefWidth="140">
+                                    <items>
+                                        <FXCollections fx:factory="observableArrayList">
+                                            <String fx:value="All Types"/>
+                                            <String fx:value="Regular"/>
+                                            <String fx:value="Probationary"/>
+                                            <String fx:value="Contractual"/>
+                                            <String fx:value="Part-timer"/>
+                                        </FXCollections>
+                                    </items>
+                                    <value><String fx:value="All Types"/></value>
+                                </ComboBox>
+                                <ComboBox styleClass="period-combo" prefWidth="160">
+                                    <items>
+                                        <FXCollections fx:factory="observableArrayList">
+                                            <String fx:value="All Departments"/>
+                                            <String fx:value="Engineering"/>
+                                            <String fx:value="Finance"/>
+                                            <String fx:value="HR &amp; Admin"/>
+                                            <String fx:value="Operations"/>
+                                            <String fx:value="Sales"/>
+                                        </FXCollections>
+                                    </items>
+                                    <value><String fx:value="All Departments"/></value>
+                                </ComboBox>
+                            </HBox>
+
+                            
+                            <VBox styleClass="card">
+                                <TableView fx:id="employeeTable"
+                                           styleClass="data-table"
+                                           prefHeight="420">
+                                    <columns>
+                                        <TableColumn fx:id="empColId"     text="ID"          prefWidth="90"/>
+                                        <TableColumn fx:id="empColName"   text="EMPLOYEE NAME" prefWidth="220"/>
+                                        <TableColumn fx:id="empColDept"   text="DEPARTMENT"  prefWidth="130"/>
+                                        <TableColumn fx:id="empColType"   text="TYPE"        prefWidth="110"/>
+                                        <TableColumn fx:id="empColRate"   text="RATE"        prefWidth="130"/>
+                                        <TableColumn fx:id="empColLeave"  text="LEAVE"       prefWidth="70"/>
+                                        <TableColumn fx:id="empColLoan"   text="LOAN BAL."   prefWidth="110"/>
+                                        <TableColumn fx:id="empColAction" text="ACTIONS"     prefWidth="120"/>
+                                    </columns>
+                                </TableView>
+                            </VBox>
+                        </VBox>
+                        <!-- /VIEW: EMPLOYEES -->
+
+                        <!-- ══════════════════════
+                             VIEW: ATTENDANCE
+                             ══════════════════════ -->
+                        <VBox fx:id="viewAttendance" spacing="20" visible="false" managed="false">
+                            <HBox alignment="CENTER_LEFT">
+                                <VBox HBox.hgrow="ALWAYS" spacing="3">
+                                    <Label text="Attendance Records" styleClass="sec-title"/>
+                                    <Label text="Click any cell to edit inline"
+                                           styleClass="sec-subtitle"/>
+                                </VBox>
+                                <HBox spacing="8" alignment="CENTER_LEFT">
+                                    <ComboBox styleClass="period-combo" prefWidth="180">
+                                        <items>
+                                            <FXCollections fx:factory="observableArrayList">
+                                                <String fx:value="Santos, Juan P."/>
+                                                <String fx:value="Reyes, Ana Marie C."/>
+                                                <String fx:value="Cruz, Rodrigo M."/>
+                                                <String fx:value="De Guzman, Liza T."/>
+                                                <String fx:value="Villanueva, Mark R."/>
+                                            </FXCollections>
+                                        </items>
+                                        <value><String fx:value="Santos, Juan P."/></value>
+                                    </ComboBox>
+                                    <ComboBox styleClass="period-combo" prefWidth="160">
+                                        <items>
+                                            <FXCollections fx:factory="observableArrayList">
+                                                <String fx:value="June 1–15, 2026"/>
+                                                <String fx:value="June 16–30, 2026"/>
+                                                <String fx:value="May 16–31, 2026"/>
+                                            </FXCollections>
+                                        </items>
+                                        <value><String fx:value="June 1–15, 2026"/></value>
+                                    </ComboBox>
+                                    <Button text="Load"
+                                            styleClass="btn-primary, btn-sm"
+                                            onAction="#loadAttendance">
+                                        <graphic><FontIcon iconLiteral="fas-redo" iconSize="12"/></graphic>
+                                    </Button>
+                                </HBox>
+                            </HBox>
+
+                            <VBox styleClass="card">
+                                <TableView fx:id="attendanceAdminTable"
+                                           styleClass="data-table"
+                                           prefHeight="320">
+                                    <columns>
+                                        <TableColumn fx:id="attAdColDay"     text="DAY"          prefWidth="60"/>
+                                        <TableColumn fx:id="attAdColDate"    text="DATE"         prefWidth="80"/>
+                                        <TableColumn fx:id="attAdColIn"      text="TIME IN"      prefWidth="110"/>
+                                        <TableColumn fx:id="attAdColOut"     text="TIME OUT"     prefWidth="110"/>
+                                        <TableColumn fx:id="attAdColHrs"     text="HRS WORKED"   prefWidth="100"/>
+                                        <TableColumn fx:id="attAdColOt"      text="OT HRS"       prefWidth="80"/>
+                                        <TableColumn fx:id="attAdColUt"      text="UNDERTIME"    prefWidth="90"/>
+                                        <TableColumn fx:id="attAdColAbsent"  text="ABSENT"       prefWidth="70"/>
+                                        <TableColumn fx:id="attAdColHoliday" text="HOLIDAY TYPE" prefWidth="120"/>
+                                        <TableColumn fx:id="attAdColSave"    text=""             prefWidth="60"/>
+                                    </columns>
+                                </TableView>
+
+                                
+                                <HBox styleClass="summary-strip" fillHeight="true">
+                                    <VBox styleClass="sum-cell" HBox.hgrow="ALWAYS" alignment="CENTER">
+                                        <Label text="TOTAL HOURS" styleClass="sum-label"/>
+                                        <Label fx:id="adminSumHours" text="41.9" styleClass="sum-value"/>
+                                    </VBox>
+                                    <VBox styleClass="sum-cell" HBox.hgrow="ALWAYS" alignment="CENTER">
+                                        <Label text="OT HOURS" styleClass="sum-label"/>
+                                        <Label fx:id="adminSumOT" text="2.0" styleClass="sum-value"/>
+                                    </VBox>
+                                    <VBox styleClass="sum-cell" HBox.hgrow="ALWAYS" alignment="CENTER">
+                                        <Label text="UNDERTIME" styleClass="sum-label"/>
+                                        <Label fx:id="adminSumUT" text="0.1" styleClass="sum-value"/>
+                                    </VBox>
+                                    <VBox styleClass="sum-cell" HBox.hgrow="ALWAYS" alignment="CENTER">
+                                        <Label text="ABSENCES" styleClass="sum-label"/>
+                                        <Label fx:id="adminSumAbsent" text="1" styleClass="sum-value"/>
+                                    </VBox>
+                                </HBox>
+                            </VBox>
+                        </VBox>
+                        <!-- /VIEW: ATTENDANCE -->
+
+                        <!-- ══════════════════════
+                             VIEW: PAYROLL RUN
+                             ══════════════════════ -->
+                        <VBox fx:id="viewPayroll" spacing="20" visible="false" managed="false">
+                            <HBox alignment="CENTER_LEFT">
+                                <VBox HBox.hgrow="ALWAYS" spacing="3">
+                                    <Label text="Payroll Run" styleClass="sec-title"/>
+                                    <Label text="Compute and review payroll for this cut-off"
+                                           styleClass="sec-subtitle"/>
+                                </VBox>
+                                <Button text="Export CSV"
+                                        styleClass="btn-outline"
+                                        onAction="#handleExportCsv">
+                                    <graphic><FontIcon iconLiteral="fas-download" iconSize="14"/></graphic>
+                                </Button>
+                            </HBox>
+
+                            
+                            <HBox spacing="12" alignment="BOTTOM_LEFT">
+                                <VBox spacing="5" HBox.hgrow="ALWAYS">
+                                    <Label text="CUT-OFF PERIOD" styleClass="form-label"/>
+                                    <ComboBox styleClass="form-combo"
+                                              maxWidth="Infinity">
+                                        <items>
+                                            <FXCollections fx:factory="observableArrayList">
+                                                <String fx:value="June 1–15, 2026"/>
+                                                <String fx:value="May 16–31, 2026"/>
+                                                <String fx:value="May 1–15, 2026"/>
+                                            </FXCollections>
+                                        </items>
+                                        <value><String fx:value="June 1–15, 2026"/></value>
+                                    </ComboBox>
+                                </VBox>
+                                <VBox spacing="5" prefWidth="200">
+                                    <Label text="SCOPE" styleClass="form-label"/>
+                                    <ComboBox styleClass="form-combo" maxWidth="Infinity">
+                                        <items>
+                                            <FXCollections fx:factory="observableArrayList">
+                                                <String fx:value="All Employees"/>
+                                                <String fx:value="Regular Only"/>
+                                                <String fx:value="Select Employees"/>
+                                            </FXCollections>
+                                        </items>
+                                        <value><String fx:value="All Employees"/></value>
+                                    </ComboBox>
+                                </VBox>
+                                <VBox spacing="5" prefWidth="200" alignment="BOTTOM_LEFT">
+                                    <Button text="Compute Payroll"
+                                            styleClass="compute-btn"
+                                            onAction="#computePayroll"
+                                            maxWidth="Infinity">
+                                        <graphic><FontIcon iconLiteral="fas-calculator" iconSize="14"/></graphic>
+                                    </Button>
+                                </VBox>
+                            </HBox>
+
+                            
+                            <VBox fx:id="payrollPlaceholder" styleClass="placeholder-pane"
+                                  alignment="CENTER" spacing="12">
+                                <Label styleClass="placeholder-icon">
+                                    <graphic><FontIcon iconLiteral="fas-calculator" iconSize="24"/></graphic>
+                                </Label>
+                                <Label text="Select cut-off and press Compute Payroll to generate results."
+                                       styleClass="placeholder-text"/>
+                            </VBox>
+
+                            
+                            <VBox fx:id="payrollResults" visible="false" managed="false"
+                                  styleClass="card">
+                                <HBox styleClass="card-header" alignment="CENTER_LEFT">
+                                    <Label text="Payroll Results — June 1–15, 2026"
+                                           styleClass="card-header-title"
+                                           HBox.hgrow="ALWAYS"/>
+                                    <HBox spacing="6">
+                                        <Button text="PDF Payslips"
+                                                styleClass="btn-outline, btn-sm"
+                                            visible="false"
+                                            managed="false"
+                                                onAction="#handlePdfPayslips">
+                                            <graphic><FontIcon iconLiteral="fas-file-pdf" iconSize="12"/></graphic>
+                                        </Button>
+                                        <Button text="CSV"
+                                                styleClass="btn-outline, btn-sm"
+                                            visible="false"
+                                            managed="false"
+                                                onAction="#handleExportCsv">
+                                            <graphic><FontIcon iconLiteral="fas-download" iconSize="12"/></graphic>
+                                        </Button>
+                                    </HBox>
+                                </HBox>
+                                <TableView fx:id="payrollTable"
+                                           styleClass="data-table"
+                                           prefHeight="320">
+                                    <columns>
+                                        <TableColumn fx:id="prColName"  text="EMPLOYEE"    prefWidth="200"/>
+                                        <TableColumn fx:id="prColBasic" text="BASIC PAY"   prefWidth="110"/>
+                                        <TableColumn fx:id="prColOT"    text="OT PAY"      prefWidth="90"/>
+                                        <TableColumn fx:id="prColGross" text="GROSS PAY"   prefWidth="110"/>
+                                        <TableColumn fx:id="prColSSS"   text="SSS"         prefWidth="80"/>
+                                        <TableColumn fx:id="prColPH"    text="PHILHEALTH"  prefWidth="100"/>
+                                        <TableColumn fx:id="prColPIG"   text="PAG-IBIG"    prefWidth="90"/>
+                                        <TableColumn fx:id="prColTax"   text="TAX (BIR)"   prefWidth="90"/>
+                                        <TableColumn fx:id="prColLoan"  text="LOAN"        prefWidth="80"/>
+                                        <TableColumn fx:id="prColNet"   text="NET PAY"     prefWidth="110"/>
+                                        <TableColumn fx:id="prColAct"   text=""            prefWidth="60"/>
+                                    </columns>
+                                </TableView>
+                            </VBox>
+                        </VBox>
+                        
+
+                        
+                        <VBox fx:id="viewReports" spacing="20" visible="false" managed="false">
+                            <HBox alignment="CENTER_LEFT">
+                                <VBox HBox.hgrow="ALWAYS" spacing="3">
+                                    <Label text="Reports &amp; Payslip History" styleClass="sec-title"/>
+                                    <Label text="All past payroll runs" styleClass="sec-subtitle"/>
+                                </VBox>
+                                <Button text="Bulk Export"
+                                        styleClass="btn-outline"
+                                        onAction="#handleBulkExport">
+                                    <graphic><FontIcon iconLiteral="fas-download" iconSize="14"/></graphic>
+                                </Button>
+                            </HBox>
+
+                            <HBox spacing="8" alignment="CENTER_LEFT">
+                                <HBox styleClass="search-bar" spacing="8" alignment="CENTER_LEFT">
+                                    <Label styleClass="search-icon">
+                                        <graphic><FontIcon iconLiteral="fas-search" iconSize="14"/></graphic>
+                                    </Label>
+                                    <TextField styleClass="search-field"
+                                               promptText="Search employee…" prefWidth="200"/>
+                                </HBox>
+                                <ComboBox styleClass="period-combo" prefWidth="100">
+                                    <items>
+                                        <FXCollections fx:factory="observableArrayList">
+                                            <String fx:value="2026"/>
+                                            <String fx:value="2025"/>
+                                        </FXCollections>
+                                    </items>
+                                    <value><String fx:value="2026"/></value>
+                                </ComboBox>
+                                <ComboBox styleClass="period-combo" prefWidth="150">
+                                    <items>
+                                        <FXCollections fx:factory="observableArrayList">
+                                            <String fx:value="All Cut-offs"/>
+                                            <String fx:value="1st Cut-off"/>
+                                            <String fx:value="2nd Cut-off"/>
+                                        </FXCollections>
+                                    </items>
+                                    <value><String fx:value="All Cut-offs"/></value>
+                                </ComboBox>
+                            </HBox>
+
+                            <VBox styleClass="card">
+                                <TableView fx:id="reportsTable"
+                                           styleClass="data-table"
+                                           prefHeight="340">
+                                    <columns>
+                                        <TableColumn fx:id="repColPeriod" text="CUT-OFF PERIOD"    prefWidth="180"/>
+                                        <TableColumn fx:id="repColEmps"   text="EMPLOYEES"         prefWidth="100"/>
+                                        <TableColumn fx:id="repColGross"  text="GROSS PAYROLL"     prefWidth="150"/>
+                                        <TableColumn fx:id="repColDed"    text="TOTAL DEDUCTIONS"  prefWidth="160"/>
+                                        <TableColumn fx:id="repColNet"    text="NET PAYROLL"       prefWidth="150"/>
+                                        <TableColumn fx:id="repColStatus" text="STATUS"            prefWidth="90"/>
+                                        <TableColumn fx:id="repColAction" text="ACTIONS"           prefWidth="100"/>
+                                    </columns>
+                                </TableView>
+                            </VBox>
+                        </VBox>
+                        
+
+                        
+                        <VBox fx:id="viewSettings" spacing="20" visible="false" managed="false">
+                            <VBox spacing="3">
+                                <Label text="System Settings" styleClass="sec-title"/>
+                                <Label text="Payroll configuration and administration"
+                                       styleClass="sec-subtitle"/>
+                            </VBox>
+
+                            <GridPane hgap="20" vgap="20">
+                                <columnConstraints>
+                                    <ColumnConstraints hgrow="ALWAYS" percentWidth="50"/>
+                                    <ColumnConstraints hgrow="ALWAYS" percentWidth="50"/>
+                                </columnConstraints>
+
+                                
+                                <VBox styleClass="card"
+                                      GridPane.columnIndex="0" GridPane.rowIndex="0">
+                                    <HBox styleClass="card-header">
+                                             <Label text="Working Calendar"
+                                                 styleClass="card-header-title"
+                                                 HBox.hgrow="ALWAYS">
+                                              <graphic><FontIcon iconLiteral="fas-calendar-alt" iconSize="14"/></graphic>
+                                             </Label>
+                                    </HBox>
+                                    <VBox styleClass="card-body" spacing="10">
+                                        <Label text="Toggle which days are considered working days:"
+                                               style="-fx-font-size: 12px; -fx-text-fill: #3D5068;"/>
+                                        <HBox spacing="6">
+                                            <Button text="Sun" styleClass="day-btn, off" onAction="#toggleDay"/>
+                                            <Button text="Mon" styleClass="day-btn"      onAction="#toggleDay"/>
+                                            <Button text="Tue" styleClass="day-btn"      onAction="#toggleDay"/>
+                                            <Button text="Wed" styleClass="day-btn"      onAction="#toggleDay"/>
+                                            <Button text="Thu" styleClass="day-btn"      onAction="#toggleDay"/>
+                                            <Button text="Fri" styleClass="day-btn"      onAction="#toggleDay"/>
+                                            <Button text="Sat" styleClass="day-btn, off" onAction="#toggleDay"/>
+                                        </HBox>
+                                        <Label text="Work hours/day: 8.0  |  OT threshold: after 8h"
+                                               style="-fx-font-size: 12px; -fx-text-fill: #3D5068;"/>
+                                    </VBox>
+                                </VBox>
+
+                                
+                                <VBox styleClass="card"
+                                      GridPane.columnIndex="1" GridPane.rowIndex="0">
+                                    <HBox styleClass="card-header" alignment="CENTER_LEFT">
+                                             <Label text="Holiday Manager"
+                                                 styleClass="card-header-title"
+                                                 HBox.hgrow="ALWAYS">
+                                              <graphic><FontIcon iconLiteral="fas-star" iconSize="14"/></graphic>
+                                             </Label>
+                                        <Button text="+ Add"
+                                                styleClass="btn-outline, btn-sm"
+                                                onAction="#addHoliday"/>
+                                    </HBox>
+                                    <ScrollPane prefHeight="180" fitToWidth="true"
+                                                styleClass="scroll-pane">
+                                        <VBox styleClass="card-body" spacing="0"
+                                              fx:id="holidayList">
+                                            <HBox styleClass="holiday-row" spacing="10">
+                                                <Label text="Jun 12" styleClass="period-row-value" prefWidth="70"/>
+                                                <Label text="Independence Day" HBox.hgrow="ALWAYS"
+                                                       style="-fx-font-size: 12px;"/>
+                                                <Label text="Regular" styleClass="badge, badge-navy"/>
+                                                      <Button styleClass="btn-sm"
+                                                        style="-fx-background-color: transparent;
+                                                            -fx-text-fill: #991B1B; -fx-border-width: 0;"
+                                                        onAction="#deleteHoliday">
+                                                       <graphic><FontIcon iconLiteral="fas-trash-alt" iconSize="12"/></graphic>
+                                                      </Button>
+                                            </HBox>
+                                            <HBox styleClass="holiday-row" spacing="10">
+                                                <Label text="Aug 21" styleClass="period-row-value" prefWidth="70"/>
+                                                <Label text="Ninoy Aquino Day" HBox.hgrow="ALWAYS"
+                                                       style="-fx-font-size: 12px;"/>
+                                                <Label text="Special" styleClass="badge, badge-gray"/>
+                                                      <Button styleClass="btn-sm"
+                                                        style="-fx-background-color: transparent;
+                                                            -fx-text-fill: #991B1B; -fx-border-width: 0;"
+                                                        onAction="#deleteHoliday">
+                                                       <graphic><FontIcon iconLiteral="fas-trash-alt" iconSize="12"/></graphic>
+                                                      </Button>
+                                            </HBox>
+                                            <HBox styleClass="holiday-row" spacing="10">
+                                                <Label text="Aug 25" styleClass="period-row-value" prefWidth="70"/>
+                                                <Label text="National Heroes Day" HBox.hgrow="ALWAYS"
+                                                       style="-fx-font-size: 12px;"/>
+                                                <Label text="Regular" styleClass="badge, badge-navy"/>
+                                                      <Button styleClass="btn-sm"
+                                                        style="-fx-background-color: transparent;
+                                                            -fx-text-fill: #991B1B; -fx-border-width: 0;"
+                                                        onAction="#deleteHoliday">
+                                                       <graphic><FontIcon iconLiteral="fas-trash-alt" iconSize="12"/></graphic>
+                                                      </Button>
+                                            </HBox>
+                                            <HBox styleClass="holiday-row" spacing="10">
+                                                <Label text="Dec 25" styleClass="period-row-value" prefWidth="70"/>
+                                                <Label text="Christmas Day" HBox.hgrow="ALWAYS"
+                                                       style="-fx-font-size: 12px;"/>
+                                                <Label text="Regular" styleClass="badge, badge-navy"/>
+                                                      <Button styleClass="btn-sm"
+                                                        style="-fx-background-color: transparent;
+                                                            -fx-text-fill: #991B1B; -fx-border-width: 0;"
+                                                        onAction="#deleteHoliday">
+                                                       <graphic><FontIcon iconLiteral="fas-trash-alt" iconSize="12"/></graphic>
+                                                      </Button>
+                                            </HBox>
+                                        </VBox>
+                                    </ScrollPane>
+                                </VBox>
+
+                                
+                                <VBox styleClass="card"
+                                      GridPane.columnIndex="0" GridPane.rowIndex="1">
+                                    <HBox styleClass="card-header" alignment="CENTER_LEFT">
+                                             <Label text="Admin Accounts"
+                                                 styleClass="card-header-title"
+                                                 HBox.hgrow="ALWAYS">
+                                              <graphic><FontIcon iconLiteral="fas-user-shield" iconSize="14"/></graphic>
+                                             </Label>
+                                        <Button text="+ Add"
+                                                styleClass="btn-outline, btn-sm"
+                                                  visible="false"
+                                                  managed="false"
+                                                onAction="#addAdmin"/>
+                                    </HBox>
+                                    <VBox styleClass="card-body" spacing="12">
+                                        <HBox spacing="10" alignment="CENTER_LEFT">
+                                            <Label text="MA" styleClass="header-avatar"
+                                                   minWidth="32" maxWidth="32"
+                                                   minHeight="32" maxHeight="32" alignment="CENTER"/>
+                                            <VBox HBox.hgrow="ALWAYS" spacing="2">
+                                                <Label text="Maria Aquino"
+                                                       style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #0B1F3A;"/>
+                                                <Label text="m.aquino@nu.edu.ph"
+                                                       style="-fx-font-size: 11px; -fx-text-fill: #7A8FA6;"/>
+                                            </VBox>
+                                            <Label text="Super Admin" styleClass="badge, badge-gold"/>
+                                        </HBox>
+                                        <HBox spacing="10" alignment="CENTER_LEFT">
+                                            <Label text="JR"
+                                                   style="-fx-background-color: linear-gradient(to bottom right,#1A3A5C,#2A4A6C);
+                                                          -fx-background-radius: 50%; -fx-min-width: 32;
+                                                          -fx-min-height: 32; -fx-max-width: 32; -fx-max-height: 32;
+                                                          -fx-text-fill: white; -fx-font-size: 11px;
+                                                          -fx-font-weight: bold; -fx-alignment: center;"/>
+                                            <VBox HBox.hgrow="ALWAYS" spacing="2">
+                                                <Label text="Jose Ramos"
+                                                       style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #0B1F3A;"/>
+                                                <Label text="j.ramos@nu.edu.ph"
+                                                       style="-fx-font-size: 11px; -fx-text-fill: #7A8FA6;"/>
+                                            </VBox>
+                                            <Label text="Payroll Admin" styleClass="badge, badge-gray"/>
+                                        </HBox>
+                                    </VBox>
+                                </VBox>
+
+                            </GridPane>
+                        </VBox>
+                        
+
+                    </VBox>
+                </ScrollPane>
+
+                
+                <StackPane fx:id="modalOverlay"
+                           styleClass="modal-overlay"
+                           visible="false" managed="false"
+                           alignment="CENTER">
+
+                    <VBox styleClass="modal-pane">
+                        <HBox styleClass="modal-header" alignment="CENTER_LEFT">
+                            <Label fx:id="modalTitle"
+                                   text="Add Employee"
+                                   styleClass="modal-title"
+                                   HBox.hgrow="ALWAYS"/>
+                            <Button styleClass="modal-close-btn"
+                                    onAction="#closeModal">
+                                <graphic><FontIcon iconLiteral="fas-times" iconSize="14"/></graphic>
+                            </Button>
+                        </HBox>
+
+                        <VBox styleClass="modal-body" spacing="12">
+                            <GridPane hgap="12" vgap="12">
+                                <columnConstraints>
+                                    <ColumnConstraints hgrow="ALWAYS" percentWidth="50"/>
+                                    <ColumnConstraints hgrow="ALWAYS" percentWidth="50"/>
+                                </columnConstraints>
+                                <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                                    <Label text="EMPLOYEE ID" styleClass="form-label"/>
+                                    <TextField fx:id="employeeIdField" styleClass="form-input" promptText="e.g. EMP-0045"/>
+                                </VBox>
+                                <VBox spacing="5" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                                    <Label text="FULL NAME" styleClass="form-label"/>
+                                    <TextField fx:id="employeeNameField" styleClass="form-input" promptText="Last, First MI."/>
+                                </VBox>
+                                <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="1">
+                                    <Label text="EMPLOYEE TYPE" styleClass="form-label"/>
+                                    <ComboBox fx:id="employeeTypeCombo" styleClass="form-combo" maxWidth="Infinity">
+                                        <items>
+                                            <FXCollections fx:factory="observableArrayList">
+                                                <String fx:value="Regular"/>
+                                                <String fx:value="Probationary"/>
+                                                <String fx:value="Contractual"/>
+                                                <String fx:value="Part-timer"/>
+                                            </FXCollections>
+                                        </items>
+                                        <value><String fx:value="Regular"/></value>
+                                    </ComboBox>
+                                </VBox>
+                                <VBox spacing="5" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                    <Label text="RATE TYPE" styleClass="form-label"/>
+                                    <ComboBox fx:id="employeeRateTypeCombo" styleClass="form-combo" maxWidth="Infinity">
+                                        <items>
+                                            <FXCollections fx:factory="observableArrayList">
+                                                <String fx:value="Monthly Rate"/>
+                                                <String fx:value="Hourly Rate"/>
+                                            </FXCollections>
+                                        </items>
+                                        <value><String fx:value="Monthly Rate"/></value>
+                                    </ComboBox>
+                                </VBox>
+                                <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="2">
+                                    <Label text="RATE AMOUNT (₱)" styleClass="form-label"/>
+                                    <TextField fx:id="employeeRateField" styleClass="form-input" promptText="e.g. 28000"/>
+                                </VBox>
+                                <VBox spacing="5" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                    <Label text="LOAN BALANCE (₱)" styleClass="form-label"/>
+                                    <TextField fx:id="employeeLoanField" styleClass="form-input" promptText="0.00"/>
+                                </VBox>
+                                <VBox spacing="5" GridPane.columnIndex="0" GridPane.rowIndex="3"
+                                      GridPane.columnSpan="2">
+                                    <Label text="DEPARTMENT" styleClass="form-label"/>
+                                    <ComboBox fx:id="employeeDepartmentCombo" styleClass="form-combo" maxWidth="Infinity">
+                                        <items>
+                                            <FXCollections fx:factory="observableArrayList">
+                                                <String fx:value="Engineering"/>
+                                                <String fx:value="Finance"/>
+                                                <String fx:value="HR &amp; Admin"/>
+                                                <String fx:value="Operations"/>
+                                                <String fx:value="Sales"/>
+                                            </FXCollections>
+                                        </items>
+                                        <value><String fx:value="Engineering"/></value>
+                                    </ComboBox>
+                                </VBox>
+                            </GridPane>
+                            <HBox spacing="8" alignment="CENTER_LEFT">
+                                <CheckBox fx:id="hasLeaveCheckbox"
+                                          style="-fx-cursor: hand;"/>
+                                <Label text="Has Leave Credits"
+                                       style="-fx-font-size: 13px; -fx-text-fill: #3D5068;"/>
+                            </HBox>
+                        </VBox>
+
+                        <HBox styleClass="modal-footer" alignment="CENTER_RIGHT" spacing="8">
+                            <Button text="Cancel"
+                                    styleClass="btn-outline"
+                                    onAction="#closeModal"/>
+                            <Button text="Save Employee"
+                                    styleClass="btn-primary"
+                                    onAction="#saveEmployee">
+                                <graphic><FontIcon iconLiteral="fas-check" iconSize="14"/></graphic>
+                            </Button>
+                        </HBox>
+                    </VBox>
+
+                </StackPane>
+
+            </StackPane>
+        </VBox>
+    </center>
+
+</BorderPane>
+

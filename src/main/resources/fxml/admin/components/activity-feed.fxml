@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.shape.*?>
+<?import javafx.geometry.*?>
+
+
+
+<VBox styleClass="card" HBox.hgrow="ALWAYS"
+      xmlns="http://javafx.com/javafx/20"
+      xmlns:fx="http://javafx.com/fxml/1"
+      spacing="0">
+
+    
+    <HBox styleClass="card-header" alignment="CENTER_LEFT">
+        <Label text="Recent Activity"
+               styleClass="card-header-title"
+               HBox.hgrow="ALWAYS"/>
+        <Label text="Live" styleClass="badge, badge-green"/>
+    </HBox>
+
+    
+    <VBox styleClass="card-body" spacing="0">
+
+        
+        <HBox styleClass="activity-row" spacing="12" alignment="CENTER_LEFT">
+            <Circle radius="4" styleClass="activity-dot-in"/>
+            <VBox HBox.hgrow="ALWAYS" spacing="2">
+                <Label text="Santos, Juan P. â€” Time In"
+                       styleClass="activity-title"/>
+                <Label text="08:02 AM Â· Engineering Â· June 10"
+                       styleClass="activity-meta"/>
+            </VBox>
+            <Label text="Present" styleClass="badge, badge-green"/>
+        </HBox>
+
+        
+        <HBox styleClass="activity-row" spacing="12" alignment="CENTER_LEFT">
+            <Circle radius="4" styleClass="activity-dot-in"/>
+            <VBox HBox.hgrow="ALWAYS" spacing="2">
+                <Label text="Reyes, Ana Marie C. â€” Time In"
+                       styleClass="activity-title"/>
+                <Label text="08:07 AM Â· Finance Â· June 10"
+                       styleClass="activity-meta"/>
+            </VBox>
+            <Label text="Present" styleClass="badge, badge-green"/>
+        </HBox>
+
+        
+        <HBox styleClass="activity-row" spacing="12" alignment="CENTER_LEFT">
+            <Circle radius="4" styleClass="activity-dot-absent"/>
+            <VBox HBox.hgrow="ALWAYS" spacing="2">
+                <Label text="Cruz, Rodrigo M. â€” No Time-In"
+                       styleClass="activity-title"/>
+                <Label text="Engineering Â· June 10"
+                       styleClass="activity-meta"/>
+            </VBox>
+            <Label text="Absent" styleClass="badge, badge-red"/>
+        </HBox>
+
+        
+        <HBox styleClass="activity-row" spacing="12" alignment="CENTER_LEFT">
+            <Circle radius="4" styleClass="activity-dot-out"/>
+            <VBox HBox.hgrow="ALWAYS" spacing="2">
+                <Label text="De Guzman, Liza T. â€” Time Out"
+                       styleClass="activity-title"/>
+                <Label text="05:34 PM Â· HR &amp; Admin Â· June 9"
+                       styleClass="activity-meta"/>
+            </VBox>
+            <Label text="OT: 0.5 hrs" styleClass="badge, badge-amber"/>
+        </HBox>
+
+        
+        <HBox styleClass="activity-row" spacing="12" alignment="CENTER_LEFT">
+            <Circle radius="4" styleClass="activity-dot-in"/>
+            <VBox HBox.hgrow="ALWAYS" spacing="2">
+                <Label text="Villanueva, Mark R. â€” Time In"
+                       styleClass="activity-title"/>
+                <Label text="07:58 AM Â· Operations Â· June 10"
+                       styleClass="activity-meta"/>
+            </VBox>
+            <Label text="Present" styleClass="badge, badge-green"/>
+        </HBox>
+
+        
+        <HBox styleClass="activity-row" spacing="12" alignment="CENTER_LEFT">
+            <Circle radius="4" styleClass="activity-dot-absent"/>
+            <VBox HBox.hgrow="ALWAYS" spacing="2">
+                <Label text="Bautista, Rosa J. â€” On Leave"
+                       styleClass="activity-title"/>
+                <Label text="HR &amp; Admin Â· June 10"
+                       styleClass="activity-meta"/>
+            </VBox>
+            <Label text="Leave" styleClass="badge, badge-blue"/>
+        </HBox>
+
+    </VBox>
+
+</VBox>
+

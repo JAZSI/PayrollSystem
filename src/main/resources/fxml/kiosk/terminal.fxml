@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.shape.*?>
+<?import javafx.geometry.*?>
+
+
+
+<VBox
+    xmlns="http://javafx.com/javafx/20"
+    xmlns:fx="http://javafx.com/fxml/1"
+    fx:controller="com.com253.payrollsystem.presentation.gui.controller.KioskTerminalController"
+    styleClass="kiosk-root"
+    prefWidth="900" prefHeight="720"
+    spacing="0">
+
+    
+    <Region styleClass="gold-stripe" minHeight="3" maxHeight="3" maxWidth="Infinity"/>
+
+    
+    <HBox styleClass="scan-strip" alignment="CENTER_LEFT" spacing="12"
+          style="-fx-padding: 12 20 12 20;">
+
+        
+        <HBox spacing="10" alignment="CENTER_LEFT" HBox.hgrow="ALWAYS">
+            <Circle fx:id="scanPulse" radius="5" styleClass="scan-pulse-indicator"/>
+            <Label text="RFID / Barcode reader ready" styleClass="scan-label"/>
+        </HBox>
+
+        
+        <VBox alignment="CENTER_RIGHT" spacing="1">
+            <Label fx:id="clockLabel" text="00:00:00" styleClass="clock-time"/>
+            <Label fx:id="dateLabel"  text="Mon, Jan 01 2026" styleClass="clock-date"/>
+        </VBox>
+
+    </HBox>
+
+    
+    <HBox styleClass="state-tab-bar" alignment="CENTER" spacing="6"
+          style="-fx-padding: 8 32 8 32;">
+        <Button fx:id="tabIdle"
+                text="Idle"
+                styleClass="state-tab, active"
+                onAction="#showIdle"/>
+        <Button fx:id="tabActive"
+                text="Active"
+                styleClass="state-tab"
+                onAction="#showActive"/>
+        <Button fx:id="tabSuccessIn"
+                text="Success (In)"
+                styleClass="state-tab"
+                onAction="#showSuccessIn"/>
+        <Button fx:id="tabSuccessOut"
+                text="Success (Out)"
+                styleClass="state-tab"
+                onAction="#showSuccessOut"/>
+        <Button fx:id="tabErrorNF"
+                text="Not Found"
+                styleClass="state-tab"
+                onAction="#showErrorNotFound"/>
+        <Button fx:id="tabErrorDup"
+                text="Already Timed"
+                styleClass="state-tab"
+                onAction="#showErrorDuplicate"/>
+    </HBox>
+
+    
+    <StackPane styleClass="kiosk-body"
+               VBox.vgrow="ALWAYS"
+               alignment="CENTER">
+
+        
+        <fx:include source="components/state-idle.fxml"/>
+        <fx:include source="components/state-active.fxml"/>
+        <fx:include source="components/state-success-in.fxml"/>
+        <fx:include source="components/state-success-out.fxml"/>
+        <fx:include source="components/state-error-notfound.fxml"/>
+        <fx:include source="components/state-error-duplicate.fxml"/>
+
+    </StackPane>
+
+</VBox>
+

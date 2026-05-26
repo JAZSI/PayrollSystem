@@ -1,13 +1,13 @@
 package com.com253.payrollsystem;
 
-import com.com253.payrollsystem.Model.Employee;
-import com.com253.payrollsystem.Model.Employee.EmployeeType;
-import com.com253.payrollsystem.Model.LeaveBalance;
-import com.com253.payrollsystem.Model.LoanBalance;
-import com.com253.payrollsystem.Model.PayrollEntry;
-import com.com253.payrollsystem.Model.PayrollSettings;
-import com.com253.payrollsystem.Model.TimeRecord;
-import com.com253.payrollsystem.Service.PayrollCalculator;
+import com.com253.payrollsystem.domain.model.Employee;
+import com.com253.payrollsystem.domain.model.Employee.EmployeeType;
+import com.com253.payrollsystem.domain.model.LeaveBalance;
+import com.com253.payrollsystem.domain.model.LoanBalance;
+import com.com253.payrollsystem.domain.model.PayrollEntry;
+import com.com253.payrollsystem.domain.model.PayrollSettings;
+import com.com253.payrollsystem.domain.model.TimeRecord;
+import com.com253.payrollsystem.domain.service.PayrollCalculator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

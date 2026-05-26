@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+<?import javafx.geometry.*?>
+
+<VBox xmlns="http://javafx.com/javafx/20"
+      xmlns:fx="http://javafx.com/fxml/1"
+      spacing="16"
+      style="-fx-padding: 20;">
+    <Label text="Leave Management - Coming Soon" styleClass="h3">
+      <graphic>
+        <FontIcon iconLiteral="fas-umbrella-beach" iconSize="16"/>
+      </graphic>
+    </Label>
+    <Label text="Leave request and history will be shown here."
+           styleClass="text-muted"/>
+</VBox>

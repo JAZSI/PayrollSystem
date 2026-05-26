@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.*?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+
+
+<VBox fx:id="stateErrorNotFound"
+      spacing="20"
+      alignment="CENTER"
+      maxWidth="520"
+      visible="false" managed="false"
+      xmlns="http://javafx.com/javafx/20"
+      xmlns:fx="http://javafx.com/fxml/1">
+
+    <VBox styleClass="error-card" spacing="16">
+        <Label styleClass="error-icon">
+            <graphic>
+                <FontIcon iconLiteral="fas-times-circle" iconSize="24"/>
+            </graphic>
+        </Label>
+        <Label text="Employee Not Found" styleClass="error-title"/>
+        <Label fx:id="errorMessageLabel"
+               text="The employee ID you entered could not be found in the system."
+               styleClass="error-message"
+               wrapText="true"
+               maxWidth="400"/>
+        <Button text="Try Again"
+                styleClass="btn-primary"
+                maxWidth="120"
+                onAction="#resetToIdle"/>
+        <Label text="Returning to idle screen..."
+               styleClass="error-countdown"/>
+    </VBox>
+
+</VBox>
+

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.shape.*?>
+<?import javafx.geometry.*?>
+
+
+
+<GridPane hgap="16" vgap="16"
+          xmlns="http://javafx.com/javafx/20"
+          xmlns:fx="http://javafx.com/fxml/1">
+
+    <columnConstraints>
+        <ColumnConstraints hgrow="ALWAYS" percentWidth="25"/>
+        <ColumnConstraints hgrow="ALWAYS" percentWidth="25"/>
+        <ColumnConstraints hgrow="ALWAYS" percentWidth="25"/>
+        <ColumnConstraints hgrow="ALWAYS" percentWidth="25"/>
+    </columnConstraints>
+
+    
+    <VBox styleClass="kpi-card" GridPane.columnIndex="0" spacing="4">
+        <Rectangle width="36" height="3" arcWidth="2" arcHeight="2"
+                   styleClass="kpi-accent-navy"/>
+        <Label text="TOTAL EMPLOYEES" styleClass="kpi-label"/>
+        <Label text="47" styleClass="kpi-value"/>
+        <Label text="3 new this month" styleClass="kpi-sub"/>
+    </VBox>
+
+    
+    <VBox styleClass="kpi-card" GridPane.columnIndex="1" spacing="4">
+        <Rectangle width="36" height="3" arcWidth="2" arcHeight="2"
+                   styleClass="kpi-accent-gold"/>
+        <Label text="PAYROLL THIS PERIOD" styleClass="kpi-label"/>
+        <Label text="â‚±1,284,600" styleClass="kpi-value-sm"/>
+        <Label text="â†‘ â‚±42,000 vs last cut-off" styleClass="kpi-sub"/>
+    </VBox>
+
+    
+    <VBox styleClass="kpi-card" GridPane.columnIndex="2" spacing="4">
+        <Rectangle width="36" height="3" arcWidth="2" arcHeight="2"
+                   styleClass="kpi-accent-green"/>
+        <Label text="ON-TIME TODAY" styleClass="kpi-label"/>
+        <Label text="39" styleClass="kpi-value"/>
+        <Label text="of 44 expected" styleClass="kpi-sub"/>
+    </VBox>
+
+    
+    <VBox styleClass="kpi-card" GridPane.columnIndex="3" spacing="4">
+        <Rectangle width="36" height="3" arcWidth="2" arcHeight="2"
+                   styleClass="kpi-accent-red"/>
+        <Label text="ABSENT TODAY" styleClass="kpi-label"/>
+        <Label text="5" styleClass="kpi-value"/>
+        <Label text="2 on approved leave" styleClass="kpi-sub"/>
+    </VBox>
+
+</GridPane>
+

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.*?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+<VBox xmlns="http://javafx.com/javafx/20"
+      xmlns:fx="http://javafx.com/fxml/1"
+      spacing="16"
+      style="-fx-padding: 20;">
+    <Label text="Reports - Coming Soon" styleClass="h3">
+      <graphic>
+        <FontIcon iconLiteral="fas-file-alt" iconSize="16"/>
+      </graphic>
+    </Label>
+    <Label text="This screen will be populated with report data when connected to services."
+           styleClass="text-muted"/>
+</VBox>
