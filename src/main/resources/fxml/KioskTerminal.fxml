@@ -246,7 +246,7 @@
                            alignment="CENTER"/>
                     <VBox HBox.hgrow="ALWAYS" spacing="4">
                         <Label fx:id="empNameLabel"
-                               text="Santos, Juan Pablo T."
+                               text="JC Senoto"
                                styleClass="emp-found-name"
                                wrapText="true"/>
                         <Label fx:id="empIdLabel"
@@ -302,7 +302,7 @@
 
             
             <Label fx:id="successInName"
-                   text="Santos, Juan Pablo T."
+                   text="JC Senoto"
                    styleClass="success-name"
                    wrapText="true"
                    maxWidth="420"
@@ -460,7 +460,7 @@ Please check your ID number or contact HR at ext. 100."
                    styleClass="error-title"/>
 
             <Label fx:id="errorDupMessage"
-                   text="Reyes, Ana Marie C. already recorded a Time In at 08:07:22 AM.
+                   text="Marc Soro already recorded a Time In at 08:07:22 AM.
 Please use Time Out to end your shift."
                    styleClass="error-message"
                    wrapText="true"

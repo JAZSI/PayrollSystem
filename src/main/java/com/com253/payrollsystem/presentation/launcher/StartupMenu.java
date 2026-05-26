@@ -1,7 +1,9 @@
 package com.com253.payrollsystem.presentation.launcher;
 
+import com.com253.payrollsystem.app.service.PayrollService;
 import com.com253.payrollsystem.infrastructure.config.Database;
 import com.com253.payrollsystem.presentation.cli.launcher.CliRunner;
+import com.com253.payrollsystem.presentation.cli.menu.SimulationMenu;
 import com.com253.payrollsystem.presentation.gui.launcher.GuiLauncher;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -21,6 +23,7 @@ public final class StartupMenu {
                     return;
                 }
                 case "3" -> resetDatabase(scanner);
+                case "5" -> new SimulationMenu(new PayrollService(), scanner).run();
                 case "4", "exit", "quit" -> {
                     System.out.println("Goodbye");
                     return;
@@ -54,6 +57,7 @@ public final class StartupMenu {
         System.out.println("1) CLI");
         System.out.println("2) GUI");
         System.out.println("3) Reset database");
+        System.out.println("5) Simulation menu");
         System.out.println("4) Exit");
         System.out.print("Choose interface: ");
     }

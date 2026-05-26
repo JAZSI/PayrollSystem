@@ -8,7 +8,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 public class SimplePayrollService {
-    // yung kabila final inaayos ko lang do not touch --- IGNORE ---
+    // dont use this this is for ui testing only --- IGNORE ---
     public SimplePayrollResult calculate(Employee employee, List<AttendanceRecord> attendance, LocalDate from, LocalDate to) {
         double totalHours = 0.0;
         double overtimeHours = 0.0;

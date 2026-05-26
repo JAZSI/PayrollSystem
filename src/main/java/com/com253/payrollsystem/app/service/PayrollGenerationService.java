@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import com.com253.payrollsystem.util.TimeUtils;
+import com.com253.payrollsystem.app.service.HolidayService;
 
 public class PayrollGenerationService {
 
@@ -47,10 +48,10 @@ public class PayrollGenerationService {
             TransactionManager.begin(conn);
 
             Optional<Submission> subOpt = submissionRepository.findByEmployeeId(employeeId);
-            if (subOpt.isEmpty() || subOpt.get().status() != Submission.Status.APPROVED) {
-                return null;
+            Submission sub = null;
+            if (subOpt.isPresent()) {
+                sub = subOpt.get();
             }
-            Submission sub = subOpt.get();
 
             Optional<Employee> empOpt = employeeRepository.findById(employeeId);
             if (empOpt.isEmpty()) {
@@ -65,10 +66,15 @@ public class PayrollGenerationService {
             LocalDate from = ym.atDay(cp.startDay());
             LocalDate to = (cp.endDay() == -1) ? ym.atEndOfMonth() : ym.atDay(Math.min(cp.endDay(), ym.lengthOfMonth()));
 
+            // build time records with holiday detection
             List<TimeRecord> records = buildTimeRecords(emp.getEmployeeId(), from, to);
             TimeRecord[] recordArray = records.toArray(new TimeRecord[0]);
+            double loanDeduction = 0.0;
+            if (sub != null && sub.status() == Submission.Status.APPROVED) {
+                loanDeduction = sub.loanDeduction();
+            }
 
-            PayrollEntry entry = PayrollCalculator.buildPayrollEntry(emp, recordArray, cutOffPeriod, sub.loanDeduction(), settings);
+            PayrollEntry entry = PayrollCalculator.buildPayrollEntry(emp, recordArray, cutOffPeriod, loanDeduction, settings);
             submissionRepository.savePayrollEntry(entry);
 
             TransactionManager.commit(conn);
@@ -84,18 +90,20 @@ public class PayrollGenerationService {
     private List<TimeRecord> buildTimeRecords(String employeeId, LocalDate from, LocalDate to) throws SQLException {
         List<AttendanceRecord> attendance = attendanceRepository.getAttendance(employeeId, from, to);
         List<TimeRecord> records = new ArrayList<>();
+        HolidayService holidayService = new HolidayService(from.getYear());
         LocalDate current = from;
 
         while (!current.isAfter(to)) {
             int dayNum = current.getDayOfMonth();
             AttendanceRecord rec = findRecord(attendance, current);
 
+            com.com253.payrollsystem.domain.model.HolidayType ht = holidayService.getHolidayType(current);
             if (rec == null || rec.getTimeIn() == null) {
-                records.add(new TimeRecord(dayNum, 0, 0, true, TimeRecord.HOLIDAY_NONE));
+                records.add(new TimeRecord(dayNum, 0, 0, true, ht));
             } else {
                 int timeIn = TimeUtils.toHHMM(rec.getTimeIn());
                 int timeOut = (rec.getTimeOut() != null) ? TimeUtils.toHHMM(rec.getTimeOut()) : 1700;
-                records.add(new TimeRecord(dayNum, timeIn, timeOut, false, TimeRecord.HOLIDAY_NONE));
+                records.add(new TimeRecord(dayNum, timeIn, timeOut, false, ht));
             }
 
             current = current.plusDays(1);

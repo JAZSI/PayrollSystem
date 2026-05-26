@@ -101,8 +101,8 @@
                minWidth="32" maxWidth="32" minHeight="32" maxHeight="32"
                alignment="CENTER"/>
         <VBox spacing="1" HBox.hgrow="ALWAYS">
-            <Label text="Maria Aquino" styleClass="sidebar-user-name"/>
-            <Label text="HR Administrator" styleClass="sidebar-user-role"/>
+            <Label text="ADMIN" styleClass="sidebar-user-name"/>
+            <Label text="ADMIN" styleClass="sidebar-user-role"/>
         </VBox>
         <Button fx:id="btnLogout"
                 styleClass="btn-icon"

@@ -117,7 +117,7 @@
             <HBox spacing="4" alignment="CENTER_LEFT">
                 <Label text="Welcome, " styleClass="header-greeting"/>
                 <Label fx:id="greetingName"
-                       text="Juan Pablo Santos"
+                       text="JC Senoto"
                        styleClass="header-greeting-name"/>
             </HBox>
 
@@ -281,7 +281,7 @@
                                     </columnConstraints>
                                     <Label text="Employee:" styleClass="payslip-meta-label"
                                            GridPane.columnIndex="0" GridPane.rowIndex="0"/>
-                                    <Label text="Santos, Juan Pablo T."
+                                    <Label text="JC Senoto"
                                            styleClass="payslip-meta-value"
                                            GridPane.columnIndex="1" GridPane.rowIndex="0"/>
                                     <Label text="ID:" styleClass="payslip-meta-label"

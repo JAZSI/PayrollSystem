@@ -103,8 +103,8 @@
                        minWidth="32" maxWidth="32" minHeight="32" maxHeight="32"
                        alignment="CENTER"/>
                 <VBox spacing="1" HBox.hgrow="ALWAYS">
-                    <Label text="Maria Aquino" styleClass="sidebar-user-name"/>
-                    <Label text="HR Administrator" styleClass="sidebar-user-role"/>
+                    <Label text="ADMIN" styleClass="sidebar-user-name"/>
+                    <Label text="ADMIN" styleClass="sidebar-user-role"/>
                 </VBox>
                 <Button style="-fx-background-color: transparent;
                                          -fx-text-fill: rgba(255,255,255,0.3);
@@ -139,7 +139,7 @@
                     <Label text="MA" styleClass="header-avatar"
                            minWidth="32" maxWidth="32" minHeight="32" maxHeight="32"
                            alignment="CENTER"/>
-                    <Label text="Maria Aquino" styleClass="header-username"/>
+                    <Label text="ADMIN" styleClass="header-username"/>
                     <Label style="-fx-text-fill: #7A8FA6; -fx-font-size: 12px;">
                         <graphic>
                             <FontIcon iconLiteral="fas-angle-down" iconSize="12"/>
@@ -232,7 +232,7 @@
                                         <HBox styleClass="holiday-row" spacing="12" alignment="CENTER_LEFT">
                                             <Circle radius="4" styleClass="activity-dot-in"/>
                                             <VBox HBox.hgrow="ALWAYS" spacing="2">
-                                                <Label text="Santos, Juan P. — Time In"
+                                                <Label text="JC Senoto — Time In"
                                                        styleClass="activity-title"/>
                                                 <Label text="08:02 AM · Engineering · June 10"
                                                        styleClass="activity-meta"/>
@@ -243,7 +243,7 @@
                                         <HBox styleClass="holiday-row" spacing="12" alignment="CENTER_LEFT">
                                             <Circle radius="4" styleClass="activity-dot-in"/>
                                             <VBox HBox.hgrow="ALWAYS" spacing="2">
-                                                <Label text="Reyes, Ana Marie C. — Time In"
+                                                <Label text="Marc Soro — Time In"
                                                        styleClass="activity-title"/>
                                                 <Label text="08:07 AM · Finance · June 10"
                                                        styleClass="activity-meta"/>
@@ -254,46 +254,12 @@
                                         <HBox styleClass="holiday-row" spacing="12" alignment="CENTER_LEFT">
                                             <Circle radius="4" styleClass="activity-dot-absent"/>
                                             <VBox HBox.hgrow="ALWAYS" spacing="2">
-                                                <Label text="Cruz, Rodrigo M. — No Time-In"
+                                                <Label text="Charles De Vega — No Time-In"
                                                        styleClass="activity-title"/>
                                                 <Label text="Engineering · June 10"
                                                        styleClass="activity-meta"/>
                                             </VBox>
                                             <Label text="Absent" styleClass="badge, badge-red"/>
-                                        </HBox>
-
-                                        <HBox styleClass="holiday-row" spacing="12" alignment="CENTER_LEFT">
-                                            <Circle radius="4" styleClass="activity-dot-out"/>
-                                            <VBox HBox.hgrow="ALWAYS" spacing="2">
-                                                <Label text="De Guzman, Liza T. — Time Out"
-                                                       styleClass="activity-title"/>
-                                                <Label text="05:34 PM · HR &amp; Admin · June 9"
-                                                       styleClass="activity-meta"/>
-                                            </VBox>
-                                            <Label text="OT: 0.5 hrs" styleClass="badge, badge-amber"/>
-                                        </HBox>
-
-                                        <HBox styleClass="holiday-row" spacing="12" alignment="CENTER_LEFT">
-                                            <Circle radius="4" styleClass="activity-dot-in"/>
-                                            <VBox HBox.hgrow="ALWAYS" spacing="2">
-                                                <Label text="Villanueva, Mark R. — Time In"
-                                                       styleClass="activity-title"/>
-                                                <Label text="07:58 AM · Operations · June 10"
-                                                       styleClass="activity-meta"/>
-                                            </VBox>
-                                            <Label text="Present" styleClass="badge, badge-green"/>
-                                        </HBox>
-
-                                        <HBox spacing="12" alignment="CENTER_LEFT"
-                                              style="-fx-padding: 9 0 0 0;">
-                                            <Circle radius="4" styleClass="activity-dot-absent"/>
-                                            <VBox HBox.hgrow="ALWAYS" spacing="2">
-                                                <Label text="Bautista, Rosa J. — On Leave"
-                                                       styleClass="activity-title"/>
-                                                <Label text="HR &amp; Admin · June 10"
-                                                       styleClass="activity-meta"/>
-                                            </VBox>
-                                            <Label text="Leave" styleClass="badge, badge-blue"/>
                                         </HBox>
 
                                     </VBox>
@@ -466,14 +432,14 @@
                                     <ComboBox styleClass="period-combo" prefWidth="180">
                                         <items>
                                             <FXCollections fx:factory="observableArrayList">
-                                                <String fx:value="Santos, Juan P."/>
-                                                <String fx:value="Reyes, Ana Marie C."/>
-                                                <String fx:value="Cruz, Rodrigo M."/>
+                                                <String fx:value="JC Senoto"/>
+                                                <String fx:value="Marc Soro"/>
+                                                <String fx:value="Charles De Vega"/>
                                                 <String fx:value="De Guzman, Liza T."/>
                                                 <String fx:value="Villanueva, Mark R."/>
                                             </FXCollections>
                                         </items>
-                                        <value><String fx:value="Santos, Juan P."/></value>
+                                        <value><String fx:value="JC Senoto"/></value>
                                     </ComboBox>
                                     <ComboBox styleClass="period-combo" prefWidth="160">
                                         <items>
@@ -837,9 +803,9 @@
                                                    minWidth="32" maxWidth="32"
                                                    minHeight="32" maxHeight="32" alignment="CENTER"/>
                                             <VBox HBox.hgrow="ALWAYS" spacing="2">
-                                                <Label text="Maria Aquino"
+                                                <Label text="ADMIN"
                                                        style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #0B1F3A;"/>
-                                                <Label text="m.aquino@nu.edu.ph"
+                                                <Label text="ADMIN@nu.edu.ph"
                                                        style="-fx-font-size: 11px; -fx-text-fill: #7A8FA6;"/>
                                             </VBox>
                                             <Label text="Super Admin" styleClass="badge, badge-gold"/>

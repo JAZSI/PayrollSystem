@@ -39,7 +39,7 @@
         <HBox spacing="4" alignment="CENTER_LEFT">
             <Label text="Welcome, " styleClass="header-greeting"/>
             <Label fx:id="greetingName"
-                   text="Juan Pablo Santos"
+                   text="JC Senoto"
                    styleClass="header-greeting-name"/>
         </HBox>
 

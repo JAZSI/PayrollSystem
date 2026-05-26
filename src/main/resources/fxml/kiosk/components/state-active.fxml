@@ -28,7 +28,7 @@
                    alignment="CENTER"/>
             <VBox HBox.hgrow="ALWAYS" spacing="4">
                 <Label fx:id="empNameLabel"
-                       text="Santos, Juan Pablo T."
+                       text="JC Senoto"
                        styleClass="emp-found-name"
                        wrapText="true"/>
                 <Label fx:id="empIdLabel"
