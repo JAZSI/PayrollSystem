@@ -29,8 +29,8 @@ classDiagram
         +handleDownloadPdf()
     }
 
-    SceneManager <<ViewHelper>>
-    Routes <<enumeration>>
+    class SceneManager <<ViewHelper>>
+    class Routes <<enumeration>>
 
     %% --- SERVICES (Application Layer) ---
     class AuthService <<Service>>
@@ -229,13 +229,11 @@ flowchart LR
     S1 -- "reads/writes" --> M1
     S1 -- "validates/calculates" --> M2
     S1 -- "uses" --> P_IF
-    P_IF <.. R_IMP
+    R_IMP -.-> P_IF
     R_IMP --> DB
 
     %% Notes for clarity
-    click V1 href "" "View: only renders, no business logic"
-    click C1 href "" "Controller: handles UI events, converts to service calls"
-    click S1 href "" "Service: application use-cases; orchestrates domain + repos"
+    %% Note: click links removed to avoid empty href parse issues
 ```
 ```
 
