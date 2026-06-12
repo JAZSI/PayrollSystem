@@ -17,4 +17,6 @@ buildNumber.properties
 .classpath
 
 # Database files
-*.db
+.db
+
+.docs/
