@@ -7,18 +7,11 @@
 <p align="center">
   <img alt="Java" src="https://img.shields.io/badge/Java-21-007396?logo=openjdk&logoColor=white">
   <img alt="Spring Boot" src="https://img.shields.io/badge/Spring%20Boot-3.3.5-6DB33F?logo=springboot&logoColor=white">
-  <img alt="React" src="https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black">
+  <img alt="React" src="https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=white">
   <img alt="Vite" src="https://img.shields.io/badge/Vite-8-646CFF?logo=vite&logoColor=white">
   <img alt="Tailwind CSS" src="https://img.shields.io/badge/Tailwind-4-06B6D4?logo=tailwindcss&logoColor=white">
   <img alt="SQLite" src="https://img.shields.io/badge/SQLite-embedded-003B57?logo=sqlite&logoColor=white">
   <img alt="Bun" src="https://img.shields.io/badge/Bun-1.3+-000000?logo=bun&logoColor=white">
-</p>
-
-<p align="center">
-  <img alt="Stars" src="https://img.shields.io/github/stars/JAZSI/PayrollSystem?style=social">
-  <img alt="Issues" src="https://img.shields.io/github/issues/JAZSI/PayrollSystem">
-  <img alt="Last commit" src="https://img.shields.io/github/last-commit/JAZSI/PayrollSystem">
-  <img alt="Status" src="https://img.shields.io/badge/status-active-success">
 </p>
 
 ---
@@ -27,6 +20,7 @@
 
 - [Overview](#overview)
 - [Features](#features)
+- [Screenshots](#screenshots)
 - [Architecture](#architecture)
 - [Tech Stack](#tech-stack)
 - [Project Structure](#project-structure)
@@ -102,6 +96,49 @@ Computation rules are grounded in [`.docs/formulas.md`](.docs/formulas.md) and
 
 ---
 
+## Screenshots
+
+### Admin / HR
+
+The advanced dark dashboard — KPI cards, charts, recent runs, top earners, and an activity feed:
+
+![Admin dashboard](.docs/previews/admin/dashboard.png)
+
+<details>
+<summary><b>More admin screens</b> — employees, attendance, payroll, reports, statutory, and more</summary>
+
+| Employees | Attendance |
+| --- | --- |
+| ![Employees](.docs/previews/admin/employees.png) | ![Attendance](.docs/previews/admin/attendance.png) |
+| **Run payroll** | **Payroll runs** |
+| ![Run payroll](.docs/previews/admin/run_payroll.png) | ![Payroll runs](.docs/previews/admin/payroll_runs.png) |
+| **Payslips** | **Reports** |
+| ![Payslips](.docs/previews/admin/payslips.png) | ![Reports](.docs/previews/admin/reports.png) |
+| **Leave** | **13th-month pay** |
+| ![Leave](.docs/previews/admin/leave.png) | ![13th month](.docs/previews/admin/13th_month.png) |
+| **Holidays** | **Statutory tables** |
+| ![Holidays](.docs/previews/admin/holiday.png) | ![Statutory tables](.docs/previews/admin/satutory_tables.png) |
+| **Audit log** | **Users** |
+| ![Audit log](.docs/previews/admin/audit_log.png) | ![Users](.docs/previews/admin/users.png) |
+| **Settings** | |
+| ![Settings](.docs/previews/admin/settings.png) | |
+
+</details>
+
+### Employee self-service
+
+| Dashboard | Payslips | Leave |
+| --- | --- | --- |
+| ![Employee dashboard](.docs/previews/employee/dashboard.png) | ![Employee payslips](.docs/previews/employee/payslips.png) | ![Employee leave](.docs/previews/employee/leave.png) |
+
+### Kiosk
+
+Public time-clock — clock in/out by employee ID:
+
+![Kiosk](.docs/previews/kiosk/kiosk.png)
+
+---
+
 ## Architecture
 
 A pure domain core with no framework dependencies, wrapped by Spring services and a React SPA.
@@ -155,8 +192,8 @@ flowchart TD
 ```text
 PayrollSystem/
 ├── src/main/java/com/com253/payrollsystem/   # backend (package-by-feature)
-│   ├── shared/            # pure domain (calculator, tax, model), Money, security, error, config, mapping
-│   ├── employee/  attendance/  payroll/       # core features (entity/repo/service/controller/dto)
+│   ├── shared/                               # pure domain (calculator, tax, model), Money, security, error, config, mapping
+│   ├── employee/  attendance/  payroll/      # core features (entity/repo/service/controller/dto)
 │   ├── loan/  leave/  payitem/  thirteenthmonth/
 │   ├── statutory/ report/ audit/ holiday/ settings/ user/ dashboard/
 │   └── PayrollApplication.java
@@ -475,16 +512,6 @@ All amounts are rounded to centavo (HALF_UP). See [`.docs/formulas.md`](.docs/fo
 
 ---
 
-## Roadmap
-
-- [x] Core payroll engine + batch runs with locking
-- [x] Loans, leave, allowances, 13th-month, night differential, employer share
-- [x] Effective-dated statutory tables, audit log, CSV reports
-- [x] Single-artifact deployment + jpackage portable app
-- [ ] Enable Flyway migrations (baseline shipped)
-- [ ] XLSX report export (CSV implemented)
-- [ ] Native installers (.msi/.deb/.dmg) wired in CI
-
 Out of scope (by design): email notifications, employee photos, org/department structure,
 self-service password reset.
 
@@ -505,8 +532,7 @@ characterization tests in the same commit when an intentional change shifts a pa
 
 ## License
 
-No `LICENSE` file is currently present in the repository. Until one is added, all rights are
-reserved by the author. Add a license (e.g. MIT) to permit reuse.
+Released under the [MIT License](LICENSE).
 
 ---
 
