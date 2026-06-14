@@ -1,5 +1,6 @@
 package com.com253.payrollsystem.employee;
 
+import com.com253.payrollsystem.audit.AuditService;
 import com.com253.payrollsystem.user.UserEntity;
 import com.com253.payrollsystem.user.UserRepository;
 import com.com253.payrollsystem.shared.security.Role;
@@ -21,12 +22,14 @@ public class EmployeeService {
     private final EmployeeRepository repository;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final AuditService auditService;
 
     public EmployeeService(EmployeeRepository repository, UserRepository userRepository,
-                           PasswordEncoder passwordEncoder) {
+                           PasswordEncoder passwordEncoder, AuditService auditService) {
         this.repository = repository;
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.auditService = auditService;
     }
 
     @Transactional(readOnly = true)
@@ -50,6 +53,7 @@ public class EmployeeService {
                 request.monthlyRate(),
                 request.hourlyRate(),
                 true);
+        entity.setBankAccount(request.bankAccount());
         EmployeeResponse saved = toResponse(repository.save(entity));
 
         // Optionally create a login account (username = employee id) so they can sign in.
@@ -61,6 +65,7 @@ public class EmployeeService {
                     request.id(), passwordEncoder.encode(request.password()),
                     Role.EMPLOYEE, request.id()));
         }
+        auditService.record("CREATE", "Employee", request.id(), "Added " + request.fullName());
         return saved;
     }
 
@@ -70,13 +75,17 @@ public class EmployeeService {
         entity.setType(request.type());
         entity.setMonthlyRate(request.monthlyRate());
         entity.setHourlyRate(request.hourlyRate());
-        return toResponse(repository.save(entity));
+        entity.setBankAccount(request.bankAccount());
+        EmployeeResponse updated = toResponse(repository.save(entity));
+        auditService.record("UPDATE", "Employee", id, "Updated " + request.fullName());
+        return updated;
     }
 
     public void deactivate(String id) {
         EmployeeEntity entity = getOrThrow(id);
         entity.setActive(false);
         repository.save(entity);
+        auditService.record("DEACTIVATE", "Employee", id, "Deactivated " + entity.getFullName());
     }
 
     private EmployeeEntity getOrThrow(String id) {
@@ -92,6 +101,7 @@ public class EmployeeService {
                 e.getType().getLabel(),
                 e.getMonthlyRate(),
                 e.getHourlyRate(),
+                e.getBankAccount(),
                 e.isActive(),
                 e.getCreatedAt() == null ? null : e.getCreatedAt().toString());
     }

@@ -28,6 +28,7 @@ const empty = {
   type: 'REGULAR' as EmployeeType,
   monthlyRate: '',
   hourlyRate: '',
+  bankAccount: '',
   password: '',
 }
 
@@ -57,6 +58,7 @@ export function EmployeeFormDialog({
             type: employee.type,
             monthlyRate: employee.type === 'PART_TIMER' ? '' : String(employee.monthlyRate),
             hourlyRate: employee.type === 'PART_TIMER' ? String(employee.hourlyRate) : '',
+            bankAccount: employee.bankAccount ?? '',
             password: '',
           }
         : empty,
@@ -77,6 +79,7 @@ export function EmployeeFormDialog({
       type: form.type,
       monthlyRate: isPartTimer ? 0 : Number(form.monthlyRate || 0),
       hourlyRate: isPartTimer ? Number(form.hourlyRate || 0) : 0,
+      bankAccount: form.bankAccount.trim() ? form.bankAccount.trim() : null,
       ...(isEdit ? {} : { password: form.password ? form.password : null }),
     }
     const onSuccess = (emp: Employee) => {
@@ -158,6 +161,14 @@ export function EmployeeFormDialog({
               />
             </Field>
           )}
+
+          <Field label="Bank Account (optional)" error={errors.bankAccount}>
+            <Input
+              placeholder="e.g. BDO 1234567890"
+              value={form.bankAccount}
+              onChange={(e) => update_('bankAccount', e.target.value)}
+            />
+          </Field>
 
           {!isEdit && (
             <Field label="Login Password (optional)" error={errors.password}>

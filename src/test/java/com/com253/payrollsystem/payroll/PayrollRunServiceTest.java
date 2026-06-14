@@ -1,11 +1,13 @@
 package com.com253.payrollsystem.payroll;
 
+import com.com253.payrollsystem.audit.AuditService;
 import com.com253.payrollsystem.employee.EmployeeRepository;
 import com.com253.payrollsystem.attendance.TimeRecordRepository;
 import com.com253.payrollsystem.leave.LeaveService;
 import com.com253.payrollsystem.loan.LoanService;
 import com.com253.payrollsystem.payitem.PayItemService;
 import com.com253.payrollsystem.settings.SettingsService;
+import com.com253.payrollsystem.statutory.ContributionTableProvider;
 import com.com253.payrollsystem.payroll.dto.PayrollRunResponse;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,6 +21,8 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 /** Lifecycle guards for batch payroll runs: DRAFT -> APPROVED -> LOCKED. */
@@ -34,6 +38,8 @@ class PayrollRunServiceTest {
     @Mock LoanService loanService;
     @Mock LeaveService leaveService;
     @Mock PayItemService payItemService;
+    @Mock ContributionTableProvider contributionTables;
+    @Mock AuditService auditService;
 
     @InjectMocks PayrollRunService service;
 
@@ -60,6 +66,7 @@ class PayrollRunServiceTest {
         PayrollRunResponse res = service.lock(1L);
 
         assertThat(res.status()).isEqualTo(PayrollRunStatus.LOCKED);
+        verify(auditService).record(eq("LOCK"), eq("PayrollRun"), eq("1"), any());
     }
 
     @Test

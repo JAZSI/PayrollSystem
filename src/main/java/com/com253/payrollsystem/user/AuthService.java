@@ -1,5 +1,6 @@
 package com.com253.payrollsystem.user;
 
+import com.com253.payrollsystem.audit.AuditService;
 import com.com253.payrollsystem.shared.security.JwtService;
 import com.com253.payrollsystem.user.dto.AuthResponse;
 import com.com253.payrollsystem.user.dto.LoginRequest;
@@ -24,13 +25,16 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
+    private final AuditService auditService;
 
     public AuthService(UserRepository userRepository, PasswordEncoder passwordEncoder,
-                       AuthenticationManager authenticationManager, JwtService jwtService) {
+                       AuthenticationManager authenticationManager, JwtService jwtService,
+                       AuditService auditService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
         this.jwtService = jwtService;
+        this.auditService = auditService;
     }
 
     /** Verifies credentials and returns a signed JWT. Bad credentials -> 401. */
@@ -42,6 +46,8 @@ public class AuthService {
                 .orElseThrow(() -> new NotFoundException("User not found: " + req.username()));
 
         String token = jwtService.generate(user.getUsername(), user.getRole());
+        auditService.recordAs(user.getUsername(), user.getRole(), "LOGIN", "User",
+                user.getUsername(), "Signed in");
         return new AuthResponse(token, user.getUsername(), user.getRole(), user.getEmployeeId());
     }
 
@@ -62,6 +68,8 @@ public class AuthService {
                 passwordEncoder.encode(req.password()),
                 req.role(),
                 req.employeeId()));
+        auditService.record("CREATE", "User", user.getUsername(),
+                "Created " + user.getRole() + " user");
         return new UserResponse(user.getUsername(), user.getRole(), user.getEmployeeId());
     }
 }

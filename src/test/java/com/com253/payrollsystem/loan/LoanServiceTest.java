@@ -23,6 +23,7 @@ class LoanServiceTest {
     @Mock LoanRepository loans;
     @Mock LoanPaymentRepository payments;
     @Mock EmployeeRepository employees;
+    @Mock com.com253.payrollsystem.audit.AuditService auditService;
 
     @InjectMocks LoanService service;
 

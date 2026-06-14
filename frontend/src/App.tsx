@@ -17,10 +17,13 @@ import { PayrollRunsPage } from '@/pages/PayrollRunsPage'
 import { PayslipsPage } from '@/pages/PayslipsPage'
 import { LeavePage } from '@/pages/LeavePage'
 import { ThirteenthMonthPage } from '@/pages/ThirteenthMonthPage'
+import { ReportsPage } from '@/pages/ReportsPage'
 import { MyPayslipsPage } from '@/pages/MyPayslipsPage'
 import { MyLeavePage } from '@/pages/MyLeavePage'
 import { UsersPage } from '@/pages/UsersPage'
 import { HolidaysPage } from '@/pages/HolidaysPage'
+import { StatutoryTablesPage } from '@/pages/StatutoryTablesPage'
+import { AuditLogPage } from '@/pages/AuditLogPage'
 
 function HomeRedirect() {
   const { user } = useAuth()
@@ -47,10 +50,13 @@ function App() {
                 <Route path="/payslips" element={<PayslipsPage />} />
                 <Route path="/leave" element={<LeavePage />} />
                 <Route path="/thirteenth-month" element={<ThirteenthMonthPage />} />
+                <Route path="/reports" element={<ReportsPage />} />
               </Route>
               <Route element={<AdminRoute />}>
                 <Route path="/users" element={<UsersPage />} />
                 <Route path="/holidays" element={<HolidaysPage />} />
+                <Route path="/statutory-tables" element={<StatutoryTablesPage />} />
+                <Route path="/audit" element={<AuditLogPage />} />
               </Route>
               <Route path="/employee" element={<EmployeeDashboardPage />} />
               <Route path="/my-payslips" element={<MyPayslipsPage />} />

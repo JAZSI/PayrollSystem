@@ -1,5 +1,6 @@
 package com.com253.payrollsystem.loan;
 
+import com.com253.payrollsystem.audit.AuditService;
 import com.com253.payrollsystem.employee.EmployeeRepository;
 import com.com253.payrollsystem.loan.dto.LoanRequest;
 import com.com253.payrollsystem.loan.dto.LoanResponse;
@@ -20,12 +21,14 @@ public class LoanService {
     private final LoanRepository loans;
     private final LoanPaymentRepository payments;
     private final EmployeeRepository employees;
+    private final AuditService auditService;
 
     public LoanService(LoanRepository loans, LoanPaymentRepository payments,
-                       EmployeeRepository employees) {
+                       EmployeeRepository employees, AuditService auditService) {
         this.loans = loans;
         this.payments = payments;
         this.employees = employees;
+        this.auditService = auditService;
     }
 
     @Transactional(readOnly = true)
@@ -40,7 +43,10 @@ public class LoanService {
         }
         LoanEntity loan = new LoanEntity(req.employeeId(), req.type(),
                 Money.round2(req.principal()), Money.round2(req.perCutoffAmount()), req.startPeriod());
-        return toResponse(loans.save(loan));
+        LoanResponse saved = toResponse(loans.save(loan));
+        auditService.record("CREATE", "Loan", String.valueOf(saved.id()),
+                req.type() + " for " + req.employeeId());
+        return saved;
     }
 
     public LoanResponse update(Long id, LoanRequest req) {
@@ -57,7 +63,10 @@ public class LoanService {
     public LoanResponse cancel(Long id) {
         LoanEntity loan = getOrThrow(id);
         loan.setStatus(LoanStatus.CANCELLED);
-        return toResponse(loans.save(loan));
+        LoanResponse cancelled = toResponse(loans.save(loan));
+        auditService.record("CANCEL", "Loan", String.valueOf(id),
+                "Cancelled " + loan.getType() + " for " + loan.getEmployeeId());
+        return cancelled;
     }
 
     // --------------------------- Payroll integration ---------------------------

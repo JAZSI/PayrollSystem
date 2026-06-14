@@ -1,5 +1,6 @@
 package com.com253.payrollsystem.shared.domain;
 
+import com.com253.payrollsystem.shared.domain.tax.ContributionTables;
 import com.com253.payrollsystem.shared.domain.tax.Pagibig;
 import com.com253.payrollsystem.shared.domain.tax.PhilHealth;
 import com.com253.payrollsystem.shared.domain.tax.SSS;
@@ -7,7 +8,7 @@ import com.com253.payrollsystem.shared.domain.tax.WithholdingTax;
 
 import com.com253.payrollsystem.shared.Money;
 
-/** Pure payroll computation per .docs/formulas.md. */
+/** Pure payroll computation engine (no Spring/DB dependencies). */
 public class PayrollCalculator {
 
     private static final double REGULAR_DAY_OVERTIME_MULTIPLIER = 1.25;
@@ -236,10 +237,18 @@ public class PayrollCalculator {
                 PayContext.of(loanAmount, Math.max(0, settings.getLeaveCreditsFor(employee))));
     }
 
-    /** Computes a full payslip; money rounded to centavo (HALF_UP). */
+    /** Uses the built-in statutory tables. */
     public static PayrollEntry buildPayrollEntry(Employee employee, TimeRecord[] records,
                                                  String cutOffPeriod, PayrollSettings settings,
                                                  PayContext ctx) {
+        return buildPayrollEntry(employee, records, cutOffPeriod, settings, ctx,
+                ContributionTables.HARDCODED);
+    }
+
+    /** Computes a full payslip; money rounded to centavo (HALF_UP). */
+    public static PayrollEntry buildPayrollEntry(Employee employee, TimeRecord[] records,
+                                                 String cutOffPeriod, PayrollSettings settings,
+                                                 PayContext ctx, ContributionTables tables) {
         PayrollEntry entry = new PayrollEntry(employee, cutOffPeriod);
 
         // --------------------------- Attendance ---------------------------
@@ -270,21 +279,22 @@ public class PayrollCalculator {
         if (employee.getEmployeeType() == EmployeeType.PART_TIMER) {
             monthlyRate = earnedPay * CUTOFFS_PER_MONTH; // approximate monthly basis
         }
-        double sss = computeSSSDeduction(monthlyRate);
-        double philhealth = computePhilHealthDeduction(monthlyRate);
-        double pagibig = computePagibigDeduction(monthlyRate);
+        double sss = tables.sssEmployeeMonthly(monthlyRate) / CUTOFFS_PER_MONTH;
+        double philhealth = tables.philhealthTotalMonthly(monthlyRate) / 2.0 / CUTOFFS_PER_MONTH;
+        double pagibig = tables.pagibigEmployeeMonthly(monthlyRate) / CUTOFFS_PER_MONTH;
         entry.setSssDeduction(Money.round2(sss));
         entry.setPhilhealthDeduction(Money.round2(philhealth));
         entry.setPagibigDeduction(Money.round2(pagibig));
 
         // --------------- Employer share (info only, per cut-off) ----------
-        entry.setEmployerSss(Money.round2(SSS.employerContribution(monthlyRate) / CUTOFFS_PER_MONTH));
-        entry.setEmployerPhilhealth(Money.round2(PhilHealth.employerShare(monthlyRate) / CUTOFFS_PER_MONTH));
-        entry.setEmployerPagibig(Money.round2(Pagibig.employerShare(monthlyRate) / CUTOFFS_PER_MONTH));
-        entry.setEmployerEc(Money.round2(SSS.employerCompensation(monthlyRate) / CUTOFFS_PER_MONTH));
+        entry.setEmployerSss(Money.round2(tables.sssEmployerMonthly(monthlyRate) / CUTOFFS_PER_MONTH));
+        entry.setEmployerPhilhealth(Money.round2(tables.philhealthTotalMonthly(monthlyRate) / 2.0 / CUTOFFS_PER_MONTH));
+        entry.setEmployerPagibig(Money.round2(tables.pagibigEmployerMonthly(monthlyRate) / CUTOFFS_PER_MONTH));
+        entry.setEmployerEc(Money.round2(tables.sssEcMonthly(monthlyRate) / CUTOFFS_PER_MONTH));
 
         double taxableIncome = earnedPay + ctx.taxableAllowances();
-        double tax = computeWithholdingTax(taxableIncome - sss - philhealth - pagibig);
+        double tax = tables.annualWithholdingTax(
+                (taxableIncome - sss - philhealth - pagibig) * CUTOFFS_PER_YEAR) / CUTOFFS_PER_YEAR;
         entry.setTaxDeduction(Money.round2(tax));
         entry.setLoanDeduction(Money.round2(ctx.loanAmount()));
         entry.setOtherDeductions(Money.round2(ctx.otherDeductions()));

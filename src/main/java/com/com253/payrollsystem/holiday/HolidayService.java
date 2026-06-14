@@ -1,5 +1,6 @@
 package com.com253.payrollsystem.holiday;
 
+import com.com253.payrollsystem.audit.AuditService;
 import com.com253.payrollsystem.holiday.dto.HolidayRequest;
 import com.com253.payrollsystem.holiday.dto.HolidayResponse;
 import com.com253.payrollsystem.shared.error.ConflictException;
@@ -15,9 +16,11 @@ import java.util.List;
 public class HolidayService {
 
     private final HolidayRepository repository;
+    private final AuditService auditService;
 
-    public HolidayService(HolidayRepository repository) {
+    public HolidayService(HolidayRepository repository, AuditService auditService) {
         this.repository = repository;
+        this.auditService = auditService;
     }
 
     @Transactional(readOnly = true)
@@ -29,7 +32,9 @@ public class HolidayService {
         if (repository.existsByDate(req.date())) {
             throw new ConflictException("A holiday already exists on " + req.date());
         }
-        return toResponse(repository.save(new HolidayEntity(req.date(), req.name(), req.type())));
+        HolidayResponse created = toResponse(repository.save(new HolidayEntity(req.date(), req.name(), req.type())));
+        auditService.record("CREATE", "Holiday", created.id().toString(), req.name() + " on " + req.date());
+        return created;
     }
 
     public HolidayResponse update(Long id, HolidayRequest req) {
@@ -41,7 +46,9 @@ public class HolidayService {
         holiday.setDate(req.date());
         holiday.setName(req.name());
         holiday.setType(req.type());
-        return toResponse(repository.save(holiday));
+        HolidayResponse updated = toResponse(repository.save(holiday));
+        auditService.record("UPDATE", "Holiday", id.toString(), req.name() + " on " + req.date());
+        return updated;
     }
 
     public void delete(Long id) {
@@ -49,6 +56,7 @@ public class HolidayService {
             throw new NotFoundException("Holiday not found: " + id);
         }
         repository.deleteById(id);
+        auditService.record("DELETE", "Holiday", id.toString(), "Deleted holiday " + id);
     }
 
     private static HolidayResponse toResponse(HolidayEntity h) {

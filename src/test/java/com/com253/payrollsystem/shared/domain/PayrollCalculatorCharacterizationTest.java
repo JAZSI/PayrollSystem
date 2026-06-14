@@ -8,15 +8,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.within;
 
 /**
- * CHARACTERIZATION test: pins the EXACT current outputs of
- * {@link PayrollCalculator#buildPayrollEntry} so behavior-preserving refactors
- * (see .docs/02-cleanup-plan.md and .docs/04-refactoring-roadmap.md) can be
- * verified to change nothing.
- *
- * <p>These values encode today's behavior, which may include bugs that the
- * roadmap will deliberately fix later. When an intentional change (e.g. the
- * Money/BigDecimal rounding migration) shifts a number, update the golden value
- * here in the same commit and record the rationale.
+ * Characterization test: pins the exact outputs of
+ * {@link PayrollCalculator#buildPayrollEntry} so behavior-preserving refactors can be
+ * verified to change nothing. When an intentional change shifts a number, update the
+ * golden value here in the same commit.
  */
 class PayrollCalculatorCharacterizationTest {
 

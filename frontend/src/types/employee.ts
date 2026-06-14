@@ -18,6 +18,7 @@ export interface Employee {
   typeLabel: string
   monthlyRate: number
   hourlyRate: number
+  bankAccount: string | null
   active: boolean
   createdAt: string | null
 }
@@ -28,5 +29,6 @@ export interface EmployeeRequest {
   type: EmployeeType
   monthlyRate: number
   hourlyRate: number
+  bankAccount?: string | null
   password?: string | null
 }

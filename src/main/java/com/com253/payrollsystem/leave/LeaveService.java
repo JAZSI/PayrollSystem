@@ -1,5 +1,6 @@
 package com.com253.payrollsystem.leave;
 
+import com.com253.payrollsystem.audit.AuditService;
 import com.com253.payrollsystem.employee.EmployeeRepository;
 import com.com253.payrollsystem.holiday.HolidayRepository;
 import com.com253.payrollsystem.leave.dto.LeaveBalanceResponse;
@@ -29,15 +30,17 @@ public class LeaveService {
     private final LeaveRequestRepository requests;
     private final EmployeeRepository employees;
     private final HolidayRepository holidays;
+    private final AuditService auditService;
 
     public LeaveService(LeaveTypeRepository types, LeaveBalanceRepository balances,
                         LeaveRequestRepository requests, EmployeeRepository employees,
-                        HolidayRepository holidays) {
+                        HolidayRepository holidays, AuditService auditService) {
         this.types = types;
         this.balances = balances;
         this.requests = requests;
         this.employees = employees;
         this.holidays = holidays;
+        this.auditService = auditService;
     }
 
     // ------------------------------ Leave types ------------------------------
@@ -149,7 +152,10 @@ public class LeaveService {
 
         request.setStatus(LeaveStatus.APPROVED);
         request.setDecidedBy(decidedBy);
-        return toRequest(requests.save(request), type.getName());
+        LeaveRequestResponse approved = toRequest(requests.save(request), type.getName());
+        auditService.record("APPROVE", "LeaveRequest", String.valueOf(id),
+                "Approved " + type.getName() + " for " + request.getEmployeeId());
+        return approved;
     }
 
     public LeaveRequestResponse reject(Long id, String decidedBy) {
@@ -157,7 +163,10 @@ public class LeaveService {
         requirePending(request);
         request.setStatus(LeaveStatus.REJECTED);
         request.setDecidedBy(decidedBy);
-        return toRequest(requests.save(request), typeName(request.getLeaveTypeId()));
+        LeaveRequestResponse rejected = toRequest(requests.save(request), typeName(request.getLeaveTypeId()));
+        auditService.record("REJECT", "LeaveRequest", String.valueOf(id),
+                "Rejected request for " + request.getEmployeeId());
+        return rejected;
     }
 
     // --------------------------- Payroll integration ---------------------------

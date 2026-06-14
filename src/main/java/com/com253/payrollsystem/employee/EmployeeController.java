@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-/** REST endpoints for employee management. See {@code .docs/08-data-model-and-api-contract.md}. */
+/** REST endpoints for employee management. */
 @RestController
 @RequestMapping("/api/employees")
 @PreAuthorize("hasAnyRole('ADMIN','HR')")

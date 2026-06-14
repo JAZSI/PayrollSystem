@@ -28,6 +28,9 @@ public record EmployeeRequest(
         @PositiveOrZero(message = "Hourly rate cannot be negative")
         double hourlyRate,
 
+        @Size(max = 60, message = "Bank account is too long")
+        String bankAccount,
+
         @Size(min = 6, message = "Password must be at least 6 characters")
         String password) {
 }

@@ -1,10 +1,12 @@
 package com.com253.payrollsystem.payroll;
 
+import com.com253.payrollsystem.audit.AuditService;
 import com.com253.payrollsystem.leave.LeaveService;
 import com.com253.payrollsystem.loan.LoanService;
 import com.com253.payrollsystem.payitem.PayItemService;
 import com.com253.payrollsystem.payitem.PayItemTotals;
 import com.com253.payrollsystem.settings.SettingsService;
+import com.com253.payrollsystem.statutory.ContributionTableProvider;
 import com.com253.payrollsystem.shared.Money;
 import com.com253.payrollsystem.shared.mapping.PayrollMapping;
 
@@ -13,6 +15,9 @@ import com.com253.payrollsystem.shared.domain.PayContext;
 import com.com253.payrollsystem.shared.domain.PayrollEntry;
 import com.com253.payrollsystem.shared.domain.PayrollSettings;
 import com.com253.payrollsystem.shared.domain.TimeRecord;
+import com.com253.payrollsystem.shared.domain.tax.ContributionTables;
+
+import java.time.LocalDate;
 import com.com253.payrollsystem.employee.EmployeeEntity;
 import com.com253.payrollsystem.employee.EmployeeRepository;
 import com.com253.payrollsystem.attendance.TimeRecordRepository;
@@ -41,6 +46,8 @@ public class PayrollRunService {
     private final LoanService loanService;
     private final LeaveService leaveService;
     private final PayItemService payItemService;
+    private final ContributionTableProvider contributionTables;
+    private final AuditService auditService;
 
     public PayrollRunService(EmployeeRepository employeeRepository,
                              TimeRecordRepository timeRecordRepository,
@@ -50,7 +57,9 @@ public class PayrollRunService {
                              PeriodLockGuard periodLockGuard,
                              LoanService loanService,
                              LeaveService leaveService,
-                             PayItemService payItemService) {
+                             PayItemService payItemService,
+                             ContributionTableProvider contributionTables,
+                             AuditService auditService) {
         this.employeeRepository = employeeRepository;
         this.timeRecordRepository = timeRecordRepository;
         this.payrollRepository = payrollRepository;
@@ -60,6 +69,8 @@ public class PayrollRunService {
         this.loanService = loanService;
         this.leaveService = leaveService;
         this.payItemService = payItemService;
+        this.contributionTables = contributionTables;
+        this.auditService = auditService;
     }
 
     /** Creates a DRAFT run, computing and saving a payslip for every active employee. */
@@ -71,6 +82,7 @@ public class PayrollRunService {
         }
 
         PayrollSettings settings = settingsService.toDomain(settingsService.getOrCreateDefault());
+        ContributionTables tables = contributionTables.tablesFor(LocalDate.now());
         PayrollRunEntity run = runRepository.save(new PayrollRunEntity(period));
 
         double totalGross = 0.0;
@@ -87,7 +99,7 @@ public class PayrollRunService {
             PayContext ctx = new PayContext(loanTotal, coveredLeaveDays,
                     items.taxableAllowances(), items.nonTaxableAllowances(), items.otherDeductions());
             PayrollEntry entry = PayrollCalculator.buildPayrollEntry(
-                    domainEmployee, records, period, settings, ctx);
+                    domainEmployee, records, period, settings, ctx, tables);
 
             PayslipEntity slip = PayrollMapping.toEntity(emp, entry);
             slip.setRunId(run.getId());
@@ -103,6 +115,8 @@ public class PayrollRunService {
         run.setTotalDeductions(Money.round2(totalGross - totalNet));
         runRepository.save(run);
 
+        auditService.record("RUN", "PayrollRun", String.valueOf(run.getId()),
+                "Created run for " + period + " (" + active.size() + " employees)");
         return toDetail(run);
     }
 
@@ -124,7 +138,10 @@ public class PayrollRunService {
                     + run.getStatus() + ")");
         }
         run.setStatus(PayrollRunStatus.APPROVED);
-        return toDetail(runRepository.save(run));
+        PayrollRunResponse approved = toDetail(runRepository.save(run));
+        auditService.record("APPROVE", "PayrollRun", String.valueOf(id),
+                "Approved run for " + run.getCutoffPeriod());
+        return approved;
     }
 
     public PayrollRunResponse lock(Long id) {
@@ -141,6 +158,8 @@ public class PayrollRunService {
                 .collect(Collectors.toMap(PayslipEntity::getEmployeeId, PayslipEntity::getId, (a, b) -> a));
         loanService.postForRun(locked.getCutoffPeriod(), payslipByEmployee);
 
+        auditService.record("LOCK", "PayrollRun", String.valueOf(id),
+                "Locked run for " + locked.getCutoffPeriod());
         return toDetail(locked);
     }
 

@@ -36,6 +36,9 @@ public class EmployeeEntity {
     @Column(nullable = false)
     private boolean active = true;
 
+    @Column(name = "bank_account", length = 60)
+    private String bankAccount;
+
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
@@ -71,6 +74,9 @@ public class EmployeeEntity {
 
     public boolean isActive() { return active; }
     public void setActive(boolean active) { this.active = active; }
+
+    public String getBankAccount() { return bankAccount; }
+    public void setBankAccount(String bankAccount) { this.bankAccount = bankAccount; }
 
     public LocalDateTime getCreatedAt() { return createdAt; }
 }

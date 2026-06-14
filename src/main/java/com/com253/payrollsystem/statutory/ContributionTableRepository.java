@@ -1,0 +1,19 @@
+package com.com253.payrollsystem.statutory;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
+
+public interface ContributionTableRepository extends JpaRepository<ContributionTableEntity, Long> {
+
+    List<ContributionTableEntity> findByAgencyOrderByEffectiveFromDesc(ContributionAgency agency);
+
+    List<ContributionTableEntity> findAllByOrderByAgencyAscEffectiveFromDesc();
+
+    Optional<ContributionTableEntity> findFirstByAgencyAndActiveTrueAndEffectiveFromLessThanEqualOrderByEffectiveFromDesc(
+            ContributionAgency agency, LocalDate date);
+
+    long countByAgency(ContributionAgency agency);
+}

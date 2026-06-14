@@ -10,6 +10,7 @@ public record EmployeeResponse(
         String typeLabel,
         double monthlyRate,
         double hourlyRate,
+        String bankAccount,
         boolean active,
         String createdAt) {
 }

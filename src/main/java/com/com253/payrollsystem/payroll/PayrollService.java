@@ -5,6 +5,7 @@ import com.com253.payrollsystem.loan.LoanService;
 import com.com253.payrollsystem.payitem.PayItemService;
 import com.com253.payrollsystem.payitem.PayItemTotals;
 import com.com253.payrollsystem.settings.SettingsService;
+import com.com253.payrollsystem.statutory.ContributionTableProvider;
 import com.com253.payrollsystem.shared.mapping.PayrollMapping;
 
 import com.com253.payrollsystem.shared.domain.Employee;
@@ -12,6 +13,9 @@ import com.com253.payrollsystem.shared.domain.PayContext;
 import com.com253.payrollsystem.shared.domain.PayrollEntry;
 import com.com253.payrollsystem.shared.domain.PayrollSettings;
 import com.com253.payrollsystem.shared.domain.TimeRecord;
+import com.com253.payrollsystem.shared.domain.tax.ContributionTables;
+
+import java.time.LocalDate;
 import com.com253.payrollsystem.employee.EmployeeEntity;
 import com.com253.payrollsystem.employee.EmployeeRepository;
 import com.com253.payrollsystem.attendance.TimeRecordRepository;
@@ -37,6 +41,7 @@ public class PayrollService {
     private final LoanService loanService;
     private final LeaveService leaveService;
     private final PayItemService payItemService;
+    private final ContributionTableProvider contributionTables;
 
     public PayrollService(EmployeeRepository employeeRepository,
                           TimeRecordRepository timeRecordRepository,
@@ -45,7 +50,8 @@ public class PayrollService {
                           PeriodLockGuard periodLockGuard,
                           LoanService loanService,
                           LeaveService leaveService,
-                          PayItemService payItemService) {
+                          PayItemService payItemService,
+                          ContributionTableProvider contributionTables) {
         this.employeeRepository = employeeRepository;
         this.timeRecordRepository = timeRecordRepository;
         this.payrollRepository = payrollRepository;
@@ -54,6 +60,7 @@ public class PayrollService {
         this.loanService = loanService;
         this.leaveService = leaveService;
         this.payItemService = payItemService;
+        this.contributionTables = contributionTables;
     }
 
     /** Computes the payslip for an employee + cut-off using current settings + attendance, then saves it. */
@@ -76,9 +83,10 @@ public class PayrollService {
         PayItemTotals items = payItemService.totalsFor(req.employeeId());
         PayContext ctx = new PayContext(loanTotal, coveredLeaveDays,
                 items.taxableAllowances(), items.nonTaxableAllowances(), items.otherDeductions());
+        ContributionTables tables = contributionTables.tablesFor(LocalDate.now());
 
         PayrollEntry entry = PayrollCalculator.buildPayrollEntry(
-                domainEmployee, records, req.period(), settings, ctx);
+                domainEmployee, records, req.period(), settings, ctx, tables);
 
         PayslipEntity saved = payrollRepository.save(PayrollMapping.toEntity(emp, entry));
         return PayrollMapping.toResponse(saved);

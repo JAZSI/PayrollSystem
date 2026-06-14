@@ -11,4 +11,6 @@ public interface PayrollRepository extends JpaRepository<PayslipEntity, Long> {
     List<PayslipEntity> findAllByOrderByCreatedAtDesc();
 
     List<PayslipEntity> findByRunIdOrderByEmployeeName(Long runId);
+
+    List<PayslipEntity> findByCutoffPeriodOrderByEmployeeName(String cutoffPeriod);
 }

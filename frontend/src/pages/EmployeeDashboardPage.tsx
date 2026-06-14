@@ -40,7 +40,7 @@ export function EmployeeDashboardPage() {
   const latest13th = thirteenth?.[0]
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <div>
         <h1 className="text-xl font-semibold">Welcome, {emp?.fullName ?? me.username}</h1>
         <p className="text-muted-foreground text-sm">Your employee profile and payslips.</p>
@@ -87,7 +87,7 @@ export function EmployeeDashboardPage() {
         <div className="grid gap-4">
           <Card>
             <CardContent className="flex items-center gap-4 p-5">
-              <div className="bg-muted text-muted-foreground flex size-10 items-center justify-center rounded-md">
+              <div className="gold-gradient flex size-10 items-center justify-center rounded-lg text-[oklch(0.20_0.03_256)]">
                 <FontAwesomeIcon icon={faMoneyBillWave} />
               </div>
               <div>
@@ -103,7 +103,7 @@ export function EmployeeDashboardPage() {
           </Card>
           <Card>
             <CardContent className="flex items-center gap-4 p-5">
-              <div className="bg-muted text-muted-foreground flex size-10 items-center justify-center rounded-md">
+              <div className="gold-gradient flex size-10 items-center justify-center rounded-lg text-[oklch(0.20_0.03_256)]">
                 <FontAwesomeIcon icon={faReceipt} />
               </div>
               <div>
@@ -116,7 +116,7 @@ export function EmployeeDashboardPage() {
           </Card>
           <Card>
             <CardContent className="flex items-center gap-4 p-5">
-              <div className="bg-muted text-muted-foreground flex size-10 items-center justify-center rounded-md">
+              <div className="gold-gradient flex size-10 items-center justify-center rounded-lg text-[oklch(0.20_0.03_256)]">
                 <FontAwesomeIcon icon={faHandHoldingDollar} />
               </div>
               <div>
@@ -133,7 +133,7 @@ export function EmployeeDashboardPage() {
           {latest13th && (
             <Card>
               <CardContent className="flex items-center gap-4 p-5">
-                <div className="bg-muted text-muted-foreground flex size-10 items-center justify-center rounded-md">
+                <div className="gold-gradient flex size-10 items-center justify-center rounded-lg text-[oklch(0.20_0.03_256)]">
                   <FontAwesomeIcon icon={faGift} />
                 </div>
                 <div>

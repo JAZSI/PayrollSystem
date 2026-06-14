@@ -29,6 +29,7 @@ class LeaveServiceTest {
     @Mock LeaveRequestRepository requests;
     @Mock EmployeeRepository employees;
     @Mock HolidayRepository holidays;
+    @Mock com.com253.payrollsystem.audit.AuditService auditService;
 
     @InjectMocks LeaveService service;
 

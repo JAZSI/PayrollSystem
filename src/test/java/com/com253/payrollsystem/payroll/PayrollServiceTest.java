@@ -13,6 +13,8 @@ import com.com253.payrollsystem.loan.LoanService;
 import com.com253.payrollsystem.payitem.PayItemService;
 import com.com253.payrollsystem.payitem.PayItemTotals;
 import com.com253.payrollsystem.settings.SettingsService;
+import com.com253.payrollsystem.statutory.ContributionTableProvider;
+import com.com253.payrollsystem.shared.domain.tax.ContributionTables;
 import com.com253.payrollsystem.payroll.dto.PayslipResponse;
 import com.com253.payrollsystem.payroll.dto.RunPayrollRequest;
 import org.junit.jupiter.api.Test;
@@ -49,6 +51,7 @@ class PayrollServiceTest {
     @Mock LoanService loanService;
     @Mock LeaveService leaveService;
     @Mock PayItemService payItemService;
+    @Mock ContributionTableProvider contributionTables;
 
     @InjectMocks PayrollService payrollService;
 
@@ -68,6 +71,7 @@ class PayrollServiceTest {
         when(loanService.activeCutoffTotal("1234-5678-90")).thenReturn(0.0);
         when(leaveService.coveredDaysFor("1234-5678-90", "1st-15th")).thenReturn(0);
         when(payItemService.totalsFor("1234-5678-90")).thenReturn(PayItemTotals.empty());
+        when(contributionTables.tablesFor(any())).thenReturn(ContributionTables.HARDCODED);
         when(payrollRepository.save(any(PayslipEntity.class)))
                 .thenAnswer(inv -> inv.getArgument(0));
 
@@ -102,6 +106,7 @@ class PayrollServiceTest {
         when(loanService.activeCutoffTotal("1234-5678-90")).thenReturn(1000.0);
         when(leaveService.coveredDaysFor("1234-5678-90", "1st-15th")).thenReturn(0);
         when(payItemService.totalsFor("1234-5678-90")).thenReturn(PayItemTotals.empty());
+        when(contributionTables.tablesFor(any())).thenReturn(ContributionTables.HARDCODED);
         when(payrollRepository.save(any(PayslipEntity.class)))
                 .thenAnswer(inv -> inv.getArgument(0));
 
