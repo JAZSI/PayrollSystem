@@ -191,20 +191,20 @@ flowchart TD
 
 ```text
 PayrollSystem/
-├── src/main/java/com/com253/payrollsystem/   # backend (package-by-feature)
-│   ├── shared/                               # pure domain (calculator, tax, model), Money, security, error, config, mapping
-│   ├── employee/  attendance/  payroll/      # core features (entity/repo/service/controller/dto)
+├── src/main/java/com/com253/payrollsystem/
+│   ├── shared/
+│   ├── employee/  attendance/  payroll/ 
 │   ├── loan/  leave/  payitem/  thirteenthmonth/
 │   ├── statutory/ report/ audit/ holiday/ settings/ user/ dashboard/
 │   └── PayrollApplication.java
 ├── src/main/resources/
 │   ├── application.properties
-│   └── db/migration/V1__init.sql              # Flyway baseline (optional, see Deployment)
-├── src/test/java/...                          # unit + characterization + wiring tests
-├── frontend/                                  # React SPA (Bun + Vite)
+│   └── db/migration/V1__init.sql
+├── src/test/java/...
+├── frontend/
 │   └── src/{api,hooks,pages,components,types,auth,lib}
-├── scripts/                                   # build / run / package  (.bat + .sh)
-└── .docs/                                     # as-built overview + domain references
+├── scripts/
+└── .docs/
 ```
 
 Each backend feature folder is self-contained (entity → repository → service → controller →
