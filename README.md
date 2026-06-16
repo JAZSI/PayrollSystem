@@ -57,9 +57,12 @@ test-pinned) with a **Spring Boot REST API** and a **React single-page UI**.
 - **Target users** — small/medium PH employers: HR/payroll staff (ADMIN/HR) and employees
   (self-service).
 
+> 🎓 **Academic project** — built as a final project for an **Object-Oriented Programming**
+> course at **National University - Dasmariñas**. It demonstrates OOP principles (encapsulation, a pure
+> domain model, separation of concerns) applied to a real-world payroll domain.
+
 Computation rules are grounded in [`.docs/formulas.md`](.docs/formulas.md) and
-[`.docs/sources.md`](.docs/sources.md); the as-built architecture lives in
-[`.docs/00-system-overview.md`](.docs/00-system-overview.md).
+[`.docs/sources.md`](.docs/sources.md).
 
 ---
 
@@ -117,7 +120,7 @@ The advanced dark dashboard — KPI cards, charts, recent runs, top earners, and
 | **Leave** | **13th-month pay** |
 | ![Leave](.docs/previews/admin/leave.png) | ![13th month](.docs/previews/admin/13th_month.png) |
 | **Holidays** | **Statutory tables** |
-| ![Holidays](.docs/previews/admin/holiday.png) | ![Statutory tables](.docs/previews/admin/satutory_tables.png) |
+| ![Holidays](.docs/previews/admin/holidays.png) | ![Statutory tables](.docs/previews/admin/statutory_tables.png) |
 | **Audit log** | **Users** |
 | ![Audit log](.docs/previews/admin/audit_log.png) | ![Users](.docs/previews/admin/users.png) |
 | **Settings** | |

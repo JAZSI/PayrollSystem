@@ -2,7 +2,6 @@ import { useEffect, useRef, useState, type FormEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
-  faClock,
   faRightToBracket,
   faRightFromBracket,
   faCircleCheck,
@@ -14,6 +13,7 @@ import { Button } from '@/components/ui/button'
 import { kioskClock } from '@/api/kiosk'
 import { toApiError } from '@/api/client'
 import { cn } from '@/lib/utils'
+import nuLogo from '@/assets/NU.png'
 import type { KioskResult } from '@/types/payroll'
 
 type Feedback =
@@ -72,8 +72,8 @@ export function KioskPage() {
   return (
     <div className="bg-background text-foreground flex min-h-screen flex-col items-center justify-center p-6">
       <div className="w-full max-w-md text-center">
-        <div className="text-muted-foreground mb-1 flex items-center justify-center gap-2 text-sm">
-          <FontAwesomeIcon icon={faClock} />
+        <div className="text-muted-foreground mb-3 flex items-center justify-center gap-2 text-sm">
+          <img src={nuLogo} alt="National University" className="size-7 object-contain" />
           PayrollPal Time Clock
         </div>
         <div className="text-6xl font-bold tabular-nums">{time}</div>

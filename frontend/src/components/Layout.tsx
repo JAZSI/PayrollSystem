@@ -1,7 +1,6 @@
 import { NavLink, Outlet, useLocation } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
-  faMoneyCheckDollar,
   faUsers,
   faGear,
   faCalendarCheck,
@@ -20,6 +19,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 import type { IconDefinition } from '@fortawesome/fontawesome-svg-core'
 import { cn } from '@/lib/utils'
+import nuLogo from '@/assets/NU.png'
 import { Button } from '@/components/ui/button'
 import { useAuth } from '@/auth/AuthContext'
 import { isAdmin, isStaff } from '@/auth/roles'
@@ -100,9 +100,7 @@ export function Layout() {
     <div className="bg-background text-foreground flex h-screen overflow-hidden">
       <aside className="sidebar-gradient border-sidebar-border hidden h-screen shrink-0 flex-col border-r md:flex md:w-16 lg:w-60">
         <div className="flex h-14 items-center gap-2.5 px-3 lg:px-4">
-          <div className="gold-gradient flex size-8 shrink-0 items-center justify-center rounded-md text-[oklch(0.20_0.03_256)]">
-            <FontAwesomeIcon icon={faMoneyCheckDollar} />
-          </div>
+          <img src={nuLogo} alt="National University" className="size-8 shrink-0 object-contain" />
           <div className="hidden leading-tight lg:block">
             <div className="text-gold-gradient text-sm font-semibold">PayrollPal</div>
             <div className="text-muted-foreground text-[10px] tracking-wide uppercase">
@@ -169,9 +167,11 @@ export function Layout() {
       <div className="flex min-w-0 flex-1 flex-col">
         <header className="border-border/60 bg-background/70 flex h-14 shrink-0 items-center justify-between border-b px-5 backdrop-blur">
           <div className="flex items-center gap-2.5">
-            <div className="gold-gradient flex size-7 items-center justify-center rounded-md text-[oklch(0.20_0.03_256)] md:hidden">
-              <FontAwesomeIcon icon={faMoneyCheckDollar} className="text-sm" />
-            </div>
+            <img
+              src={nuLogo}
+              alt="National University"
+              className="size-7 shrink-0 object-contain md:hidden"
+            />
             <span className="gold-gradient hidden h-4 w-1 rounded-full md:block" />
             <h1 className="text-sm font-semibold">{title}</h1>
           </div>

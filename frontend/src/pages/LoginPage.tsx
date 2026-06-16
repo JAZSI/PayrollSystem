@@ -1,7 +1,8 @@
 import { useState, type FormEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faMoneyCheckDollar, faRightToBracket } from '@fortawesome/free-solid-svg-icons'
+import { faRightToBracket } from '@fortawesome/free-solid-svg-icons'
+import nuLogo from '@/assets/NU.png'
 import {
   Card,
   CardContent,
@@ -42,10 +43,7 @@ export function LoginPage() {
       <Card className="w-full max-w-sm">
         <CardHeader className="text-center">
           <div className="mb-2 flex justify-center">
-            <FontAwesomeIcon
-              icon={faMoneyCheckDollar}
-              className="text-primary text-3xl"
-            />
+            <img src={nuLogo} alt="National University" className="size-16 object-contain" />
           </div>
           <CardTitle>PayrollPal</CardTitle>
           <CardDescription>Sign in to manage payroll</CardDescription>
